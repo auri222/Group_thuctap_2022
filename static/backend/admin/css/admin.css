@@ -1,0 +1,89 @@
+:root {
+    --primary: #0C63E7;
+    --light: #ffffff;
+    --grey: #efefef;
+    --black: #000000;
+}
+
+body{
+    overflow: hidden;
+    font-weight: 300;
+    color: var(--primary) !important;
+}
+
+.bg-main {
+    background-color: var(--primary) !important;
+}
+
+.bg-white {
+    background-color: var(--light) !important;
+}
+
+.bg-grey {
+    background-color: var(--grey) !important;
+}
+
+#sidebar-container {
+    min-height: 100vh;
+    transition: 250ms all;
+    z-index: 1000;
+}
+
+#sidebar-container .logo {
+    padding: .875rem 1.25rem;
+}
+
+#sidebar-container .menu {
+    width: 18rem;
+    transition: 250ms ease-in-out;
+}
+
+#sidebar-container .menu a{
+    text-decoration: none;
+    transition: 250ms ease-in-out;
+}
+#sidebar-container .menu a:hover{
+    transform: translateX(-2px);
+    background-color: #052996;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+}
+
+#content {
+    overflow-y: auto;
+    height: 100vh;
+    padding-bottom: 5rem;
+}
+
+.dashboard-card .card-body i{
+    font-size: 35px;
+    
+}
+
+.dashboard-card .card-body .card-content {
+    box-shadow: 2px 2px 5px rgb(185, 183, 183);
+}
+
+.sideMenuToggler{
+    display: none;
+}
+
+@media (max-width: 992px){
+    #sidebar-container{
+        display: none;
+    }
+    .sideMenuToggler {
+        display: block;
+    }
+}
+
+#sidebar-container.active {
+    display: block;
+}
+
+.content-main {
+    color: var(--black) !important;
+}

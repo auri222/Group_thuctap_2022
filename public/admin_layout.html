@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', path='vendors/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='backend/admin/css/admin.css') }}">
+
+</head>
+
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar-container" class="bg-main">
+            <div class="logo">
+                <h4 class="text-light font-weight-bold">Brand</h4>
+            </div>
+            <div class="menu">
+                {% block sidebar %} {% endblock %}
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="w-100">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+                <div class="container">
+                    <button class="navbar-toggler sideMenuToggler" type="button">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto">
+            
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="#">
+                                    {% block username %}{% endblock %}
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="#">
+                                    Đăng xuất
+                                </a>
+                            </li>
+            
+                        </ul>
+                    </div>
+            
+                </div>
+            </nav>
+            <!-- End Navbar -->
+
+            <!-- Content -->
+            <div id="content">
+                <section class="py-3 bg-grey">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h1 class="font-weight-bold mb-0">{% block page_name %}{% endblock %}</h1>
+                                <p class="lead text-muted">{% block page_name_detail %}{% endblock %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Card -->
+                <section class="dashboard-content">
+                    <div class="container">
+                        {% block content %}{% endblock %}
+                    </div>
+                </section>
+                <!-- End Card -->
+            </div>
+            <!-- End Content -->
+        </div>
+        <!-- End Content -->
+
+
+    </div>
+
+
+    <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', path='vendors/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', path='backend/admin/js/admin.js') }}"></script>
+    {% block script %}{% endblock %}
+</body>
+
+</html>

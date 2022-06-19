@@ -2,21 +2,58 @@ from typing import Union
 from pydantic import BaseModel
 from datetime import date, datetime
 
+#Start Account
+#----------------------------------------------------------
 class Account(BaseModel):
     account_username: str
     account_password: str
     account_type: int
     account_otp: Union[int, None] = None
     account_token: Union[str, None] = None
+    account_verify_status: Union[int, None] = None
+    account_active_status: Union[int, None] = None
     account_date_created: datetime = None
 
     class Config:
         orm_mode = True
 
+class RegisterAccount(Account):
+    pass
+
+class UpdateAccountPassword(BaseModel):
+    account_password: str
+
+    class Config:
+        orm_mode = True
+
+class UpdateAccountVerifyStatus(BaseModel):
+    account_verify_status: int
+
+    class Config:
+        orm_mode = True
+
+class UpdateAccountActiveStatus(BaseModel):
+    account_active_status: int
+
+    class Config:
+        orm_mode = True
+
+class UpdateAccountOTPToken(BaseModel):
+    account_otp: int
+    account_token: str
+    
+    class Config:
+        orm_mode = True
+
+#End Account
+#----------------------------------------------------------
+
+#Start Admin
+#----------------------------------------------------------
 class Admin(BaseModel):
     admin_name: str
     admin_birthday: date = None
-    admin_addrs: str
+    admin_address: str
     admin_phone: str
     admin_email: str
     account_id : int
@@ -24,6 +61,21 @@ class Admin(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateAdminInfo(BaseModel):
+    admin_name: str
+    admin_birthday: date = None
+    admin_address: str
+    admin_phone: str
+    admin_email: str
+
+    class Config:
+        orm_mode = True
+
+#End Admin
+#----------------------------------------------------------
+
+#Start Buyer
+#----------------------------------------------------------
 class Buyer(BaseModel):
     buyer_name: str
     buyer_birthday: date = None
@@ -36,6 +88,33 @@ class Buyer(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateBuyerInfo(BaseModel):
+    buyer_name: str
+    buyer_birthday: date = None
+    buyer_address: Union[str, None] = None
+    buyer_phone: str
+    buyer_email: str
+    buyer_shipping_address: str
+
+    class Config:
+        orm_mode = True
+
+class UpdateBuyerInfo(BaseModel):
+    buyer_name: str
+    buyer_birthday: date = None
+    buyer_address: Union[str, None] = None
+    buyer_phone: str
+    buyer_email: str
+    buyer_shipping_address: str
+
+    class Config:
+        orm_mode = True
+
+#End Buyer
+#----------------------------------------------------------
+
+#Start Seller
+#----------------------------------------------------------
 class Seller(BaseModel):
     seller_name: str
     seller_birthday: date = None
@@ -47,26 +126,85 @@ class Seller(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateSellerInfo(BaseModel):
+    seller_name: str
+    seller_birthday: date = None
+    seller_address: Union[str, None] = None
+    seller_phone: str
+    seller_email: str
+
+    class Config:
+        orm_mode = True
+
+class UpdateSellerInfo(BaseModel):
+    seller_name: str
+    seller_birthday: date = None
+    seller_address: Union[str, None] = None
+    seller_phone: str
+    seller_email: str
+
+    class Config:
+        orm_mode = True
+
+#End Seller
+#----------------------------------------------------------
+
+#Start Food type
+#----------------------------------------------------------
 class FoodType(BaseModel):
     food_type_name: str
 
     class Config:
         orm_mode = True
 
+#End Food type
+#----------------------------------------------------------
+
+#Start Payment methods
+#----------------------------------------------------------
 class PaymentMethod(BaseModel):
     payment_method_name: str
 
     class Config:
         orm_mode = True
 
+#End Payment methods
+#----------------------------------------------------------
+
+#Start Restaurant
+#----------------------------------------------------------
 class Restaurant(BaseModel):
     restaurant_name: str
     restaurant_address: str
+    restaurant_image: Union[str, None] = None
     seller_id: int
 
     class Config:
         orm_mode = True
 
+class CreateRestaurantInfo(BaseModel):
+    restaurant_name: str
+    restaurant_address: str
+    restaurant_image: Union[str, None] = None
+    seller_id: int
+
+    class Config:
+        orm_mode = True
+
+class UpdateRestaurantInfo(BaseModel):
+    restaurant_name: str
+    restaurant_address: str
+    restaurant_image: Union[str, None] = None
+    seller_id: int
+
+    class Config:
+        orm_mode = True
+
+#End Restaurant
+#----------------------------------------------------------
+
+#Start Food
+#----------------------------------------------------------
 class Food(BaseModel):
     food_name: str
     food_image: Union[str, None] = None
@@ -77,6 +215,12 @@ class Food(BaseModel):
     class Config:
         orm_mode = True
 
+#End Food
+#----------------------------------------------------------
+
+
+#Start Restaurant warehouse
+#----------------------------------------------------------
 class RestaurantWarehouse(BaseModel):
     restaurant_id: int
     food_id: int
@@ -85,6 +229,11 @@ class RestaurantWarehouse(BaseModel):
     class Config:
         orm_mode = True
 
+#End Restaurant warehouse
+#----------------------------------------------------------
+
+#Start Order
+#----------------------------------------------------------
 class Order(BaseModel):
     order_created_date: datetime = None
     order_shipping_address: str
@@ -96,6 +245,11 @@ class Order(BaseModel):
     class Config:
         orm_mode = True
 
+#End Order
+#----------------------------------------------------------
+
+#Start Order Detail 
+#----------------------------------------------------------
 class OrderDetail(BaseModel):
     order_id: int
     food_id: int
@@ -104,3 +258,6 @@ class OrderDetail(BaseModel):
 
     class Config:
         orm_mode = True
+
+#End Order Detail
+#----------------------------------------------------------

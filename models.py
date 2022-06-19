@@ -12,6 +12,8 @@ class Account(Base):
     account_type = Column(Integer)
     account_otp = Column(Integer)
     account_token = Column(String(255))
+    account_verify_status = Column(Integer)
+    account_active_status = Column(Integer)
     account_date_created = Column(DateTime)
 
 
@@ -20,14 +22,14 @@ class Admin(Base):
     admin_id = Column(Integer, primary_key=True, index=True)
     admin_name = Column(String(100))
     admin_birthday = Column(Date)
-    admin_addrs = Column(String(250))
+    admin_address = Column(String(250))
     admin_phone = Column(String(10))
     admin_email = Column(String(250))
     account_id = Column(Integer)
 
 
 class Buyer(Base):
-    __tablename_ = "buyer"
+    __tablename__= "buyer"
     buyer_id = Column(Integer, primary_key=True, index=True)
     buyer_name = Column(String(100))
     buyer_birthday = Column(Date)
@@ -39,7 +41,7 @@ class Buyer(Base):
 
 
 class Seller(Base):
-    __tablename_ = "seller"
+    __tablename__= "seller"
     seller_id = Column(Integer, primary_key=True, index=True)
     seller_name = Column(String(100))
     seller_birthday = Column(Date)
@@ -63,6 +65,7 @@ class Restaurant(Base):
     restaurant_id = Column(Integer, primary_key=True, index=True)
     restaurant_name = Column(String(250))
     restaurant_address = Column(String(250))
+    restaurant_image = Column(String(255), nullable=True)
     seller_id = Column(Integer)
 
 class Food(Base):
@@ -76,8 +79,8 @@ class Food(Base):
 
 class RestaurantWarehouse(Base):
     __tablename__ = "restaurant_warehouse"
-    restaurant_id = Column(Integer)
-    food_id = Column(Integer)
+    restaurant_id = Column(Integer, primary_key=True)
+    food_id = Column(Integer, primary_key=True)
     food_quantity = Column(Integer)
 
 class Order(Base):
@@ -92,7 +95,7 @@ class Order(Base):
 
 class OrderDetail(Base):
     __tablename__ = "order_detail"
-    order_id = Column(Integer)
-    food_id = Column(Integer)
+    order_id = Column(Integer, primary_key=True)
+    food_id = Column(Integer, primary_key=True)
     order_quantity = Column(Integer)
     order_price = Column(Float)

@@ -1,0 +1,54 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+    Trang admin
+{% endblock %}
+
+{% block username %}
+    Username
+{% endblock %}
+
+{% block page_name %}
+    Profile
+{% endblock %}
+
+{% block page_name_detail %}
+    Trang thông tin cá nhân
+{% endblock %}
+
+{% block content %}
+    <h1>Trang chủ</h1>
+    {% for info in admin_info %}
+    <div class="row">
+        <div class="col-md-9">
+            <table class="table table-borderless mt-2">
+                <tbody>
+                    <tr>
+                        <th>Họ tên: </th>
+                        <td>{{ info.admin_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày sinh: </th>
+                        {% set birthday = info.admin_birthday %}
+                        <td>{{ birthday.strftime("%d/%m/%Y") }}</td>
+                    </tr>
+                    <tr>
+                        <th>Địa chỉ: </th>
+                        <td>{{ info.admin_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Số điện thoại: </th>
+                        <td>{{ info.admin_phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email: </th>
+                        <td>{{ info.admin_email }}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    {% endfor %}
+{% endblock %}

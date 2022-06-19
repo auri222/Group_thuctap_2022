@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from .. import models
-from .. import schemas
+import models
+import schemas
 
 def get_admin_by_ID(db: Session, admin_id: int):
     return db.query(models.Admin).filter(models.Admin.admin_id == admin_id).first()
@@ -11,13 +11,13 @@ def get_admin_by_email(db: Session, email: str):
 def get_all_admins(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Admin).offset(skip).limit(limit).all()
 
-def create_admin_info(db: Session, admin: schemas.Admin, account_id: int):
-    db_user = models.Admin(admin_name=admin.admin_name, 
-                                admin_birthday=admin.admin_birthday, 
-                                admin_addrs=admin.admin_addrs, 
-                                admin_phone=admin.admin_phone, 
-                                admin_email= admin.admin_email,
-                                account_id=account_id)
+def create_admin_info(db: Session, admin: schemas.CreateAdminInfo, account_id: int):
+    db_user = models.Admin( admin_name=admin.admin_name, 
+                            admin_birthday=admin.admin_birthday, 
+                            admin_address=admin.admin_address, 
+                            admin_phone=admin.admin_phone, 
+                            admin_email= admin.admin_email,
+                            account_id=account_id)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -26,7 +26,7 @@ def create_admin_info(db: Session, admin: schemas.Admin, account_id: int):
 def create_admin_return_ID(db: Session, admin: schemas.Admin, account_id: int):
     db_admin = models.Admin(admin_name=admin.admin_name, 
                                 admin_birthday=admin.admin_birthday, 
-                                admin_addrs=admin.admin_addrs, 
+                                admin_address=admin.admin_address, 
                                 admin_phone=admin.admin_phone, 
                                 admin_email= admin.admin_email,
                                 account_id=account_id)
@@ -43,7 +43,7 @@ def update_admin(db: Session, admin: schemas.Admin, admin_id: int):
         return {"Error": None}
     db_admin.admin_name = admin.admin_name
     db_admin.admin_birthday = admin.admin_birthday
-    db_admin.admin_addrs = admin.admin_addrs
+    db_admin.admin_address = admin.admin_address
     db_admin.admin_phone = admin.admin_phone
     db_admin.admin_email = admin.admin_email
     # db.add(db_user)
