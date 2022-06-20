@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+
+    <!-- <link rel="stylesheet" href="../assets/style.css"> -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
+    </style>
+
+    <title>Đăng ký</title>
+</head>
+<style>
+    body {
+        background-color: #caf0f8;
+        min-height: 100vh;
+    }
+
+    .info-form {
+        padding: 30px;
+        margin-top: 50px;
+        -webkit-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        margin-left: 500px;margin-right: 500px;margin-top: 50px;
+        background-color: #fff;
+        border-radius: 15px;
+    }
+
+    .main-content {
+        min-height: 700px;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+    }
+    .btn-submit{
+    cursor:pointer;
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 30px;
+      margin: auto;
+      text-decoration: none;
+      background-color: orange;
+      color: #fff;
+      transition: scaleY scaleX 0.5s;
+  }
+  .btn-submit:hover{
+    transform: scaleY(1.05) scaleX(1.05);
+  }
+</style>
+
+<body>
+    <!-- <div class="col-3"></div> -->
+    <div class="main-content" style="padding-bottom: 100px;">
+        <form class="info-form">
+            <h4 style="text-align: center;">Thông Tin Cá Nhân</h4>
+            
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="buyer_name" name="buyer_name" placeholder="Họ Và Tên">
+                        <label for="floatingInput">Họ và tên</label>
+                    </div>
+                </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="date" class="form-control" id="buyer_birthday" name="buyer_birthday" placeholder="Ngày Sinh">
+                    <label for="floatingInput">Ngày Sinh</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="buyer_address" name="buyer_address"placeholder="Địa Chỉ">
+                    <label for="floatingInput">Địa Chỉ</label>
+                </div> 
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="buyer_phone" name="buyer_phone" placeholder="Số Điện Thoại">
+                    <label for="floatingInput">Số Điện Thoại</label>
+                </div>  
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="buyer_email" name="buyer_email" placeholder="Email">
+                    <label for="floatingInput">Email</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="buyer_shipping_address" name="buyer_shipping_address"placeholder="Địa Chỉ Giao Hàng">
+                    <label for="floatingInput">Địa Chỉ Giao Hàng</label>
+                </div>
+            </div><br>
+            <div class="mb-3" style="text-align: center;">
+                <a href="../otp_form.html"><button type="button" class="btn-submit border border-warning">Tiếp Theo</button></a>
+            </div>
+
+        </form>
+    </div>
+    <div class="col-3"></div>
+</body>
+
+</html>

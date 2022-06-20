@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
 from crud import admin_crud, account_crud
+from routes.login import manager
 router = APIRouter(
     prefix="/admin",
     tags=['Admins']
@@ -34,23 +35,19 @@ def read_admins(skip: int = 0, limit: int=100):
     admins = admin_crud.get_all_admins(db, skip=0, limit=10)
     return admins
 
-@router.get("/profile/{id}", response_class=HTMLResponse)
-def read_profile_admin(id: int, request: Request):
-    admin_info = admin_crud.get_admin_by_ID(db,admin_id=id)
-    data = []
-    data.append(admin_info.__dict__)
-    data_res = {
-        "request": request,
-        "title": 'Thông tin Admin',
-        'admin_info': data
-    }
-    return templates.TemplateResponse("admin_profile.html", data_res)
+@router.get("/profile/{account_id}", response_class=HTMLResponse)
+def read_profile_admin(account_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
 
-@router.get("/{id}", response_class=HTMLResponse)
-def admin_page(id: int, request: Request):
-    admin_info = admin_crud.get_admin_by_ID(db,admin_id=id)
-    acc_id = admin_info.account_id
-    account_info = account_crud.get_account(db, account_id=acc_id)
+    
+    admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
+    account_info = account_crud.get_account(db, account_id=account_id)
     username = account_info.account_username
     data = []
     data.append(admin_info.__dict__)
@@ -59,7 +56,31 @@ def admin_page(id: int, request: Request):
         "title": 'Thông tin Admin',
         'admin_info': data,
         'username': username,
-        'account_id': acc_id
+        'account_id': account_id
+    }
+    return templates.TemplateResponse("admin_profile.html", data_res)
+
+@router.get("/{account_id}", response_class=HTMLResponse)
+def admin_page(account_id: int, request: Request, user = Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    data = []
+    data.append(admin_info.__dict__)
+    data_res = {
+        "request": request,
+        "title": 'Thông tin Admin',
+        'admin_info': data,
+        'username': username,
+        'account_id': account_id
     }
     return templates.TemplateResponse("admin_index.html", data_res)
 

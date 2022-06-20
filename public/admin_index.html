@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block sidebar %}
+    <a href="/admin/{{ account_id }}" class="d-block text-light p-3">
+        <i class="bi bi-clipboard-data mr-2"></i>
+        Dashboard</a>
     <a href="/admin/profile/{{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Profile</a>
@@ -22,9 +25,18 @@
         Quản lý loại thức ăn</a>
 {% endblock %}
 
-{% block username %}
-
-    {{ username if username != None }}
+{% block nav_link %}
+    <li class="nav-item dropdown">
+        <a class="nav-link" href="#">
+            {{ username if username != None }}
+        </a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link" href="/logout">
+            Đăng xuất
+        </a>
+    </li>
+    
 
 {% endblock %}
 
@@ -37,6 +49,6 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Trang chủ</h1>
+    <h2>Xin chào admin {{ username if username != None }}</h2>
 
 {% endblock %}

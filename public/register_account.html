@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.14/dist/sweetalert2.min.css"> -->
+  <!-- <script type="text/javascript" src="{{url_for('static',path='/jquery/jquery-3.6.0.min.js')}}"></script> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+  <!-- <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="icon" href="../../static/image/logo.png" type="image/x-icon"> -->
+  <title>Đăng ký</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
+  </style>
+</head>
+<style>
+  body {
+    background-color: #caf0f8;
+    min-height: 100vh;
+    padding-top: 80px;
+  }
+
+  .account_form {
+    padding: 30px;
+    -webkit-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+    box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+    margin-left: 500px;
+    margin-right: 500px;
+    background-color: #fff;
+    border-radius: 15px;
+  }
+
+  .main-content {
+    /* min-height: 100vh; */
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 100px;
+  }
+
+  .btn-submit-seller {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin: auto;
+    text-decoration: none;
+    background-color: orange;
+    color: #fff;
+    transition: scaleY scaleX 0.5s;
+  }
+
+  .btn-submit-seller:hover {
+    transform: scaleY(1.05) scaleX(1.05);
+  }
+
+  .btn-submit-buyer {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin: auto;
+    text-decoration: none;
+    background-color: orange;
+    color: #fff;
+    transition: scaleY scaleX 0.5s;
+  }
+
+  .btn-submit-buyer:hover {
+    transform: scaleY(1.05) scaleX(1.05);
+  }
+</style>
+
+<body>
+  <div class="main-content">
+    <form class="account_form">
+      <!-- <img class="avatar" src="../../static/image/avt.svg" alt=""> -->
+      <h4 style="text-align:center;">Đăng Ký Tài Khoản</h4>
+      <div class="mb-3">
+        <div class="form-floating">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Tên Đăng Nhập">
+          <label for="floatingInput">Tên Đăng Nhập</label>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="form-floating">
+          <input type="password" class="form-control" id="pass" name="pass" placeholder="Mật Khẩu">
+          <label for="floatingInput">Mật Khẩu</label>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="form-floating">
+          <input type="password" class="form-control" id="repass" name="repass" placeholder="Nhập Lại Mật Khẩu">
+          <label for="floatingInput">Nhập Lại Mật Khẩu</label>
+        </div>
+      </div>
+      <div>
+        <p style="text-align: center;">Tài khoản này dành cho :</p>
+        <div class=" mb-3">
+          <button type="button" class="btn-submit-seller border border-warning">Người Mua</button>
+
+          <button type="button" class="btn-submit-buyer border border-warning">Người Bán</button>
+
+        </div>
+      </div>
+      <div>
+        <p style="text-align: center;">Bạn đã có tài khoản?<a href="/login_form" style="color: red;text-decoration: none;"> Đăng nhập</a>
+        </p>
+      </div>
+    </form>
+  </div>
+  <!-- footer -->
+
+  <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
+  <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
+  <script>
+    $(document).ready(function(){
+
+      function check_input(username, password, repass){
+        var flag = true;
+        if(username == "" ){
+          Swal.fire({
+            icon: 'error',
+            title: 'Nhập thiếu...',
+            text: 'Hãy nhập tên đăng nhập!'
+          });
+          flag = false;
+        }
+
+        if(password == "" ){
+          Swal.fire({
+            icon: 'error',
+            title: 'Nhập thiếu...',
+            text: 'Hãy nhập mật khẩu!'
+          });
+          flag = false;
+        }
+        if(repass == "" ){
+          Swal.fire({
+            icon: 'error',
+            title: 'Nhập thiếu...',
+            text: 'Hãy nhập nhập lại mật khẩu!'
+          });
+          flag = false;
+        }
+
+        if(repass !== password){
+          Swal.fire({
+            icon: 'error',
+            title: 'Nhập thiếu...',
+            text: 'Nhập lại mật khẩu chưa đúng!'
+          });
+          flag = false;
+        }
+
+        return flag
+        
+      }
+
+      $('.btn-submit-seller').on('click', function(){
+        var account_username = $('#username').val();
+        var account_password = $('#pass').val();
+        var account_repassword = $('#repass').val();
+        var account_type = 2;
+        var account_otp = 0;
+        var account_token = "";
+        var account_verify_status = 0;
+        var account_active_status = 0;
+        var adc = new Date();
+        var account_date_created = ""+adc.getFullYear()+"-"+(adc.getMonth()+1)+"-"+adc.getDate()+" "+adc.getHours()+":"+adc.getMinutes()+":"+adc.getSeconds();
+        console.log("Date created: "+account_date_created);
+        if(check_input(account_username, account_password, account_repassword)){
+          
+          var data = {
+            "account_username": account_username,
+            "account_password": account_password,
+            "account_type": account_type,
+            "account_otp": account_otp,
+            "account_token": account_token,
+            "account_verify_status": account_verify_status,
+            "account_active_status": account_active_status,
+            "account_date_created": account_date_created,
+          };
+          console.log(data);
+          $.ajax({
+                url: "/register/register-seller",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function(response){
+                    console.log(response);
+                    if(response.status == 0){
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi rồi',
+                        text: ''+response.status
+                      });
+                    }
+                    else{
+                      Swal.fire({
+                        title: ''+response.message,
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Đi tới bước tiếp theo'
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          location.href = "/register/register-seller?account_id="+response.account_id;
+                        }
+                      })
+                    }
+                }
+            })
+        }
+      });
+
+      $('.btn-submit-buyer').on('click', function(){
+        var account_username = $('#username').val();
+        var account_password = $('#pass').val();
+        var account_repassword = $('#repass').val();
+        var account_type = 3;
+        var account_otp = 0;
+        var account_token = "";
+        var account_verify_status = 0;
+        var account_active_status = 0;
+        var adc = new Date();
+        var account_date_created = ""+adc.getFullYear()+"-"+(adc.getMonth()+1)+"-"+adc.getDate()+" "+adc.getHours()+":"+adc.getMinutes()+":"+adc.getSeconds();
+        console.log("Date created: "+account_date_created);
+        if(check_input(account_username, account_password, account_repassword)){
+          var data = {
+            "account_username": account_username,
+            "account_password": account_password,
+            "account_type": account_type,
+            "account_otp": account_otp,
+            "account_token": account_token,
+            "account_verify_status": account_verify_status,
+            "account_active_status": account_active_status,
+            "account_date_created": account_date_created,
+          };
+          console.log(data);
+          // $.ajax({
+          //       url: "",
+          //       method: "POST",
+          //       contentType: "application/json",
+          //       data: JSON.stringify(data),
+          //       success: function(response){
+          //           console.log(response);
+          //           //alert(response.info)
+          //       }
+          //   })
+        }
+      });
+    });
+  </script>
+  <!-- end_footer -->
+</body>
+
+</html>

@@ -9,6 +9,9 @@ def get_account(db: Session, account_id: int):
 def get_account_by_name(db: Session, account_name: str):
     return db.query(models.Account).filter(models.Account.account_username == account_name).first()
 
+def count_duplicate_username(db: Session, username: str):
+    return db.query(models.Account).filter(models.Account.account_username == username).count()
+
 def create_account(db: Session, account: schemas.Account):
     hashed_password = Hash.bcrypt(account.account_password)
     db_acc = models.Account(

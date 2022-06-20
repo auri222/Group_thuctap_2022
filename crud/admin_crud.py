@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
+def get_admin_by_account_id(db: Session, account_id:int):
+    return db.query(models.Admin).filter(models.Admin.account_id == account_id).first()
+
 def get_admin_by_ID(db: Session, admin_id: int):
     return db.query(models.Admin).filter(models.Admin.admin_id == admin_id).first()
 

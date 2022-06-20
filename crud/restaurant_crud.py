@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from .. import models
-from .. import schemas
+import models
+import schemas
 
 def create_restaurant_info(db: Session, restaurant: schemas.Restaurant, seller_id: int):
     db_restaurant = models.Restaurant(  restaurant_name = restaurant.restaurant_name,

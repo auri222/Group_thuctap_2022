@@ -2,6 +2,17 @@ from typing import Union
 from pydantic import BaseModel
 from datetime import date, datetime
 
+#Start Login
+#----------------------------------------------------------
+class Login(BaseModel):
+    username: str
+    password: str
+    class Config:
+        orm_mode = True
+
+#End Login
+#----------------------------------------------------------
+
 #Start Account
 #----------------------------------------------------------
 class Account(BaseModel):
@@ -88,16 +99,8 @@ class Buyer(BaseModel):
     class Config:
         orm_mode = True
 
-class CreateBuyerInfo(BaseModel):
-    buyer_name: str
-    buyer_birthday: date = None
-    buyer_address: Union[str, None] = None
-    buyer_phone: str
-    buyer_email: str
-    buyer_shipping_address: str
-
-    class Config:
-        orm_mode = True
+class CreateBuyerInfo(Buyer):
+    pass
 
 class UpdateBuyerInfo(BaseModel):
     buyer_name: str
@@ -126,15 +129,8 @@ class Seller(BaseModel):
     class Config:
         orm_mode = True
 
-class CreateSellerInfo(BaseModel):
-    seller_name: str
-    seller_birthday: date = None
-    seller_address: Union[str, None] = None
-    seller_phone: str
-    seller_email: str
-
-    class Config:
-        orm_mode = True
+class CreateSellerInfo(Seller):
+    pass
 
 class UpdateSellerInfo(BaseModel):
     seller_name: str
@@ -185,8 +181,6 @@ class Restaurant(BaseModel):
 class CreateRestaurantInfo(BaseModel):
     restaurant_name: str
     restaurant_address: str
-    restaurant_image: Union[str, None] = None
-    seller_id: int
 
     class Config:
         orm_mode = True
@@ -194,11 +188,16 @@ class CreateRestaurantInfo(BaseModel):
 class UpdateRestaurantInfo(BaseModel):
     restaurant_name: str
     restaurant_address: str
-    restaurant_image: Union[str, None] = None
-    seller_id: int
 
     class Config:
         orm_mode = True
+
+class UpdateRestaurantImage(BaseModel):
+    restaurant_image: str
+
+    class Config:
+        orm_mode = True
+
 
 #End Restaurant
 #----------------------------------------------------------

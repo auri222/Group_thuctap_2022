@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+
+    <!-- <link rel="stylesheet" href="../assets/style.css"> -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
+    </style>
+
+    <title>Đăng ký</title>
+</head>
+<style>
+    body {
+        background-color: #caf0f8;
+        min-height: 100vh;
+    }
+
+    .info-form {
+        padding: 30px;
+        margin-top: 50px;
+        -webkit-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
+        margin-left: 500px;
+        margin-right: 500px;
+        margin-top: 50px;
+        background-color: #fff;
+        border-radius: 15px;
+    }
+
+    .main-content {
+        min-height: 700px;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+    }
+
+    .btn-submit {
+        cursor: pointer;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 30px;
+        margin: auto;
+        text-decoration: none;
+        background-color: orange;
+        color: #fff;
+        transition: scaleY scaleX 0.5s;
+    }
+
+    .btn-submit:hover {
+        transform: scaleY(1.05) scaleX(1.05);
+    }
+</style>
+
+<body>
+    <!-- <div class="col-3"></div> -->
+    <div class="main-content" style="padding-bottom: 100px;">
+        <form class="info-form">
+            <h4 style="text-align: center;">Thông Tin Cá Nhân</h4>
+
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="seller_name" name="buyer_name" placeholder="Họ Và Tên">
+                    <label for="floatingInput">Họ và tên</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="date" class="form-control" id="seller_birthday" name="buyer_birthday"
+                        placeholder="Ngày Sinh">
+                    <label for="floatingInput">Ngày Sinh</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="seller_address" name="buyer_address"
+                        placeholder="Địa Chỉ">
+                    <label for="floatingInput">Địa Chỉ</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="seller_phone" name="buyer_phone"
+                        placeholder="Số Điện Thoại">
+                    <label for="floatingInput">Số Điện Thoại</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="seller_email" name="buyer_email" placeholder="Email">
+                    <label for="floatingInput">Email</label>
+                </div>
+            </div>
+            <br>
+            <h5 style="text-align: center;">Thông Tin Cửa Hàng</h5>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="Restaurant_name" name="Restaurant_name"
+                        placeholder="Tên Cửa Hàng">
+                    <label for="floatingInput">Tên Cửa Hàng</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="Restaurant_Address" name="Restaurant_Address"
+                        placeholder="Địa Chỉ Cửa Hàng">
+                    <label for="floatingInput">Địa Chỉ Cửa Hàng</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="file" class="form-control" id="Restaurant_Image" name="Restaurant_Image"
+                        placeholder="Hình đại diện cửa hàng">
+                    <label for="floatingInput">Hình đại diện cửa hàng</label>
+                </div>
+            </div>
+            <br>
+            <div class="mb-3" style="text-align: center;">
+                <button type="button" class="btn-submit border border-warning">Đăng ký</button>
+            </div>
+
+        </form>
+    </div>
+    <div class="col-3"></div>
+
+    <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function(){
+            function check_seller_input(name, birthday, phone, email, restaurant_name, restaurant_addrs, image){
+                var flag = true;
+                if(name == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập họ tên!'
+                    });
+                    flag = false;
+                }
+                if(birthday == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy chọn ngày sinh!'
+                    });
+                    flag = false;
+                }
+                if(phone == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập số điện thoại!'
+                    });
+                    flag = false;
+                }
+                if(email == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập địa chỉ email!'
+                    });
+                    flag = false;
+                }
+                if(restaurant_name == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập tên cửa hàng!'
+                    });
+                    flag = false;
+                }
+                if(restaurant_addrs == ""){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập địa chỉ cửa hàng!'
+                    });
+                    flag = false;
+                }
+                if(image == ""){
+                    Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu...',
+                    text: 'Hãy chọn hình đại diện cửa hàng!'
+                });
+                flag = false;
+                }
+                var extension = image.split('.').pop().toLowerCase();
+                if (jQuery.inArray(extension, ['jpg','png','jpeg']) == -1) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'File ảnh không hợp lệ. Hãy chọn lại!'
+                    });
+                    flag = false;
+                }
+                return flag
+            }
+            
+
+            $('.btn-submit').on('click', function(){
+                var seller_name = $('#seller_name').val();
+                var seller_birthday = $('#seller_birthday').val();
+                var seller_address = $('#seller_address').val();
+                var seller_phone = $('#seller_phone').val();
+                var seller_email = $('#seller_email').val();
+                var restaurant_name = $('#Restaurant_name').val();
+                var restaurant_address = $('#Restaurant_Address').val();
+                var restaurant_image = $('#Restaurant_Image').val();
+
+                var url = window.location.href;
+                var queryString = window.location.search;
+                var urlParams = new URLSearchParams(queryString);
+                var account_id = urlParams.get('account_id');
+                console.log("URL: "+url);
+                console.log("account_id: "+account_id);
+
+                if(check_seller_input(seller_name, seller_birthday, seller_phone, seller_email, restaurant_name, restaurant_address, restaurant_image)){
+                    if(seller_address == ""){
+                        seller_address = "Trống";
+                    }
+
+                    if(account_id == ""){
+                        account_id = 9999;
+                    }
+
+                    var register_seller = {
+                        "seller_name": seller_name,
+                        "seller_birthday": seller_birthday,
+                        "seller_address": seller_address,
+                        "seller_phone": seller_phone,
+                        "seller_email": seller_email,
+                        "account_id": account_id
+                    };
+
+                    var register_restaurant = {
+                        "restaurant_name": restaurant_name,
+                        "restaurant_address": restaurant_address
+                    };
+
+                    $.ajax({
+                        url: "/register/register-seller",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({register_seller, register_restaurant}),
+                        success: function(response){
+                            console.log(response.Success);
+                            console.log("seller_id: "+response.seller_id);
+                            var file = document.getElementById('Restaurant_Image').files[0];
+                            var image_data = new FormData();
+                            image_data.append("restaurant_image", file);
+                            $.ajax({
+                                url: "/register/register-seller/"+response.seller_id,
+                                enctype: "multipart/form-data",
+                                method: "PUT",
+                                contentType:false,
+                                cache: false,
+                                processData: false,
+                                data: image_data,
+                                success: function(output){
+                                    console.log(output);
+                                }
+                            });
+                        }
+                    });
+
+                }
+
+            })
+        });
+    </script>
+</body>
+
+</html>
