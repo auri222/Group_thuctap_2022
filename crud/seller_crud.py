@@ -25,13 +25,13 @@ def create_seller(db: Session, seller: schemas.CreateSellerInfo, account_id: int
     db.refresh(db_seller)
     return db_seller
 
-def create_seller_return_ID(db: Session, seller: schemas.CreateSellerInfo, account_id: int):
+def create_seller_return_ID(db: Session, seller: schemas.CreateSellerInfo):
     db_seller = models.Seller(  seller_name=seller.seller_name,
                                 seller_birthday= seller.seller_birthday,
                                 seller_address = seller.seller_address, 
                                 seller_phone = seller.seller_phone, 
                                 seller_email = seller.seller_email,
-                                account_id = account_id
+                                account_id = seller.account_id
     )
     db.add(db_seller)
     db.commit()

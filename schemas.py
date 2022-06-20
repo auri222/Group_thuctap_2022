@@ -181,7 +181,7 @@ class Restaurant(BaseModel):
 class CreateRestaurantInfo(BaseModel):
     restaurant_name: str
     restaurant_address: str
-
+    restaurant_image: Union[str, None] = None
     class Config:
         orm_mode = True
 

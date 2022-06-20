@@ -11,14 +11,14 @@ def get_buyer_by_email(db: Session, email: str):
 def get_buyers(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Buyer).offset(skip).limit(limit).all()
 
-def create_buyer(db: Session, buyer: schemas.CreateBuyerInfo, account_id: int):
+def create_buyer(db: Session, buyer: schemas.CreateBuyerInfo):
     db_buyer = models.Buyer( buyer_name=buyer.buyer_name, 
                             buyer_birthday=buyer.buyer_birthday, 
                             buyer_address=buyer.buyer_address, 
                             buyer_phone=buyer.buyer_phone, 
                             buyer_email= buyer.buyer_email, 
                             buyer_shipping_address=buyer.buyer_shipping_address,
-                            account_id = account_id)
+                            account_id = buyer.account_id)
     db.add(db_buyer)
     db.commit()
     db.refresh(db_buyer)

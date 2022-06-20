@@ -137,10 +137,10 @@
     <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
     <script>
-        $(document).ready(function(){
-            function check_seller_input(name, birthday, phone, email, restaurant_name, restaurant_addrs, image){
+        $(document).ready(function () {
+            function check_seller_input(name, birthday, phone, email, restaurant_name, restaurant_addrs, image) {
                 var flag = true;
-                if(name == ""){
+                if (name == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -148,7 +148,7 @@
                     });
                     flag = false;
                 }
-                if(birthday == ""){
+                if (birthday == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -156,7 +156,7 @@
                     });
                     flag = false;
                 }
-                if(phone == ""){
+                if (phone == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -164,7 +164,7 @@
                     });
                     flag = false;
                 }
-                if(email == ""){
+                if (email == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -172,7 +172,7 @@
                     });
                     flag = false;
                 }
-                if(restaurant_name == ""){
+                if (restaurant_name == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -180,7 +180,7 @@
                     });
                     flag = false;
                 }
-                if(restaurant_addrs == ""){
+                if (restaurant_addrs == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Nhập thiếu...',
@@ -188,16 +188,16 @@
                     });
                     flag = false;
                 }
-                if(image == ""){
+                if (image == "") {
                     Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu...',
-                    text: 'Hãy chọn hình đại diện cửa hàng!'
-                });
-                flag = false;
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy chọn hình đại diện cửa hàng!'
+                    });
+                    flag = false;
                 }
                 var extension = image.split('.').pop().toLowerCase();
-                if (jQuery.inArray(extension, ['jpg','png','jpeg']) == -1) {
+                if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Lỗi',
@@ -207,9 +207,9 @@
                 }
                 return flag
             }
-            
 
-            $('.btn-submit').on('click', function(){
+
+            $('.btn-submit').on('click', function () {
                 var seller_name = $('#seller_name').val();
                 var seller_birthday = $('#seller_birthday').val();
                 var seller_address = $('#seller_address').val();
@@ -223,15 +223,15 @@
                 var queryString = window.location.search;
                 var urlParams = new URLSearchParams(queryString);
                 var account_id = urlParams.get('account_id');
-                console.log("URL: "+url);
-                console.log("account_id: "+account_id);
+                console.log("URL: " + url);
+                console.log("account_id: " + account_id);
 
-                if(check_seller_input(seller_name, seller_birthday, seller_phone, seller_email, restaurant_name, restaurant_address, restaurant_image)){
-                    if(seller_address == ""){
+                if (check_seller_input(seller_name, seller_birthday, seller_phone, seller_email, restaurant_name, restaurant_address, restaurant_image)) {
+                    if (seller_address == "") {
                         seller_address = "Trống";
                     }
 
-                    if(account_id == ""){
+                    if (account_id == "") {
                         account_id = 9999;
                     }
 
@@ -253,25 +253,52 @@
                         url: "/register/register-seller",
                         method: "POST",
                         contentType: "application/json",
-                        data: JSON.stringify({register_seller, register_restaurant}),
-                        success: function(response){
-                            console.log(response.Success);
-                            console.log("seller_id: "+response.seller_id);
-                            var file = document.getElementById('Restaurant_Image').files[0];
-                            var image_data = new FormData();
-                            image_data.append("restaurant_image", file);
-                            $.ajax({
-                                url: "/register/register-seller/"+response.seller_id,
-                                enctype: "multipart/form-data",
-                                method: "PUT",
-                                contentType:false,
-                                cache: false,
-                                processData: false,
-                                data: image_data,
-                                success: function(output){
-                                    console.log(output);
-                                }
-                            });
+                        data: JSON.stringify({ register_seller, register_restaurant }),
+                        success: function (response) {
+                            if (response.status == 0) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: '' + response.message
+                                });
+                            }
+                            else {
+                                console.log("seller_id: " + response.seller_id);
+                                var file = document.getElementById('Restaurant_Image').files[0];
+                                var image_data = new FormData();
+                                image_data.append("restaurant_image", file);
+                                $.ajax({
+                                    url: "/register/register-seller/" + response.seller_id,
+                                    enctype: "multipart/form-data",
+                                    method: "PUT",
+                                    contentType: false,
+                                    cache: false,
+                                    processData: false,
+                                    data: image_data,
+                                    success: function (output) {
+                                        console.log(output);
+                                        if (output.status == 0) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Lỗi',
+                                                text: '' + output.message
+                                            });
+                                        }
+                                        else {
+                                            Swal.fire({
+                                                title: '' + output.message,
+                                                icon: 'success',
+                                                confirmButtonColor: '#3085d6',
+                                                confirmButtonText: 'Đi đến trang đăng nhập'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    location.href = "/login_form";
+                                                }
+                                            })
+                                        }
+                                    }
+                                });
+                            }
                         }
                     });
 

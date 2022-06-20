@@ -29,7 +29,9 @@
         -webkit-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
         -moz-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
         box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
-        margin-left: 500px;margin-right: 500px;margin-top: 50px;
+        margin-left: 500px;
+        margin-right: 500px;
+        margin-top: 50px;
         background-color: #fff;
         border-radius: 15px;
     }
@@ -42,20 +44,22 @@
         background-position: center;
         position: relative;
     }
-    .btn-submit{
-    cursor:pointer;
-      display: inline-block;
-      padding: 8px 20px;
-      border-radius: 30px;
-      margin: auto;
-      text-decoration: none;
-      background-color: orange;
-      color: #fff;
-      transition: scaleY scaleX 0.5s;
-  }
-  .btn-submit:hover{
-    transform: scaleY(1.05) scaleX(1.05);
-  }
+
+    .btn-submit {
+        cursor: pointer;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 30px;
+        margin: auto;
+        text-decoration: none;
+        background-color: orange;
+        color: #fff;
+        transition: scaleY scaleX 0.5s;
+    }
+
+    .btn-submit:hover {
+        transform: scaleY(1.05) scaleX(1.05);
+    }
 </style>
 
 <body>
@@ -63,30 +67,33 @@
     <div class="main-content" style="padding-bottom: 100px;">
         <form class="info-form">
             <h4 style="text-align: center;">Thông Tin Cá Nhân</h4>
-            
-                <div class="mb-3">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="buyer_name" name="buyer_name" placeholder="Họ Và Tên">
-                        <label for="floatingInput">Họ và tên</label>
-                    </div>
-                </div>
+
             <div class="mb-3">
                 <div class="form-floating">
-                    <input type="date" class="form-control" id="buyer_birthday" name="buyer_birthday" placeholder="Ngày Sinh">
+                    <input type="text" class="form-control" id="buyer_name" name="buyer_name" placeholder="Họ Và Tên">
+                    <label for="floatingInput">Họ và tên</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="date" class="form-control" id="buyer_birthday" name="buyer_birthday"
+                        placeholder="Ngày Sinh">
                     <label for="floatingInput">Ngày Sinh</label>
                 </div>
             </div>
             <div class="mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="buyer_address" name="buyer_address"placeholder="Địa Chỉ">
+                    <input type="text" class="form-control" id="buyer_address" name="buyer_address"
+                        placeholder="Địa Chỉ">
                     <label for="floatingInput">Địa Chỉ</label>
-                </div> 
+                </div>
             </div>
             <div class="mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="buyer_phone" name="buyer_phone" placeholder="Số Điện Thoại">
+                    <input type="text" class="form-control" id="buyer_phone" name="buyer_phone"
+                        placeholder="Số Điện Thoại">
                     <label for="floatingInput">Số Điện Thoại</label>
-                </div>  
+                </div>
             </div>
             <div class="mb-3">
                 <div class="form-floating">
@@ -96,17 +103,132 @@
             </div>
             <div class="mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="buyer_shipping_address" name="buyer_shipping_address"placeholder="Địa Chỉ Giao Hàng">
+                    <input type="text" class="form-control" id="buyer_shipping_address" name="buyer_shipping_address"
+                        placeholder="Địa Chỉ Giao Hàng">
                     <label for="floatingInput">Địa Chỉ Giao Hàng</label>
                 </div>
             </div><br>
             <div class="mb-3" style="text-align: center;">
-                <a href="../otp_form.html"><button type="button" class="btn-submit border border-warning">Tiếp Theo</button></a>
+                <button type="button" class="btn-submit border border-warning">Đăng ký</button>
             </div>
 
         </form>
     </div>
     <div class="col-3"></div>
+
+    <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            function check_buyer_input(name, birthday, phone, email, shipping_addrs) {
+                var flag = true;
+                if (name == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập họ tên!'
+                    });
+                    flag = false;
+                }
+                if (birthday == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy chọn ngày sinh!'
+                    });
+                    flag = false;
+                }
+                if (phone == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập số điện thoại!'
+                    });
+                    flag = false;
+                }
+                if (email == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập địa chỉ email!'
+                    });
+                    flag = false;
+                }
+                if (shipping_addrs == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Nhập thiếu...',
+                        text: 'Hãy nhập địa chỉ giao hàng!'
+                    });
+                    flag = false;
+                }
+                return flag;
+            }
+
+            $('.btn-submit').on('click', function () {
+                var buyer_name = $('#buyer_name').val();
+                var buyer_birthday = $('#buyer_birthday').val();
+                var buyer_address = $('#buyer_address').val();
+                var buyer_phone = $('#buyer_phone').val();
+                var buyer_email = $('#buyer_email').val();
+                var buyer_shipping_address = $('#buyer_shipping_address').val();
+
+                var url = window.location.href;
+                var queryString = window.location.search;
+                var urlParams = new URLSearchParams(queryString);
+                var account_id = urlParams.get('account_id');
+                console.log("URL: " + url);
+                console.log("account_id: " + account_id);
+
+                if (check_buyer_input(buyer_name, buyer_birthday, buyer_phone, buyer_email, buyer_shipping_address)) {
+                    if (buyer_address == "") {
+                        buyer_address = "Trống";
+                    }
+
+                    var data = {
+                        "buyer_name": buyer_name,
+                        "buyer_birthday": buyer_birthday,
+                        "buyer_address": buyer_address,
+                        "buyer_phone": buyer_phone,
+                        "buyer_email": buyer_email,
+                        "buyer_shipping_address": buyer_shipping_address,
+                        "account_id": account_id
+                    };
+
+                    $.ajax({
+                        url: "/register/register-buyer",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            if (response.status == 0) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: '' + response.message
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: '' + response.message,
+                                    icon: 'success',
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Đi đến trang đăng nhập'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = "/login_form";
+                                    }
+                                })
+                            }
+                        }
+                    });
+                }
+
+            });
+        });
+    </script>
 </body>
 
 </html>
