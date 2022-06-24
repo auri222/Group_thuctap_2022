@@ -1,3 +1,4 @@
+from email import message
 from re import template
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -9,7 +10,7 @@ from starlette.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
-from crud import admin_crud, account_crud
+from crud import admin_crud, account_crud, food_type_crud
 from routes.login import manager
 router = APIRouter(
     prefix="/admin",
@@ -35,7 +36,7 @@ def read_admins(skip: int = 0, limit: int=100):
     admins = admin_crud.get_all_admins(db, skip=0, limit=10)
     return admins
 
-@router.get("/profile/{account_id}", response_class=HTMLResponse)
+@router.get("/profile/", response_class=HTMLResponse)
 def read_profile_admin(account_id: int, request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -60,7 +61,7 @@ def read_profile_admin(account_id: int, request: Request, user=Depends(manager))
     }
     return templates.TemplateResponse("admin_profile.html", data_res)
 
-@router.get("/{account_id}", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 def admin_page(account_id: int, request: Request, user = Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -84,11 +85,153 @@ def admin_page(account_id: int, request: Request, user = Depends(manager)):
     }
     return templates.TemplateResponse("admin_index.html", data_res)
 
-@router.put("/update/{id}")
+@router.put("/update/")
 def update_admin(id: int, admin: schemas.Admin):
     return admin_crud.update_admin(db, admin=admin, admin_id=id)
 
-@router.delete("/delete/{id}")
+@router.delete("/delete/")
 def delete_admin(id: int):
     return admin_crud.delete_admin(db, admin_id=id)
+
+@router.get("/foodtype/", response_class=HTMLResponse)
+def read_foodtype(account_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    if foodtype_info:
+        error = None
+    else: 
+        error = "Không có dữ liệu"
+    print(error)
+    print(foodtype_info)
+    data = []
+    for foodtype in foodtype_info:
+        data.append(foodtype.__dict__)
+    print(f"food type info {data}")
+    data_res = {
+        "request": request,
+        "title": 'Thông tin Admin',
+        'username': username,
+        'account_id': account_id,
+        'foodtype_info': data,
+        'error': error
+    }
+    return templates.TemplateResponse("admin_foodtype.html", data_res)
+
+@router.get("/foodtype/create", response_class=HTMLResponse)
+def create_foodtype_form(account_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    # foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin Admin',
+        'username': username,
+        'account_id': account_id   
+    }
+    return templates.TemplateResponse("admin_foodtype_create.html", data_res)
+
+@router.post("/foodtype/create")
+def create_food_type(foodtype: schemas.FoodType):
+    print(foodtype)
+    #Khởi tạo biến thông báo
+    status = 1
+    message = ""
+
+    db_foodtype = food_type_crud.create_food_type(db=db, foodtype=foodtype)
+    
+    if db_foodtype:
+        status = 1
+        message = "Thêm thông tin thành công"
+    else:
+        status = 0
+        message = "Lỗi. Thử lại sau"
+    
+    return {"status": status, "message": message}
+
+
+@router.get("/foodtype/edit", response_class=HTMLResponse)
+def edit_foodtype_form(account_id: int, foodtype_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    foodtype_info = food_type_crud.get_food_type_by_ID(db=db, foodtype_ID=foodtype_id)
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    data = []
+    if foodtype_info:
+        data.append(foodtype_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin Admin',
+        'username': username,
+        'account_id': account_id,
+        'foodtype_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_foodtype_edit.html", data_res)
+
+@router.put("/foodtype/edit")
+def edit_foodtype(account_id: int, foodtype_id: int, foodtype: schemas.FoodType, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    #Kiểm tra nếu tên nhập trùng
+    foodtype_name = foodtype.food_type_name
+    row_count = food_type_crud.count_food_type(db=db, foodtype_name=foodtype_name)
+    status = 1
+    message = ""
+    print(f"Số tên trùng: {row_count}")
+    if row_count > 0:
+        status = 0
+        message = "Tên loại thức ăn bị trùng!"
+    else:
+        foodtype_info = food_type_crud.update_food_type(db=db, foodtype=foodtype, foodtype_ID=foodtype_id)
+        print(f"Food type info: {foodtype_info}")
+        if foodtype_info:
+            status = 1
+            message = "Sửa thành công"
+        else:
+            status = 0
+            message = "Sửa không thành công. Thử lại sau!"
+
+    
+
+    return {"status": status, "message": message, "account_id": account_id}
+        
+
+    
 

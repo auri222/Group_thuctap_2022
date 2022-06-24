@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block title %}{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+    <link rel="icon" href="{{ url_for('static', path='frontend/images/logo/logo.png') }}" type="image/x-icon">
+    {% block style %}{% endblock %}
+</head>
+
+<body>
+    <div id="container">
+        <div id="header">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+                    <p class="navbar-brand"
+                        style="font-family: 'Mali', cursive;font-size: 30px; color: orange;margin-bottom: auto;">
+                        <img src="{{ url_for('static', path='frontend/images/logo/logo.png') }}" alt="" width="50" height="50"
+                            class="d-inline-block align-text-center">
+                        Food Delivery
+                    </p>
+                    <div class="collapse navbar-collapse " id="navbarSupportedContent" >
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            {% block navbar %}{% endblock %}
+                        </ul>
+
+                    </div>
+                </div>
+            </nav>
+            {% block banner %}{% endblock %}
+
+        </div>
+        <div id="main-content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- footer -->
+        <div id="footer">
+            <footer class="text-center footer"
+                style="padding-top: 20px; background-color: orange;color: #fff;margin-top: 100px;">
+                <!-- Section: Links  -->
+                <section class="">
+                    <div class="container text-center text-md-start mt-5">
+                        <!-- Grid row -->
+                        <div class="row mt-3">
+                            <img src="../../../static/image/logo.png" alt=""
+                                style="height: 100px;width: 100px;padding-left: 0px;padding-right: 0px;">
+                            <!-- Grid column -->
+                            <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                                <!-- Content -->
+                                <h6 class="text-uppercase mb-4">
+                                    <span style="font-family: 'Monoton', cursive;font-size: 30px;">FOOD DELIVERY</span>
+                                    <!-- <i class="fas fa-gem me-3" style="font-family: 'Permanent Marker', cursive;"></i>FOOD DELIVERY -->
+                                </h6>
+                                <p>
+                                    Mang đến trải nghiệm tuyệt vời
+                                </p>
+                            </div>
+                            <!-- Grid column -->
+
+                            <!-- Grid column -->
+                            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                                <!-- Links -->
+                                <h6 class="text-uppercase fw-bold mb-4">
+                                    Sản Phẩm
+                                </h6>
+                                <p>
+                                    <a href="#!" style="text-decoration:none" class="text-reset">Thức Ăn</a>
+                                </p>
+                                <p>
+                                    <a href="#!" style="text-decoration:none" class="text-reset">Đồ Uống</a>
+                                </p>
+
+                            </div>
+                            <!-- Grid column -->
+
+                            <!-- Grid column -->
+                            <!-- Grid column -->
+
+                            <!-- Grid column -->
+                            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                                <!-- Links -->
+                                <h6 class="text-uppercase fw-bold mb-4">
+                                    Liên Hệ
+                                </h6>
+                                <p><i class="bi bi-geo-alt-fill"></i> Ninh Kiều, Cần Thơ</p>
+                                <p>
+                                    <i class="bi bi-envelope-fill"></i>
+                                    fooddelivery@gmail.com
+                                </p>
+                                <p><i class="bi bi-telephone-fill"></i> 0879 875 254</p>
+                                <!-- <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p> -->
+                            </div>
+                            <!-- Grid column -->
+                        </div>
+                        <!-- Grid row -->
+                    </div>
+                </section>
+                <!-- Section: Links  -->
+
+                <!-- Copyright -->
+                <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+                    © 2022 Copyright:
+                    <a class="text-reset fw-bold" href="https://mdbootstrap.com/">FoodDelivery.com</a>
+                </div>
+                <!-- Copyright -->
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
+    {% block script %}{% endblock %}
+</body>
+
+</html>

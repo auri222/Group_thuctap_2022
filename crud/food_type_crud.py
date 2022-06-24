@@ -1,7 +1,6 @@
-from operator import mod
 from sqlalchemy.orm import Session
-from .. import models
-from .. import schemas
+import models
+import schemas
 
 def get_all_food_type(db: Session, skip: int = 0, limit: int = 100): 
     return db.query(models.FoodType).offset(skip).limit(limit).all()
@@ -18,6 +17,9 @@ def get_food_type_by_name(db: Session, foodtype_name: str):
         return {"Error": f"{foodtype_name} is not exists"}
     return db_foodtype
 
+def count_food_type(db: Session, foodtype_name: str):
+    return db.query(models.FoodType).filter(models.FoodType.food_type_name == foodtype_name).count()
+
 def create_food_type(db: Session, foodtype: schemas.FoodType):
     db_foodtype = models.FoodType(food_type_name = foodtype.food_type_name)
     db.add(db_foodtype)
@@ -31,7 +33,8 @@ def update_food_type(db: Session, foodtype: schemas.FoodType, foodtype_ID: int):
         return {"Error": f"Food type of this ID {foodtype_ID} is not exists"}
     db_foodtype.food_type_name = foodtype.food_type_name
     db.commit()
-    return db_foodtype
+    db_foodtype_id = db_foodtype.food_type_id
+    return db_foodtype_id
 
 def delete_food_type(db: Session, foodtype_ID: int):
     db_foodtype = db.query(models.FoodType).filter(models.FoodType.food_type_id == foodtype_ID).first()

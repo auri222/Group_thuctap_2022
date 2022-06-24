@@ -214,6 +214,21 @@ class Food(BaseModel):
     class Config:
         orm_mode = True
 
+class UpdateFoodInfo(BaseModel):
+    food_name: str
+    food_price: float
+    food_description: Union[str, None] = None
+    food_type_id: int
+
+    class Config:
+        orm_mode = True
+
+class UpdateFoodImage(BaseModel):
+    food_image: str
+
+    class Config:
+        orm_mode = True
+
 #End Food
 #----------------------------------------------------------
 

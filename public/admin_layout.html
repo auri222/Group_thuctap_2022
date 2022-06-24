@@ -62,7 +62,7 @@
                 </section>
 
                 <!-- Card -->
-                <section class="dashboard-content">
+                <section class="dashboard-content mt-2">
                     <div class="container">
                         {% block content %}{% endblock %}
                     </div>
@@ -79,6 +79,7 @@
 
     <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', path='vendors/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ url_for('static', path='backend/admin/js/admin.js') }}"></script>
     {% block script %}{% endblock %}
 </body>

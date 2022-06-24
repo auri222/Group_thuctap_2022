@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
+
+body {
+    position: relative;
+    height: 100%;
+}
+
+body {
+    /* background: #eee; */
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+    color: orange;
+}
+
+a.nav-link {
+    font-size: 18px;
+
+}
+
+.row {
+    justify-content: space-between;
+}
+
+.row .card {
+    border: 0;
+    padding-top: 10px;
+}
+
+.card {
+    background-color: #f8f9fa;
+    flex: 1 1 15rem;
+    margin: 10px 20px;
+    /* box-shadow: 0 0 15px; */
+}
+
+.card-body a {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin-left: 70px;
+    text-decoration: none;
+    background-color: orange;
+    color: #fff;
+    transition: scaleY scaleX 0.5s;
+}
+
+.card-body a:hover {
+    transform: scaleY(1.05) scaleX(1.05);
+}
+
+h5.card-title {
+    text-align: center;
+}

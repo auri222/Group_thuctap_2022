@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block sidebar %}
-    <a href="/admin/{{ account_id }}" class="d-block text-light p-3">
+    <a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Dashboard</a>
-    <a href="/admin/profile/{{ account_id }}" class="d-block text-light p-3">
+    <a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Profile</a>
     <a href="#" class="d-block text-light p-3">
@@ -20,7 +20,7 @@
     <a href="#" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Quản lý tài khoản đơn hàng</a>
-    <a href="#" class="d-block text-light p-3">
+    <a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Quản lý loại thức ăn</a>
 {% endblock %}

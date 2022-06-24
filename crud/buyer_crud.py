@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
+def get_buyer_by_account_id(db: Session, account_id: int):
+    return db.query(models.Buyer).filter(models.Buyer.account_id == account_id).first()
+
 def get_buyer(db: Session, buyer_id: int):
     return db.query(models.Buyer).filter(models.Buyer.buyer_id == buyer_id).first()
 

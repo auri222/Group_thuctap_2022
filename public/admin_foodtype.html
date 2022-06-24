@@ -1,0 +1,114 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+Trang admin
+{% endblock %}
+
+{% block sidebar %}
+<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Dashboard</a>
+<a href="/admin/profile/?account_id{{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Profile</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản buyer</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản seller</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản đơn hàng</a>
+<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý loại thức ăn</a>
+{% endblock %}
+
+{% block nav_link %}
+<li class="nav-item dropdown">
+    <a class="nav-link" href="#">
+        {{ username if username != None }}
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a class="nav-link" href="/logout">
+        Đăng xuất
+    </a>
+</li>
+
+
+{% endblock %}
+
+{% block page_name %}
+Loại thức ăn
+{% endblock %}
+
+{% block page_name_detail %}
+Trang quản lý loại thức ăn
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="/admin/foodtype/create?account_id={{ account_id }}" class="btn btn-primary"> Thêm mới </a>
+        <div class="card border-0">
+            <div class="card-body px-0 py-2">
+                <div id="data_content" class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên loại thức ăn</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Nếu error không là None -->
+                            {% if error != "NONE" %}
+                            {% for info in foodtype_info %}
+                            <tr>
+                                <td>{{ info.food_type_id }}</td>
+                                <td>{{ info.food_type_name }}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-edit"
+                                        data-foodtype-id="{{ info.food_type_id }}">Sửa</button>
+                                    <button class="btn btn-danger btn-delete"
+                                        data-foodtype-id="{{ info.food_type_id }}">Xóa</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="3">{{ error }}</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        var url = window.location.href;
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var account_id = urlParams.get('account_id');
+        console.log("URL: " + url);
+        console.log("account_id: " + account_id);
+
+        $(document).on('click', '.btn-edit', function () {
+            var foodtype_ID = $(this).data("foodtype-id");
+            console.log("ID: " + foodtype_ID);
+            location.href = "/admin/foodtype/edit?account_id=" + account_id + "&foodtype_id=" + foodtype_ID;
+        })
+    })
+</script>
+{% endblock %}
