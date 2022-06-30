@@ -2,8 +2,11 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
-def get_seller(db: Session, Seller_ID: int):
+def get_seller_by_id(db: Session, Seller_ID: int):
     return db.query(models.Seller).filter(models.Seller.seller_id == Seller_ID).first() 
+
+def get_seller_by_account_id(db: Session, account_id: int):
+    return db.query(models.Seller).filter(models.Seller.account_id == account_id).first() 
 
 def get_seller_by_email(db: Session, email: str):
     return db.query(models.Seller).filter(models.Seller.seller_email == email).first()

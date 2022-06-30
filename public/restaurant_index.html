@@ -1,0 +1,53 @@
+{% extends "seller_layout.html" %}
+
+{% block title %}
+Trang thông tin cửa hàng
+{% endblock %}
+
+
+
+{% block content %}
+<h1>Thông tin cửa hàng</h1>
+
+{% endblock %}
+
+    {% block modal %}
+    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avatarModalLabel">Sửa ảnh cửa hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    
+
+                    <form id="frmAvatar" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="avatar" class="col-form-label">Thay ảnh: </label>
+                            <input type="file" class="form-control" id="avatar" name="avatar" />
+                           
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" id="submit" name="submit" value="Lưu"
+                                class="btn btn-primary btn-block">
+                        </div>
+                    </form>
+
+                </div>
+                <div class=" modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    {% block script %}
+
+    {% endblock %}

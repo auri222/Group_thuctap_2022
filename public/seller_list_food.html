@@ -1,0 +1,311 @@
+{% extends "seller_layout.html" %}
+
+{% block title %}
+Trang seller
+{% endblock %}
+
+{% block page_name %}
+Món ăn
+{% endblock %}
+
+{% block page_name_detail %}
+Trang thông tin danh sách món ăn
+{% endblock %}
+
+{% block content %}
+<div class="row py-2">
+    <div class="col-md-12">
+        <button type="button" class="btn btn-primary my-2" data-toggle="modal" data-target="#createFoodModal">Thêm món
+            ăn</button>
+        <table class="table  mt-2">
+            <thead class="thead-dark">
+                <tr>
+                    <th>STT </th>
+                    <th>Tên món ăn</th>
+                    <th>Xem</th>
+                    <th>Sửa</th>
+                    <th>Xóa</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% if food_info %}
+                    {% for info in food_info %}
+                    <tr>
+                        <td>{{ info.food_id }}</td>
+                        <td>{{ info.food_name }}</td>
+                        <td>
+                            <a href="#"><i class="bi bi-eye-fill"></i></i></a>
+                        </td>
+                        <td>
+                            <a href="#"><i class="bi bi-pen-fill"></i></a>
+                        </td>
+                        <td>
+                            <a href="#"><i class="bi bi-x-circle-fill"></i></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="5"> {{ food_info }} </td>
+                    </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">Chưa có thông tin</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+<div class="modal fade" id="createFoodModal" tabindex="-1" aria-labelledby="createFoodModalLabel" aria-hidden="true"
+    style="color: black;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createFoodModalLabel">Thêm món ăn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="frmCreateFoodInfo" method="POST">
+                    <div class="form-group">
+                        <label for="food_name" class="col-form-label">Tên món ăn: </label>
+                        <input type="text" class="form-control" id="food_name" name="food_name" required />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="food_price">Giá</label>
+                            <input type="text" class="form-control" id="food_price" name="food_price">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="food_type">Loại thức ăn</label>
+                            <select name="food_type" id="food_type" class="form-control">
+                                <option selected>-- Chọn loại --</option>
+                                {% if food_type_info %}
+                                {% for food_type in food_type_info %}
+                                <option value="{{ food_type.food_type_id }}">{{ food_type.food_type_name }}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option>Chưa có loại thức ăn</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="food_quantity">Số lượng</label>
+                            <input type="text" class="form-control" name="food_quantity" id="food_quantity">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="food_discription" class="col-form-label">Mô tả món ăn: </label>
+                        <textarea class="form-control" name="food_discription" id="food_discription" cols="30"
+                            rows="5"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="food_image" class="col-form-label">Hình món ăn: </label>
+                        <input type="file" class="form-control" id="food_image" name="food_image" />
+                    </div>
+
+
+
+                </form>
+
+            </div>
+            <div class=" modal-footer">
+                <button type="button" class="btn btn-primary btn-save-food-info" data-dismiss="modal">Lưu</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(document).ready(function () {
+        
+        function check_food_input(name, price, type, quantity, description) {
+            var flag = true;
+            if (name == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu ..',
+                    text: 'Hãy nhập tên món ăn'
+                });
+                flag = false;
+            }
+            if (price == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu ..',
+                    text: 'Hãy nhập giá'
+                });
+                flag = false;
+            }
+            if (type == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu ..',
+                    text: 'Hãy chọn loại'
+                });
+                flag = false;
+            }
+            if (quantity == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu ..',
+                    text: 'Hãy nhập số lượng'
+                });
+                flag = false;
+            }
+            if (description == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu ..',
+                    text: 'Hãy nhập mô tả món ăn'
+                });
+                flag = false;
+            }
+            return flag;
+        }
+
+        function check_food_image() {
+            var flag = true
+            var image = $('#food_image').val();
+            if (image == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Hãy chọn hình'
+                });
+                flag = false;
+            }
+            else {
+                var extension = image.split('.').pop().toLowerCase();
+                var file = document.getElementById('food_image').files[0];
+                var size = file.size;
+                console.log(image);
+                console.log(extension);
+                console.log(size);
+                if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg'
+                    });
+                    flag = false;
+                }
+
+                if (size > 2000000) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Hãy upload ảnh nhỏ hơn 2MB'
+                    });
+                    flag = false
+                }
+            }
+            return flag;
+        }
+
+        $(document).on('click', '.btn-save-food-info', function () {
+            var food_name = $('#food_name').val();
+            var food_price = $('#food_price').val();
+            var food_type = $('#food_type').val();
+            var food_quantity = $('#food_quantity').val();
+            var food_discription = $('#food_discription').val();
+            var food_image = $('#food_image').val();
+
+            if ((check_food_input(food_name, food_price, food_type, food_quantity, food_discription) == true) && (check_food_image() == true)) {
+                var food = {
+                    "food_name": food_name,
+                    "food_image": "",
+                    "food_price": food_price,
+                    "food_description": food_discription,
+                    "food_type_id": food_type
+                };
+
+                var warehouse = {
+                    "food_quantity": food_quantity
+                };
+
+                console.log("OK, work fine");
+
+                // Lấy giá trị ảnh
+                var file = document.getElementById('food_image').files[0];
+                var image = new FormData();
+                image.append("food_image", file);
+
+                //1. Lưu thông tin món ăn
+                $.ajax({
+                    url: "/food/create",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ food, warehouse }),
+                    success: function (response) {
+                        if (response.status == 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: '' + response.message
+                            });
+                        }
+                        else {
+                            //2. update food_image
+                            var food_id = response.food_id
+                            console.log("Food ID: "+food_id);
+                            $.ajax({
+                                url: "/food/create/image?food_id="+ food_id,
+                                enctype: "multipart/form-data",
+                                method: "PUT",
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                data: image,
+                                success: function(output){
+                                    if (output.status == 0) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Lỗi',
+                                        text: '' + output.message
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        position: 'center',
+                                        icon: 'success',
+                                        title: '' + output.message,
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    $(function () {
+                                        function reload_info_modal() {
+                                            $('#createFoodModal').modal('hide');
+                                            location.reload();
+                                        }
+                                        window.setTimeout(reload_info_modal, 1500);
+                                    });
+                                }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                console.log("ack! sth wrong");
+            }
+        })
+    })
+</script>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 {% block title %}
     Food Delivery
-{% end block title %}
+{% endblock %}
 
 {% block style %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.14/dist/sweetalert2.min.css">
@@ -12,33 +12,46 @@
 {% endblock %}
 
 {% block navbar %}
-<li class="nav-item">
+<li class="nav-item px-2">
     <a class="nav-link" aria-current="page" href="#">Trang Chủ</a>
 </li>
-<li class="nav-item" style="padding-left: 30px;">
+<li class="nav-item px-2" >
     <a class="nav-link" aria-current="page" href="#">Đồ Ăn</a>
 </li>
-<li class="nav-item" style="padding-left: 30px;">
+<li class="nav-item px-2">
     <a class="nav-link" aria-current="page" href="#">Đồ Uống</a>
 </li>
-<li class="nav-item" style="padding-left: 30px;">
+<li class="nav-item px-2">
     <a class="nav-link bi bi-cart-fill" aria-current="page" href="#"> Giỏ Hàng</a>
 </li>
 
-<form class="d-flex" style="padding-left: 30px;">
+<form class="d-flex">
     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 300px;">
     <button class="btn btn-outline-warning bi bi-search" type="submit"></button>
 </form>
-<li class="nav-item dropdown" style="padding-left: 30px;">
+{% if username %}
+<li class="nav-item dropdown px-2">
     <a class="nav-link dropdown-toggle bi bi-person-circle" href="#" id="navbarDropdownMenuLink" role="button"
         data-bs-toggle="dropdown" aria-expanded="false">
         {{ username }}
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="/buyer/profile/?account_id={{ account_id }}">Profile</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
     </ul>
 </li>
+{% else %}
+<li class="nav-item px-2">
+    <a class="nav-link" href="/login_form" >
+        Đăng nhập
+    </a>  
+</li>
+<li class="nav-item px-2">
+    <a class="nav-link" href="/register/" >
+        Đăng ký
+    </a>  
+</li>
+{% endif %}
 {% endblock %}
 {% block banner %}
 <div class="swiper mySwiper" style="padding-top: 10px;">
@@ -93,161 +106,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="food-box" style="width:1000px;margin-left: 200px;">
+<div class="food-box" >
     <div class="food_header">
         <p class="navbar-brand"
             style="font-family:'Raleway', sans-serif;font-size: 25px;text-align: center; color: orange;">
-            Hôm Nay Ăn Gì?
+            Hôm Nay Ăn Ở Đâu?
         </p>
     </div>
     <div class="listitems">
         <div class="row">
 
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food1.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Restaurant Name</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
+            {% if restaurant_info %}
+                {% for restaurant in restaurant_info %}
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="card" style="width: 16rem;">
+                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}" class="card-img-top rounded" alt="..." height="170px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                            <p class="card-text">{{ restaurant.restaurant_address }}</p>
+                            <a href="#" class="border border-warning">Xem Thêm</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food2.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
-                </div>
-            </div>
-
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food3.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
-                </div>
-            </div>
-
-
+                {% endfor %}
+            {% endif %}
         </div>
-        <div class="row">
 
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food4.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
-                </div>
-            </div>
-
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food5.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
-                </div>
-            </div>
-
-            <div class="card" style="width: 18rem;">
-                <img src="../../../static/image/food6.png" class="card-img-top rounded" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the
-                        bulk of the
-                        card's content.</p>
-                    <a href="#" class="border border-warning">Thêm Món</a>
-                </div>
-            </div>
-
-        </div>
     </div>
-    <br>
-    <br>
-    <div class="food_header">
-        <p class="navbar-brand"
-            style="font-family: 'Raleway', sans-serif;font-size: 25px;text-align: center;color: orange;">
-            Hôm Nay Uống Gì?
-        </p>
-        <div class="listitems">
-            <div class="row">
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink1.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink2.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink3.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink4.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink5.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-                <div class="card" style="width: 18rem;">
-                    <img src="../../../static/image/drink6.png" class="card-img-top rounded" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up
-                            the bulk of the
-                            card's content.</p>
-                        <a href="#" class="border border-warning">Thêm Món</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
+
 </div>
 {% endblock %}

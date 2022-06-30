@@ -38,21 +38,27 @@
             {% block banner %}{% endblock %}
 
         </div>
-        <div id="main-content">
-            {% block content %}{% endblock %}
-        </div>
+        <section class="content py-5">
+            <div class="container">
+                <div id="main-content">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </section>
+       
 
         <!-- footer -->
         <div id="footer">
             <footer class="text-center footer"
-                style="padding-top: 20px; background-color: orange;color: #fff;margin-top: 100px;">
+                style="padding-top: 20px; background-color: orange;color: #fff;">
                 <!-- Section: Links  -->
                 <section class="">
                     <div class="container text-center text-md-start mt-5">
                         <!-- Grid row -->
                         <div class="row mt-3">
-                            <img src="../../../static/image/logo.png" alt=""
-                                style="height: 100px;width: 100px;padding-left: 0px;padding-right: 0px;">
+                            <img src="{{ url_for('static', path='frontend/images/logo/logo.png') }}" alt="" width="50" height="50"
+                            class="d-inline-block align-text-center" style="height: 100px;width: 100px;padding-left: 0px;padding-right: 0px;">
+ 
                             <!-- Grid column -->
                             <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                                 <!-- Content -->

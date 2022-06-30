@@ -1,0 +1,263 @@
+{% extends "seller_layout.html" %}
+
+{% block title %}
+Trang thông tin cửa hàng
+{% endblock %}
+
+{% block page_name %}
+Cửa hàng
+{% endblock %}
+
+{% block page_name_detail %}
+Trang thông tin cửa hàng
+{% endblock %}
+
+{% block content %}
+
+<div class="row py-2">
+    <div class="col-lg-12">
+        {% for info in restaurant_info %}
+        <div class="row my-4">
+
+            <div class="col-md-3 mb-2">
+
+                <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ info.restaurant_image }}"
+                    class="mx-auto d-block shadow rounded" width="180px" height="180px">
+
+                <button type="button" class="btn btn-info btn-block mt-3" data-toggle="modal"
+                    data-target="#avatarModal">Sửa ảnh cửa hàng</button>
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h5>Thông tin cửa hàng</h5>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" type="button" class="btn-edit-info " data-toggle="modal" data-target="#infoModal"><i
+                                class="bi bi-pencil-square" data-toggle="tooltip" data-placement="top"
+                                title="Click vào để sửa thông tin"></i></a>
+                    </div>
+                </div>
+
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Tên cửa hàng</th>
+                            <td>{{ info.restaurant_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Địa chỉ</th>
+                            <td>{{ info.restaurant_address }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
+
+    {% block modal %}
+    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avatarModalLabel">Sửa ảnh cửa hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% for info in restaurant_info %}
+                    <!-- <img src="/nln_test/assets/img/upload/avatar/' . $u['avatar'] . '" class="img-fluid"> -->
+
+                    <form id="frmAvatar" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="avatar" class="col-form-label">Thay ảnh: </label>
+                            <input type="file" class="form-control" id="avatar" name="avatar" />
+                            <input type="hidden" class="form-control" name="restaurant_id" id="restaurant_id"
+                                value="{{ info.restaurant_id }}" />
+                        </div>
+
+                    </form>
+                    {% endfor %}
+                </div>
+                <div class=" modal-footer">
+                    <button type="button" class="btn btn-primary btn-save-avatar" data-dismiss="modal">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Sửa thông tin cửa hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% for info in restaurant_info %}
+                    <!-- <img src="/nln_test/assets/img/upload/avatar/' . $u['avatar'] . '" class="img-fluid"> -->
+
+                    <form id="frmInfo" method="POST">
+                        <div class="form-group">
+                            <label for="restaurant_name" class="col-form-label">Tên cửa hàng: </label>
+                            <input type="text" class="form-control" id="restaurant_name" name="restaurant_name"
+                                value="{{ info.restaurant_name }}" required />
+                            <input type="hidden" class="form-control" name="restaurant_id" id="restaurant_id"
+                                value="{{ info.restaurant_id }}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant_address" class="col-form-label">Địa chỉ cửa hàng: </label>
+                            <input type="text" class="form-control" id="restaurant_address" name="restaurant_address"
+                                value="{{ info.restaurant_address }}" required />
+
+                        </div>
+                    </form>
+                    {% endfor %}
+                </div>
+                <div class=" modal-footer">
+                    <button type="button" class="btn btn-primary btn-save-info" data-dismiss="modal">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    {% block script %}
+
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.btn-save-avatar', function () {
+                // Kiểm tra file upload
+                var avatar = $('#avatar').val();
+
+                if (avatar == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Hãy chọn hình'
+                    });
+                }
+                else {
+                    var extension = avatar.split('.').pop().toLowerCase();
+                    var file = document.getElementById('avatar').files[0];
+                    var size = file.size;
+                    console.log(avatar);
+                    console.log(extension);
+                    console.log(size);
+                    if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg'
+                        });
+                    }
+                    else if (size > 2000000) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Hãy upload ảnh nhỏ hơn 2MB'
+                        });
+                    }
+                    else {
+                        var restaurant_id = $('#restaurant_id').val();
+                        var image_data = new FormData();
+                        image_data.append("restaurant_image", file);
+                        $.ajax({
+                            url: "/restaurant/update-image?restaurant_id=" + restaurant_id,
+                            enctype: "multipart/form-data",
+                            method: "PUT",
+                            contentType: false,
+                            cache: false,
+                            processData: false,
+                            data: image_data,
+                            success: function (response) {
+                                if (response.status == 0) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Lỗi',
+                                        text: '' + response.message
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        position: 'center',
+                                        icon: 'success',
+                                        title: '' + response.message,
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    $(function () {
+                                        function reload_info_modal() {
+                                            $('#avatarModal').modal('hide');
+                                            location.reload();
+                                        }
+                                        window.setTimeout(reload_info_modal, 1500);
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+
+
+            })
+
+            $(document).on('click', '.btn-save-info', function () {
+                var restaurant_name = $('#restaurant_name').val();
+                var restaurant_address = $('#restaurant_address').val();
+                var restaurant_id = $('#restaurant_id').val();
+
+                var restaurant = {
+                    "restaurant_name": restaurant_name,
+                    "restaurant_address": restaurant_address
+                };
+
+                $.ajax({
+                    url: "/restaurant/edit-info?restaurant_id=" + restaurant_id,
+                    method: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(restaurant),
+                    success: function (response) {
+                        if (response.status == 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: '' + response.message
+                            });
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: '' + response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $(function () {
+                                function reload_info_modal() {
+                                    $('#infoModal').modal('hide');
+                                    location.reload();
+                                }
+                                window.setTimeout(reload_info_modal, 1500);
+                            });
+                        }
+                    }
+                });
+            });
+
+
+        })
+
+    </script>
+
+    {% endblock %}

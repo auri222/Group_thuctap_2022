@@ -37,7 +37,7 @@ def read_admins(skip: int = 0, limit: int=100):
     return admins
 
 @router.get("/profile/", response_class=HTMLResponse)
-def read_profile_admin(account_id: int, request: Request, user=Depends(manager)):
+def read_profile_admin(request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -46,10 +46,11 @@ def read_profile_admin(account_id: int, request: Request, user=Depends(manager))
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    
+    account_id = user.account_id
+    username = user.account_username
     admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
     account_info = account_crud.get_account(db, account_id=account_id)
-    username = account_info.account_username
+
     data = []
     data.append(admin_info.__dict__)
     data_res = {
@@ -62,7 +63,7 @@ def read_profile_admin(account_id: int, request: Request, user=Depends(manager))
     return templates.TemplateResponse("admin_profile.html", data_res)
 
 @router.get("/", response_class=HTMLResponse)
-def admin_page(account_id: int, request: Request, user = Depends(manager)):
+def admin_page(request: Request, user = Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -70,10 +71,11 @@ def admin_page(account_id: int, request: Request, user = Depends(manager)):
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
-
+    account_id = user.account_id
+    username = user.account_username
     admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
     account_info = account_crud.get_account(db, account_id=account_id)
-    username = account_info.account_username
+
     data = []
     data.append(admin_info.__dict__)
     data_res = {
@@ -94,7 +96,7 @@ def delete_admin(id: int):
     return admin_crud.delete_admin(db, admin_id=id)
 
 @router.get("/foodtype/", response_class=HTMLResponse)
-def read_foodtype(account_id: int, request: Request, user=Depends(manager)):
+def read_foodtype(request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -103,9 +105,10 @@ def read_foodtype(account_id: int, request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
+    account_id = user.account_id
+    username = user.account_username
     foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
-    account_info = account_crud.get_account(db, account_id=account_id)
-    username = account_info.account_username
+
     error = ""
     if foodtype_info:
         error = None
@@ -128,7 +131,7 @@ def read_foodtype(account_id: int, request: Request, user=Depends(manager)):
     return templates.TemplateResponse("admin_foodtype.html", data_res)
 
 @router.get("/foodtype/create", response_class=HTMLResponse)
-def create_foodtype_form(account_id: int,request: Request, user=Depends(manager)):
+def create_foodtype_form(request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -137,9 +140,8 @@ def create_foodtype_form(account_id: int,request: Request, user=Depends(manager)
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    # foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
-    account_info = account_crud.get_account(db, account_id=account_id)
-    username = account_info.account_username
+    account_id = user.account_id
+    username = user.account_username
     
     data_res = {
         "request": request,
@@ -169,7 +171,7 @@ def create_food_type(foodtype: schemas.FoodType):
 
 
 @router.get("/foodtype/edit", response_class=HTMLResponse)
-def edit_foodtype_form(account_id: int, foodtype_id: int,request: Request, user=Depends(manager)):
+def edit_foodtype_form(foodtype_id: int,request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -178,9 +180,11 @@ def edit_foodtype_form(account_id: int, foodtype_id: int,request: Request, user=
         }
         return templates.TemplateResponse("login.html", error_data)
 
+    account_id = user.account_id
+    username = user.account_username
+
     foodtype_info = food_type_crud.get_food_type_by_ID(db=db, foodtype_ID=foodtype_id)
-    account_info = account_crud.get_account(db, account_id=account_id)
-    username = account_info.account_username
+
     data = []
     if foodtype_info:
         data.append(foodtype_info.__dict__)
@@ -200,7 +204,7 @@ def edit_foodtype_form(account_id: int, foodtype_id: int,request: Request, user=
     return templates.TemplateResponse("admin_foodtype_edit.html", data_res)
 
 @router.put("/foodtype/edit")
-def edit_foodtype(account_id: int, foodtype_id: int, foodtype: schemas.FoodType, request: Request, user=Depends(manager)):
+def edit_foodtype(foodtype_id: int, foodtype: schemas.FoodType, request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -208,6 +212,8 @@ def edit_foodtype(account_id: int, foodtype_id: int, foodtype: schemas.FoodType,
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
 
     #Kiểm tra nếu tên nhập trùng
     foodtype_name = foodtype.food_type_name

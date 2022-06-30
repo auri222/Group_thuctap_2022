@@ -8,7 +8,8 @@
     <title>{% block title %}{% endblock %}</title>
 
     <link rel="stylesheet" href="{{ url_for('static', path='vendors/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='backend/admin/css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='backend/seller/css/seller.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
 </head>
 
@@ -16,13 +17,13 @@
 
     <div class="d-flex">
         <!-- Sidebar -->
-        {% include 'admin_sidebar.html' %}
+        {% include 'seller_sidebar.html' %}
         <!-- Sidebar -->
 
-        <!-- End Content -->
+        <!-- Content -->
         <div class="w-100">
             <!-- Navbar -->
-            {% include 'admin_navbar.html' %}
+            {% include 'seller_navbar.html' %}
             <!-- End Navbar -->
 
             <!-- Content -->
@@ -39,7 +40,7 @@
                 </section>
 
                 <!-- Card -->
-                <section class="dashboard-content mt-2">
+                <section class="dashboard-content">
                     <div class="container">
                         {% block content %}{% endblock %}
                     </div>
@@ -57,8 +58,13 @@
     <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', path='vendors/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
-    <script src="{{ url_for('static', path='backend/admin/js/admin.js') }}"></script>
+    <script src="{{ url_for('static', path='backend/seller/js/seller.js') }}"></script>
+
+    {% block modal %}{% endblock %}
     {% block script %}{% endblock %}
+
+    
 </body>
 
 </html>
+

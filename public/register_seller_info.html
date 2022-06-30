@@ -196,15 +196,18 @@
                     });
                     flag = false;
                 }
-                var extension = image.split('.').pop().toLowerCase();
-                if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'File ảnh không hợp lệ. Hãy chọn lại!'
-                    });
-                    flag = false;
+                else {
+                    var extension = image.split('.').pop().toLowerCase();
+                    if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'File ảnh không hợp lệ. Hãy chọn lại!'
+                        });
+                        flag = false;
+                    }
                 }
+
                 return flag
             }
 

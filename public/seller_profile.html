@@ -1,0 +1,51 @@
+{% extends "seller_layout.html" %}
+
+{% block title %}
+    Trang seller
+{% endblock %}
+
+
+{% block page_name %}
+    Profile
+{% endblock %}
+
+{% block page_name_detail %}
+    Trang thông tin cá nhân
+{% endblock %}
+
+{% block content %}
+    <h1>Trang chủ</h1>
+    {% for info in seller_info %}
+    <div class="row">
+        <div class="col-md-9">
+            <table class="table table-borderless mt-2">
+                <tbody>
+                    <tr>
+                        <th>Họ tên: </th>
+                        <td>{{ info.seller_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày sinh: </th>
+                        {% set birthday = info.seller_birthday %}
+                        <td>{{ birthday.strftime("%d/%m/%Y") }}</td>
+                    </tr>
+                    <tr>
+                        <th>Địa chỉ: </th>
+                        <td>{{ info.seller_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Số điện thoại: </th>
+                        <td>{{ info.seller_phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email: </th>
+                        <td>{{ info.seller_email }}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    {% endfor %}
+{% endblock %}

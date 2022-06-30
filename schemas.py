@@ -214,6 +214,9 @@ class Food(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateFoodInfo(Food):
+    pass
+
 class UpdateFoodInfo(BaseModel):
     food_name: str
     food_price: float
@@ -238,6 +241,12 @@ class UpdateFoodImage(BaseModel):
 class RestaurantWarehouse(BaseModel):
     restaurant_id: int
     food_id: int
+    food_quantity: int
+
+    class Config:
+        orm_mode = True
+
+class CreateRestaurantWarehouse(BaseModel):
     food_quantity: int
 
     class Config:

@@ -63,44 +63,46 @@
 </style>
 
 <body>
-  <div class="row">
-    <div class="col-3 col-sm-4 col-lg-4"></div>
-    <div class="col-6 col-sm-4 col-lg-4">
-      <div class="main-content" style="text-align: center;">
-        <form class="login-form" action="/auth/login" method="post" enctype="application/x-www-form-urlencoded">
-
-          <h4 style="text-align: center;">Đăng Nhập</h4>
-          {% if error %}
-          <div class="alert alert-warning">{{ error }}</div>
-          {% endif %}
-          <div class="mb-3">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="username" name="username" placeholder="Tên Đăng Nhập"
-                required>
-              <label for="floatingInput">Tên Đăng Nhập</label>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3 col-sm-4 col-lg-4"></div>
+      <div class="col-6 col-sm-4 col-lg-4">
+        <div class="main-content" style="text-align: center;">
+          <form class="login-form" action="/auth/login" method="post" enctype="application/x-www-form-urlencoded">
+  
+            <h4 style="text-align: center;">Đăng Nhập</h4>
+            {% if error %}
+            <div class="alert alert-warning">{{ error }}</div>
+            {% endif %}
+            <div class="mb-3">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Tên Đăng Nhập"
+                  required>
+                <label for="floatingInput">Tên Đăng Nhập</label>
+              </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <div class="form-floating">
-              <input type="password" class="form-control" id="password" name="password" placeholder="Mật Khẩu" required>
-              <label for="floatingInput">Mật Khẩu</label>
+            <div class="mb-3">
+              <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Mật Khẩu" required>
+                <label for="floatingInput">Mật Khẩu</label>
+              </div>
             </div>
-          </div>
-          <br>
-          <div>
-            <button type="submit" class="btn-submit border border-warning"
-              style="background-color: orange; color: #fff;">Đăng Nhập</button>
-          </div>
-          <div>
-            <p style="text-align: center;">Bạn chưa có tài khoản?<a href="/register/"
-                style="color: red;text-decoration: none;"> Đăng Ký</a>
-
-          </div>
-        </form>
-
+            <br>
+            <div>
+              <button type="submit" class="btn-submit border border-warning"
+                style="background-color: orange; color: #fff;">Đăng Nhập</button>
+            </div>
+            <div>
+              <p style="text-align: center;">Bạn chưa có tài khoản?<a href="/register/"
+                  style="color: red;text-decoration: none;"> Đăng Ký</a>
+  
+            </div>
+          </form>
+  
+        </div>
       </div>
+      <div class="col-3 col-sm-4 col-lg-4"></div>
     </div>
-    <div class="col-3 col-sm-4 col-lg-4"></div>
   </div>
 
   <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>

@@ -22,28 +22,28 @@ db = get_database_session()
 
 templates = Jinja2Templates(directory="public")
 
-@router.get("/profile/", response_class=HTMLResponse)
-def buyer_profile(account_id: int, request: Request, user= Depends(manager)):
-    if user.account_type != 3:
-        error_data = {
-            "request": request,
-            "title": 'Trang đăng nhập',
-            'error': 'Bạn không được cấp quyền để vào trang này!'
-        }
-        return templates.TemplateResponse("login.html", error_data)
+# @router.get("/profile/", response_class=HTMLResponse)
+# def buyer_profile(account_id: int, request: Request, user= Depends(manager)):
+#     if user.account_type != 3:
+#         error_data = {
+#             "request": request,
+#             "title": 'Trang đăng nhập',
+#             'error': 'Bạn không được cấp quyền để vào trang này!'
+#         }
+#         return templates.TemplateResponse("login.html", error_data)
 
-    buyer_info = buyer_crud.get_buyer_by_account_id(db=db, account_id=account_id)
-    account_info = account_crud.get_account(db=db, account_id=account_id)
+#     buyer_info = buyer_crud.get_buyer_by_account_id(db=db, account_id=account_id)
+#     account_info = account_crud.get_account(db=db, account_id=account_id)
 
-    data_res = {
-        "request": request,
-        "title": "Trang thông tin người mua",
-        'account_id': account_id,
-        'buyer_info': buyer_info.__dict__,
-        'account_info': account_info.__dict__
-    }
+#     data_res = {
+#         "request": request,
+#         "title": "Trang thông tin người mua",
+#         'account_id': account_id,
+#         'buyer_info': buyer_info.__dict__,
+#         'account_info': account_info.__dict__
+#     }
 
-    return templates.TemplateResponse("", data_res)
+#     return templates.TemplateResponse("", data_res)
 
 @router.get("/", response_class=HTMLResponse)
 def home(account_id: int, request: Request, user= Depends(manager)):

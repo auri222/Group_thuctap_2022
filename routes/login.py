@@ -63,14 +63,15 @@ async def login(username: str = Form(...), password: str = Form(...)):
     account_type = user.account_type
     account_id = user.account_id
     if account_type == 1:
-        url = f"/admin/?account_id={account_id}"
+        url = f"/admin/"
         resp = RedirectResponse(url=url,status_code=status.HTTP_302_FOUND)
     
     if account_type == 2:
-        resp = RedirectResponse(url="/private",status_code=status.HTTP_302_FOUND)
+        url = f"/seller/"
+        resp = RedirectResponse(url=url,status_code=status.HTTP_302_FOUND)
     
     if account_type == 3:
-        url = f"/buyer/?account_id={account_id}"
+        url = f"/buyer/"
         resp = RedirectResponse(url=url,status_code=status.HTTP_302_FOUND)
     
     
