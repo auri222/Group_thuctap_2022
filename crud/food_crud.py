@@ -15,6 +15,14 @@ JOIN food f ON f.food_id = rw.food_id
 WHERE acc.account_id = {account_id}""")
     return result.fetchall()
 
+def get_food_from_restaurant(db: Session, restaurant_id: int, skip: int = 0, limit: int = 100):
+    result = db.execute(f"""SELECT res.restaurant_id AS restaurant_ID, f.*, rw.food_quantity
+FROM restaurant_warehouse rw
+JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
+JOIN food f ON f.food_id = rw.food_id
+WHERE res.restaurant_id = {restaurant_id}""")
+    return result.fetchall()
+
 def create_food_info(db: Session, food: schemas.Food):
     db_food = models.Food(  food_name = food.food_name,
                             food_image = food.food_image,

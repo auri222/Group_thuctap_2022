@@ -39,7 +39,7 @@ app.include_router(foodtype.router)
 app.include_router(restaurant.router)
 app.include_router(food.router)
 
-
+# Trang chủ
 @app.get("/", response_class=HTMLResponse, tags=["Homepage"])
 def root(request: Request):
 
@@ -58,6 +58,31 @@ def root(request: Request):
     }
 
     return templates.TemplateResponse("buyer_index.html",data_res)
+
+@app.get("/restaurant_detail", response_class=HTMLResponse, tags=["Restaurant Detail"])
+def restaurant_detail(restaurant_id: int, request: Request):
+    # Lấy phiên làm việc database
+    db_ = get_database_session()
+
+    # Lấy thông tin nhà hàng dựa trên ID
+    restaurant_info = restaurant_crud.get_restaurant_info_by_ID(db=db_, restaurant_id=restaurant_id)
+
+    restaurant_data = []
+    restaurant_data.append(restaurant_info.__dict__)
+
+    # Lấy danh sách món ăn dựa trên ID nhà hàng
+    food_info = food_crud.get_food_from_restaurant(db=db_, restaurant_id=restaurant_id, skip=0, limit=100)
+    food_data = []
+    for food in food_info:
+        food_data.append(food)
+
+    data_res = {
+        "request": request,
+        "title": "Trang chủ",
+        'restaurant_info': restaurant_data,
+        'food_info': food_data
+    }
+    return templates.TemplateResponse("buyer_restaurant_index.html", data_res)
 
 # #bắt phải đăng nhập 
 # class NotAuthenticatedException(Exception):

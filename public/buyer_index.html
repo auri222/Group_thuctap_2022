@@ -11,48 +11,7 @@
 
 {% endblock %}
 
-{% block navbar %}
-<li class="nav-item px-2">
-    <a class="nav-link" aria-current="page" href="#">Trang Chủ</a>
-</li>
-<li class="nav-item px-2" >
-    <a class="nav-link" aria-current="page" href="#">Đồ Ăn</a>
-</li>
-<li class="nav-item px-2">
-    <a class="nav-link" aria-current="page" href="#">Đồ Uống</a>
-</li>
-<li class="nav-item px-2">
-    <a class="nav-link bi bi-cart-fill" aria-current="page" href="#"> Giỏ Hàng</a>
-</li>
 
-<form class="d-flex">
-    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 300px;">
-    <button class="btn btn-outline-warning bi bi-search" type="submit"></button>
-</form>
-{% if username %}
-<li class="nav-item dropdown px-2">
-    <a class="nav-link dropdown-toggle bi bi-person-circle" href="#" id="navbarDropdownMenuLink" role="button"
-        data-bs-toggle="dropdown" aria-expanded="false">
-        {{ username }}
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
-    </ul>
-</li>
-{% else %}
-<li class="nav-item px-2">
-    <a class="nav-link" href="/login_form" >
-        Đăng nhập
-    </a>  
-</li>
-<li class="nav-item px-2">
-    <a class="nav-link" href="/register/" >
-        Đăng ký
-    </a>  
-</li>
-{% endif %}
-{% endblock %}
 {% block banner %}
 <div class="swiper mySwiper" style="padding-top: 10px;">
     <div class="swiper-wrapper">
@@ -124,7 +83,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
                             <p class="card-text">{{ restaurant.restaurant_address }}</p>
-                            <a href="#" class="border border-warning">Xem Thêm</a>
+                            <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}" class="border border-warning">Xem Thêm</a>
                         </div>
                     </div>
                 </div>
@@ -132,6 +91,7 @@
             {% endif %}
         </div>
 
+        
     </div>
     
 

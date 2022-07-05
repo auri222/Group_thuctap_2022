@@ -1,104 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "buyer_layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+{% block title %}
+Food Delivery
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.14/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', path='frontend/css/buyer_index.css') }}">
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-1 col-md-2 col-lg-2"></div>
+  <div class="col-9 col-md-8 col-lg-8">
+
+    <div class="row">
+      <div class="col-md-10">
+        <h4>Thông tin tài khoản</h4>
+      </div>
+      <div class="col-md-2">
+        <a href="#" type="button" class="btn-edit-acc" data-bs-toggle="modal" data-bs-target="#accInfoModal"><i
+            class="bi bi-pencil-square"></i></a>
+      </div>
+    </div>
+    <table class="table table-borderless">
+      {% if account_info %}
+
+      {% for account in account_info %}
+
+      <tbody>
+
+        <tr>
+          <th scope="row">Tên tài khoản:</th>
+          <td>
+            {{ account.account_username }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Ngày tạo tài khoản:</th>
+          <td>
+            {% set date_created = account.account_date_created %}
+            {{ date_created.strftime("%d/%m/%Y %H:%M:%S") }}
+          </td>
+        </tr>
+
+      </tbody>
+      {% endfor %}
+      {% endif %}
+    </table>
+    <hr>
+
+    <div class="row">
+      <div class="col-md-10">
+        <h4>Thông tin cá nhân</h4>
+      </div>
+      <div class="col-md-2">
+        <a href="#" type="button" class="btn-edit-info " data-bs-toggle="modal" data-bs-target="#infoModal"><i
+            class="bi bi-pencil-square"></i></a>
+      </div>
+    </div>
+    <table class="table table-borderless">
+      {% if buyer_info %}
+      {% for info in buyer_info %}
+
+      <tbody>
+
+        <tr>
+          <th scope="row">Họ tên: </th>
+          <td>{{ info.buyer_name }}</td>
+        </tr>
+
+        <tr>
+          <th scope="row">Ngày sinh: </th>
+          <td>
+            {% set birthday = info.buyer_birthday %}
+            {{ birthday.strftime("%d/%m/%Y") }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Địa chỉ: </th>
+          <td>{{ info.buyer_address }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Số điện thoại: </th>
+          <td>{{ info.buyer_phone }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Email: </th>
+          <td>{{ info.buyer_email }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Địa chỉ giao hàng: </th>
+          <td>{{ info.buyer_shipping_address }}</td>
+        </tr>
+
+      </tbody>
+      {% endfor %}
+      {% endif %}
+    </table>
 
 
-    <title>Xem thông tin người mua</title>
-</head>
-<style>
-    .info-form{
-      padding: 30px;
-      margin-top: 50px;
-      -webkit-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
-      -moz-box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
-      box-shadow: -1px 4px 26px 5px rgba(0, 0, 0, 0.75);
-    }
-  </style>
-  <!-- <body style="background-color: #ff8f1f;"> -->
-    <style>
-        body, html {
-          height: 100%;
-          margin: 0;
-          font-family: Arial, Helvetica, sans-serif;
-        }
-        
-        .hero-image {
-          background-image:  url("https://junoonva.com/images/slider/2.jpg");
-          height: 70%;
-          background-position: auto;
-          background-repeat: no-repeat;
-          background-size: cover;
-          position: relative;
-        }
-        
-        .hero-text {
-          text-align: center;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-        }
-        
-        .hero-text button {
-          border: none;
-          outline: 0;
-          display: inline-block;
-          padding: 10px 25px;
-          color: black;
-          background-color: #ddd;
-          text-align: center;
-          cursor: pointer;
-        }
-        
-        /* .hero-text button:hover {
-          background-color: #555;
-          color: white;
-        } */
-        </style>
-        </head>
-        <body>
-        
-        <div class="hero-image">
-          <div class="hero-text">
-            <!-- <h1 style="font-size:50px">I am John Doe</h1>
-            <p>And I'm a Photographer</p> -->
+
+  </div>
+  <div class="col-1 col-md-2 col-lg-2"></div>
+</div>
+{% endblock %}
+
+
+{% block modal %}
+<!-- Modal sửa thông tin tài khoản -->
+<div class="modal fade" id="accInfoModal" tabindex="-1" aria-labelledby="accInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="accInfoModalLabel">Sửa tên đăng nhập</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% if account_info %}
+
+      {% for account in account_info %}
+      <form id="frmAcc">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="username" class="col-form-label">Tên đăng nhập:</label>
+            <input type="text" class="form-control" id="account_username" name="account_username"
+              value="{{ account.account_username }}">
           </div>
         </div>
-<div class="col-3"></div>
-<div class="info-form" style=" margin-left: 500px; margin-top: 100px;margin-right: 500px;">
-    <h4 style="text-align: center;">Thông Tin Khách Hàng</h4><br>
-    <form>
-        <div class="mb-3">
-            <th scope="col"> Họ tên: </th>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-save-acc" data-account-id="">Lưu thay đổi</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
         </div>
-        <div class="mb-3">
-            <th scope="col"> Ngày sinh: </th>
-        </div>
-        <div class="mb-3">
-            <th scope="col"> Địa chỉ: </th>
-        </div>
-        <div class="mb-3">
-            <th scope="col">Số điện thoại: </th>
-        </div>
-        <div class="mb-3">
-            <th scope="col"> Email khách hàng: </th>
-        </div>
-
-        <div class="mb-3">
-            <th scope="col"> Địa chỉ giao hàng: </th>
-        </div><br>
-        <div class="mb-3" style="text-align: center;">
-            <button a href="" class="btn btn-secondary" id="submit-btn">Sửa thông tin </button>
-
-        </div>
-
-    </form>
+      </form>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
 </div>
+
+<!-- Modal sửa thông tin cá nhận -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">Sửa thông tin cá nhân</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% if buyer_info %}
+      {% for info in buyer_info %}
+      <form id="frmInfo">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Họ tên:</label>
+            <input type="text" class="form-control" id="buyer_name" name="buyer_name" value="{{ info.buyer_name }}">
+            &nbsp; <span style="color: red;">*</span>
+          </div>
+          <div class="form-group">
+            <label for="dob" class="col-form-label">Ngày sinh:</label> &nbsp;
+            <input type="date" class="form-control" id="buyer_birthday" name="buyer_birthday"
+              value="{{ info.buyer_birthday }}"> &nbsp; <span style="color: red;">*</span>
+          </div>
+          <div class="form-group">
+            <label for="dob" class="col-form-label">Địa chỉ:</label> &nbsp;
+            <input type="text" class="form-control" id="buyer_address" name="buyer_address"
+              value="{{ info.buyer_address }}">
+
+          </div>
+          <div class="form-group">
+            <label for="dob" class="col-form-label">Số điện thoại:</label> &nbsp;
+            <input type="text" class="form-control" id="buyer_phone" name="buyer_phone" value="{{ info.buyer_phone }}">
+            &nbsp; <span style="color: red;">*</span>
+          </div>
+          <div class="form-group">
+            <label for="dob" class="col-form-label">Email:</label> &nbsp;
+            <input type="text" class="form-control" id="buyer_email" name="buyer_email" value="{{ info.buyer_email }}">
+            &nbsp; <span style="color: red;">*</span>
+          </div>
+          <div class="form-group">
+            <label for="dob" class="col-form-label">Địa chỉ giao hàng:</label> &nbsp;
+            <input type="text" class="form-control" id="buyer_shipping_address" name="buyer_shipping_address"
+              value="{{ info.buyer_shipping_address }}"> &nbsp; <span style="color: red;">*</span>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-save-info" data-buyer-id="">Lưu thay đổi</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        </div>
+      </form>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
