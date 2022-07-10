@@ -118,3 +118,26 @@ def delete_food(db: Session, food_id: int):
     db.delete(db_food)
     db.commit()
     return {"Success": "Delete food successfully"}
+
+# API cho dashboard -----------------------------------------------------------------
+def get_total_rows_food(db: Session, account_id: int):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW_FOOD
+                FROM account acc
+                JOIN seller sl ON sl.account_id = acc.account_id
+                JOIN restaurant r ON r.seller_id = sl.seller_id
+                JOIN restaurant_warehouse rw ON rw.restaurant_id = r.restaurant_id
+                JOIN food f ON f.food_id = rw.food_id
+                WHERE (acc.account_id = {account_id}) """
+    result = db.execute(query)
+    return result.fetchall()
+
+def get_list_foods_out_of_stock(db: Session, account_id: int):
+    query = f"""SELECT f.food_id, f.food_name, rw.food_quantity
+                FROM account acc
+                JOIN seller sl ON sl.account_id = acc.account_id
+                JOIN restaurant r ON r.seller_id = sl.seller_id
+                JOIN restaurant_warehouse rw ON rw.restaurant_id = r.restaurant_id
+                JOIN food f ON f.food_id = rw.food_id
+                WHERE (acc.account_id = {account_id}) AND (rw.food_quantity = 0)"""
+    result = db.execute(query)
+    return result.fetchall()

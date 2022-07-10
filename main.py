@@ -39,6 +39,8 @@ app.include_router(foodtype.router)
 app.include_router(restaurant.router)
 app.include_router(food.router)
 
+
+# Chưa login ---------------------------------------------------------------------------
 # Trang chủ
 @app.get("/", response_class=HTMLResponse, tags=["Homepage"])
 def root(request: Request):
@@ -57,7 +59,26 @@ def root(request: Request):
         'restaurant_info': restaurant_data
     }
 
-    return templates.TemplateResponse("buyer_index.html",data_res)
+    return templates.TemplateResponse("index.html",data_res)
+
+@app.get("/restaurants", response_class=HTMLResponse, tags=["Homepage"])
+def root(request: Request):
+
+    db_ = get_database_session()
+
+    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=0, limit=100)
+
+    restaurant_data = []
+    for info in restaurant_info:
+        restaurant_data.append(info)
+    print(restaurant_data)
+    data_res = {
+        "request": request,
+        "title": "Trang chủ",
+        'restaurant_info': restaurant_data
+    }
+
+    return templates.TemplateResponse("restaurant_list.html",data_res)
 
 @app.get("/restaurant_detail", response_class=HTMLResponse, tags=["Restaurant Detail"])
 def restaurant_detail(restaurant_id: int, request: Request):
@@ -76,13 +97,22 @@ def restaurant_detail(restaurant_id: int, request: Request):
     for food in food_info:
         food_data.append(food)
 
+    # Lấy loại thức ăn của nhà hàng 
+    food_type_info = restaurant_crud.get_list_food_type_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+    food_type_data = []
+    for food_type in food_type_info:
+        food_type_data.append(food_type)
+
     data_res = {
         "request": request,
         "title": "Trang chủ",
         'restaurant_info': restaurant_data,
-        'food_info': food_data
+        'food_info': food_data,
+        'food_type_info': food_type_data
     }
-    return templates.TemplateResponse("buyer_restaurant_index.html", data_res)
+    return templates.TemplateResponse("restaurant_index.html", data_res)
+
+# ----------------------------------------------------------------------------------------------------------
 
 # if __name__ == "__main__":
 #     uvicorn.run(app=app, host="0.0.0.0", port=8088)
@@ -135,3 +165,4 @@ def check_login(request: Request):
         message = "Bạn cần đăng nhập để thực hiện chức năng này!"
 
     return {"status": status, "message": message}
+

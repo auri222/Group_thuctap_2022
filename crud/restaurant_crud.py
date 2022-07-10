@@ -53,3 +53,14 @@ def update_restaurant_image_by_restaurant_id(db: Session, restaurant: schemas.Up
 
     res_id = db_restaurant.restaurant_id
     return res_id
+
+def get_list_food_type_by_restaurant_id(db: Session, restaurant_id: int):
+    query = f"""SELECT ft.food_type_name
+                FROM restaurant res
+                JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
+                JOIN food f ON f.food_id = rw.food_id
+                JOIN food_type ft ON ft.food_type_id = f.food_type_id
+                WHERE res.restaurant_id = {restaurant_id}
+                GROUP BY ft.food_type_id"""
+    result = db.execute(query)
+    return result.fetchall()

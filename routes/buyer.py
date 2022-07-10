@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from config.db import SessionLocal
 from fastapi.templating import Jinja2Templates
 import models, schemas
-from crud import buyer_crud, account_crud, restaurant_crud
+from crud import buyer_crud, account_crud, restaurant_crud, food_crud
 from routes.login import manager
 router = APIRouter(
     prefix="/buyer",
@@ -117,6 +117,80 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
 
     return {"status": status, "message": message}
 
+
+@router.get("/restaurants", response_class=HTMLResponse)
+def home( request: Request, user= Depends(manager)):
+    if user.account_type != 3:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+    db_ = get_database_session()
+    account_info = account_crud.get_account(db=db_, account_id=account_id)
+    username = account_info.account_username
+    
+
+    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=0, limit=100)
+
+    restaurant_data = []
+    for info in restaurant_info:
+        restaurant_data.append(info)
+    data_res = {
+        "request": request,
+        "title": "Trang chủ",
+        'account_id': account_id,
+        'username': username,
+        'restaurant_info': restaurant_data
+    }
+
+    return templates.TemplateResponse("restaurant_list.html",data_res)
+
+@router.get("/restaurant-detail", response_class=HTMLResponse)
+def home(restaurant_id: int, request: Request, user= Depends(manager)):
+    if user.account_type != 3:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+    db_ = get_database_session()
+    account_info = account_crud.get_account(db=db_, account_id=account_id)
+    username = account_info.account_username
+    
+    # Lấy thông tin nhà hàng dựa trên ID
+    restaurant_info = restaurant_crud.get_restaurant_info_by_ID(db=db_, restaurant_id=restaurant_id)
+
+    restaurant_data = []
+    restaurant_data.append(restaurant_info.__dict__)
+
+    # Lấy danh sách món ăn dựa trên ID nhà hàng
+    food_info = food_crud.get_food_from_restaurant(db=db_, restaurant_id=restaurant_id, skip=0, limit=100)
+    food_data = []
+    for food in food_info:
+        food_data.append(food)
+    
+    # Lấy loại thức ăn của nhà hàng 
+    food_type_info = restaurant_crud.get_list_food_type_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+    food_type_data = []
+    for food_type in food_type_info:
+        food_type_data.append(food_type)
+
+    data_res = {
+        "request": request,
+        "title": "Trang chủ",
+        'account_id': account_id,
+        'username': username,
+        'restaurant_info': restaurant_data,
+        'food_info': food_data,
+        'food_type_info': food_type_data
+    }
+
+    return templates.TemplateResponse("restaurant_index.html",data_res)
 
 @router.get("/", response_class=HTMLResponse)
 def home( request: Request, user= Depends(manager)):

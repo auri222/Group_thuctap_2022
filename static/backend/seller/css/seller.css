@@ -61,13 +61,22 @@ body{
     padding-bottom: 5rem;
 }
 
-.dashboard-card .card-body i{
-    font-size: 35px;
-    
+.card {
+    border-color: #7209B7;
 }
 
-.dashboard-card .card-body .card-content {
+.card-body i{
+    font-size: 35px;
+    color: #7209B7;
+}
+
+.card-content {
     box-shadow: 2px 2px 5px rgb(185, 183, 183);
+}
+
+.table-dashboard thead{
+    background-color: #7209B7;
+    color: #ffffff;
 }
 
 .sideMenuToggler{

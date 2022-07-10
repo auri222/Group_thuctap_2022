@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
-from crud import seller_crud, account_crud, food_type_crud, food_crud
+from crud import seller_crud, account_crud, food_type_crud, food_crud, order_crud
 from routes.login import manager
 import math
 router = APIRouter(
@@ -209,6 +209,48 @@ def check_duplicate_username(username: str):
 
     return count
 
+@router.get("/fetch-total-rows-food")
+def fetch_total_rows_food(request: Request, user = Depends(manager)):
+    if user.account_type != 2:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    # Lấy tổng số món ăn của tài khoản này
+    account_id = user.account_id
+    db_ = get_database_session()
+    count = food_crud.get_total_rows_food(db=db_, account_id=account_id)
+    TOTAL_ROWS_FOOD = count[0]['TOTAL_ROW_FOOD']
+
+    print(f"count: {count}")
+    print(f"total: {TOTAL_ROWS_FOOD}")
+
+    return {"TOTAL_ROWS_FOOD": TOTAL_ROWS_FOOD}
+
+@router.get("/fetch-total-rows-order")
+def fetch_total_rows_order(request: Request, user = Depends(manager)):
+    if user.account_type != 2:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    # Lấy tổng số đơn hàng của tài khoản này
+    account_id = user.account_id
+    db_ = get_database_session()
+    count = order_crud.get_total_rows_order(db=db_, account_id=account_id)
+    TOTAL_ROWS_ORDER = count[0]['TOTAL_ROW_ORDER']
+
+    print(f"count: {count}")
+    print(f"total: {TOTAL_ROWS_ORDER}")
+
+    return {"TOTAL_ROWS_ORDER": TOTAL_ROWS_ORDER}
+
 @router.get("/", response_class=HTMLResponse)
 def seller_index_page( request: Request, user = Depends(manager)):
     if user.account_type != 2:
@@ -222,7 +264,14 @@ def seller_index_page( request: Request, user = Depends(manager)):
     account_id = user.account_id
     username = user.account_username
 
-    seller_info = seller_crud.get_seller_by_account_id(db=db, account_id=account_id)
+    #Lấy thông tin tài khoản
+    db_ = get_database_session()
+    seller_info = seller_crud.get_seller_by_account_id(db=db_, account_id=account_id)
+
+    # Lấy danh sách món ăn hết hàng
+    list_foods_out_of_stock = food_crud.get_list_foods_out_of_stock(db=db_, account_id=account_id)
+
+    print(f"out of stock: {list_foods_out_of_stock}")
 
     data = []
     data.append(seller_info.__dict__)
@@ -231,7 +280,8 @@ def seller_index_page( request: Request, user = Depends(manager)):
         "title": 'Thông tin Seller',
         'seller_info': data,
         'username': username,
-        'account_id': account_id
+        'account_id': account_id,
+        'list_foods_out_of_stock': list_foods_out_of_stock
     }
     return templates.TemplateResponse("seller_index.html", data_res)
 

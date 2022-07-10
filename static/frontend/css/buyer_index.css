@@ -66,6 +66,8 @@ a.nav-link {
 .row .card {
     border: 0;
     padding-top: 10px;
+    cursor: pointer;
+    transition: transform .3s;
 }
 
 .card {
@@ -73,6 +75,10 @@ a.nav-link {
     flex: 1 1 15rem;
     margin: 10px 20px;
     /* box-shadow: 0 0 15px; */
+}
+
+.card:hover {
+    transform: translateY(5px);
 }
 
 .card-body a {
