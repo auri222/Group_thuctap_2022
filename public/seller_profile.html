@@ -1,51 +1,342 @@
 {% extends "seller_layout.html" %}
 
 {% block title %}
-    Trang seller
+Trang seller
 {% endblock %}
 
 
 {% block page_name %}
-    Profile
+Profile
 {% endblock %}
 
 {% block page_name_detail %}
-    Trang thông tin cá nhân
+Trang thông tin cá nhân
 {% endblock %}
 
 {% block content %}
-    <h1>Trang chủ</h1>
-    {% for info in seller_info %}
-    <div class="row">
-        <div class="col-md-9">
-            <table class="table table-borderless mt-2">
-                <tbody>
-                    <tr>
-                        <th>Họ tên: </th>
-                        <td>{{ info.seller_name }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ngày sinh: </th>
-                        {% set birthday = info.seller_birthday %}
-                        <td>{{ birthday.strftime("%d/%m/%Y") }}</td>
-                    </tr>
-                    <tr>
-                        <th>Địa chỉ: </th>
-                        <td>{{ info.seller_address }}</td>
-                    </tr>
-                    <tr>
-                        <th>Số điện thoại: </th>
-                        <td>{{ info.seller_phone }}</td>
-                    </tr>
-                    <tr>
-                        <th>Email: </th>
-                        <td>{{ info.seller_email }}</td>
-                    </tr>
-
-                </tbody>
-            </table>
+<div class="row pt-3">
+    <div class="col-md-12">
+        <div class="row py-3">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h4>Thông tin tài khoản</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" type="button" class="btn-edit-account-modal" data-toggle="modal"
+                            data-target="#accountModal"><i class="bi bi-pencil-square" data-toggle="tooltip"
+                                data-placement="top" title="Click vào để sửa thông tin tài khoản"></i></a>
+                    </div>
+                </div>
+                <table class="table table-borderless mt-2">
+                    <tbody>
+                        <tr>
+                            <th>Tên đăng nhập: </th>
+                            <td>{{ username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày tạo tài khoản: </th>
+                            {% if created_date %}
+                            <td>{{ created_date.strftime("%H:%M:%S %d/%m/%Y") }}</td>
+                            {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3"></div>
         </div>
-        <div class="col-md-3"></div>
+        {% for info in seller_info %}
+        <div class="row py-3">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h4>Thông tin cá nhân</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" type="button" class="btn-edit-info-modal" data-toggle="modal"
+                            data-target="#infoModal"><i class="bi bi-pencil-square" data-toggle="tooltip"
+                                data-placement="top" title="Click vào để sửa thông tin cá nhân"></i></a>
+                    </div>
+                </div>
+                <table class="table table-borderless mt-2">
+                    <tbody>
+                        <tr>
+                            <th>Họ tên: </th>
+                            <td>{{ info.seller_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày sinh: </th>
+                            {% set birthday = info.seller_birthday %}
+                            <td>{{ birthday.strftime("%d/%m/%Y") }}</td>
+                        </tr>
+                        <tr>
+                            <th>Địa chỉ: </th>
+                            <td>{{ info.seller_address }}</td>
+                        </tr>
+                        <tr>
+                            <th>Số điện thoại: </th>
+                            <td>{{ info.seller_phone }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email: </th>
+                            <td>{{ info.seller_email }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
     </div>
-    {% endfor %}
+</div>
+{% endfor %}
+
+
+{% endblock %}
+
+{% block modal %}
+
+<!-- Modal sửa thông tin cá nhân -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Sửa thông tin cá nhân</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                {% for info in seller_info %}
+                <form>
+                    <div class="form-group row">
+                        <label for="seller_name" class="col-sm-4 col-form-label">Họ tên</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="seller_name" value="{{ info.seller_name }}">
+                            <small id="error-name" style="color: red;"></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="seller_birthday" class="col-sm-4 col-form-label">Ngày sinh</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" id="seller_birthday"
+                                value="{{ info.seller_birthday }}">
+                            <small id="error-birthday" style="color: red;"></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="seller_address" class="col-sm-4 col-form-label">Địa chỉ</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="seller_address"
+                                value="{{ info.seller_address }}">
+                            <small id="error-address" style="color: red;"></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="seller_phone" class="col-sm-4 col-form-label">Số điện thoại</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="seller_phone" value="{{ info.seller_phone }}">
+                            <small id="error-phone" style="color: red;"></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="seller_email" class="col-sm-4 col-form-label">Email</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="seller_email" value="{{ info.seller_email }}">
+                            <small id="error-email" style="color: red;"></small>
+                        </div>
+                    </div>
+                </form>
+                {% endfor %}
+            </div>
+            <div class=" modal-footer">
+                <button type="button" class="btn btn-primary btn-save-info">Lưu</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal sửa thông tin tài khoản -->
+<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accountModalLabel">Sửa thông tin tài khoản</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="frmAccount">
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">Tên đăng nhập</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="account_username" value="{{ username }}">
+                            <small id="error_username" style="color: red;"></small>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class=" modal-footer">
+                <button type="button" class="btn btn-primary btn-save-account">Lưu</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', '.btn-save-account', function () {
+            var account_username = $('#account_username').val();
+
+            if (account_username === "") {
+                $('#error_username').html("Hãy nhập tên đăng nhập!");
+            }
+            else {
+                $('#error_username').html("");
+                // Kiểm tra tên trùng
+                $.ajax({
+                    url: "/seller/check-duplicate-username?username=" + account_username,
+                    method: "GET",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.count[0].TOTAL > 0) {
+                            $('#error_username').html("Tên đăng nhập bị trùng!");
+                        }
+                        else {
+                            $('#error_username').html("");
+                            data = { "account_username": account_username };
+                            $.ajax({
+                                url: "/seller/profile/edit-account",
+                                method: "PUT",
+                                contentType: "application/json",
+                                data: JSON.stringify(data),
+                                success: function (response) {
+                                    if (response.status == 0) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Lỗi',
+                                            text: '' + response.message
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            position: 'center',
+                                            icon: 'success',
+                                            title: '' + response.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        $(function () {
+                                            function reload_info_modal() {
+                                                $('#accountModal').modal('hide');
+                                                location.reload();
+                                            }
+                                            window.setTimeout(reload_info_modal, 1500);
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+
+
+            }
+        });
+
+
+        $(document).on('click', '.btn-save-info', function () {
+            var seller_name = $('#seller_name').val();
+            var seller_birthday = $('#seller_birthday').val();
+            var seller_address = $('#seller_address').val();
+            var seller_phone = $('#seller_phone').val();
+            var seller_email = $('#seller_email').val();
+
+            var flag = true;
+
+            if (seller_name === "") {
+                $('#error-name').html("Hãy nhập họ tên!");
+                flag = false;
+            }
+            if (seller_birthday === "") {
+                $('#error-birthday').html("Hãy nhập ngày sinh!");
+                flag = false;
+            }
+            if (seller_address === "") {
+                $('#error-address').html("Hãy nhập địa chỉ!");
+                flag = false;
+            }
+            if (seller_phone === "") {
+                $('#error-phone').html("Hãy nhập số điện thoại!");
+                flag = false;
+            }
+            if (seller_email === "") {
+                $('#error-email').html("Hãy nhập địa chỉ email!");
+                flag = false;
+            }
+
+            if (flag) {
+                $('#error-name').html("");
+                $('#error-birthday').html("");
+                $('#error-address').html("");
+                $('#error-phone').html("");
+                $('#error-email').html("");
+
+                var data = {
+                    "seller_name": seller_name,
+                    "seller_birthday": seller_birthday,
+                    "seller_address": seller_address,
+                    "seller_phone": seller_phone,
+                    "seller_email": seller_email
+                };
+
+                $.ajax({
+                    url: "/seller/profile/edit-info",
+                    method: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.status == 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: '' + response.message
+                            });
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: '' + response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $(function () {
+                                function reload_info_modal() {
+                                    $('#infoModal').modal('hide');
+                                    location.reload();
+                                }
+                                window.setTimeout(reload_info_modal, 1500);
+                            });
+                        }
+                    }
+                });
+            }
+
+        });
+    });
+</script>
+
 {% endblock %}

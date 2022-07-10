@@ -63,3 +63,14 @@ def update_seller_return_ID(db: Session, seller: schemas.Seller, Seller_ID: int)
     seller_id = update_sel.seller_id
     return seller_id
     
+def update_seller_by_account_id(db: Session, seller: schemas.UpdateSellerInfo, account_id: int):
+    update_sel = db.query(models.Seller).filter(models.Seller.account_id == account_id).first()
+
+    update_sel.seller_name = seller.seller_name
+    update_sel.seller_birthday = seller.seller_birthday
+    update_sel.seller_address = seller.seller_address
+    update_sel.seller_phone = seller.seller_phone
+    update_sel.seller_email = seller.seller_email
+    db.commit()
+    seller_id = update_sel.seller_id
+    return seller_id

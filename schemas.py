@@ -31,6 +31,12 @@ class Account(BaseModel):
 class RegisterAccount(Account):
     pass
 
+class UpdateAccountName(BaseModel):
+    account_username: str
+
+    class Config:
+        orm_mode = True
+
 class UpdateAccountPassword(BaseModel):
     account_password: str
 
@@ -247,6 +253,12 @@ class RestaurantWarehouse(BaseModel):
         orm_mode = True
 
 class CreateRestaurantWarehouse(BaseModel):
+    food_quantity: int
+
+    class Config:
+        orm_mode = True
+
+class UpdateRestaurantWarehouse(BaseModel):
     food_quantity: int
 
     class Config:

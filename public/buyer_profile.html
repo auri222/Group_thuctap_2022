@@ -120,24 +120,24 @@ Food Delivery
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      {% if account_info %}
 
-      {% for account in account_info %}
       <form id="frmAcc">
         <div class="modal-body">
           <div class="form-group">
             <label for="username" class="col-form-label">Tên đăng nhập:</label>
+            {% if username %}
             <input type="text" class="form-control" id="account_username" name="account_username"
-              value="{{ account.account_username }}">
+              value="{{ username }}">
+            {% endif %}
+            <small id="error-username" style="color: red;"></small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-save-acc" data-account-id="">Lưu thay đổi</button>
+          <button type="button" class="btn btn-primary btn-save-acc">Lưu thay đổi</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
         </div>
       </form>
-      {% endfor %}
-      {% endif %}
+
     </div>
   </div>
 </div>
@@ -157,40 +157,46 @@ Food Delivery
       <form id="frmInfo">
         <div class="modal-body">
           <div class="form-group">
-            <label for="name" class="col-form-label">Họ tên:</label>
+            <label for="buyer_name" class="col-form-label">Họ tên:</label>
             <input type="text" class="form-control" id="buyer_name" name="buyer_name" value="{{ info.buyer_name }}">
-            &nbsp; <span style="color: red;">*</span>
+            
+            <small id="error-name" style="color: red;"></small>
           </div>
           <div class="form-group">
-            <label for="dob" class="col-form-label">Ngày sinh:</label> &nbsp;
+            <label for="buyer_birthday" class="col-form-label">Ngày sinh:</label> 
             <input type="date" class="form-control" id="buyer_birthday" name="buyer_birthday"
-              value="{{ info.buyer_birthday }}"> &nbsp; <span style="color: red;">*</span>
+              value="{{ info.buyer_birthday }}" min="1920-01-01">
+            <small id="error-birthday" style="color: red;"></small>
           </div>
           <div class="form-group">
-            <label for="dob" class="col-form-label">Địa chỉ:</label> &nbsp;
+            <label for="buyer_address" class="col-form-label">Địa chỉ:</label>
             <input type="text" class="form-control" id="buyer_address" name="buyer_address"
               value="{{ info.buyer_address }}">
+            <small id="error-address" style="color: red;"></small>
 
           </div>
           <div class="form-group">
-            <label for="dob" class="col-form-label">Số điện thoại:</label> &nbsp;
+            <label for="buyer_phone" class="col-form-label">Số điện thoại:</label> 
             <input type="text" class="form-control" id="buyer_phone" name="buyer_phone" value="{{ info.buyer_phone }}">
-            &nbsp; <span style="color: red;">*</span>
+            
+            <small id="error-phone" style="color: red;"></small>
           </div>
           <div class="form-group">
-            <label for="dob" class="col-form-label">Email:</label> &nbsp;
+            <label for="buyer_email" class="col-form-label">Email:</label> 
             <input type="text" class="form-control" id="buyer_email" name="buyer_email" value="{{ info.buyer_email }}">
-            &nbsp; <span style="color: red;">*</span>
+            
+            <small id="error-email" style="color: red;"></small>
           </div>
           <div class="form-group">
-            <label for="dob" class="col-form-label">Địa chỉ giao hàng:</label> &nbsp;
+            <label for="buyer_shipping_address" class="col-form-label">Địa chỉ giao hàng:</label> &nbsp;
             <input type="text" class="form-control" id="buyer_shipping_address" name="buyer_shipping_address"
-              value="{{ info.buyer_shipping_address }}"> &nbsp; <span style="color: red;">*</span>
+              value="{{ info.buyer_shipping_address }}">
+            <small id="error-shipAdrr" style="color: red;"></small>
           </div>
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-save-info" data-buyer-id="">Lưu thay đổi</button>
+          <button type="button" class="btn btn-primary btn-save-info">Lưu thay đổi</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
         </div>
       </form>
@@ -199,5 +205,162 @@ Food Delivery
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function () {
+
+    $(document).on('click', '.btn-save-acc', function () {
+      var account_username = $('#account_username').val();
+
+      var count;
+      if (account_username === "") {
+        $('#error-username').html("Hãy nhập tên đăng nhập muốn sửa");
+
+      }
+      else {
+        $.ajax({
+          url: "/account/check-duplicate-username?username=" + account_username,
+          method: "GET",
+          contentType: "application/json",
+          success: function (response) {
+
+
+            console.log(response.count[0].TOTAL);
+            if (response.count[0].TOTAL > 0) {
+              $('#error-username').html("Trùng tên đăng nhập. Hãy nhập tên khác!");
+
+            }
+            else {
+              $('#error-username').html("");
+
+              var data = { "account_username": account_username };
+
+              $.ajax({
+                url: "/buyer/profile/edit-account",
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                  if (response.status == 0) {
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Lỗi',
+                      text: '' + response.message
+                    });
+                  } else {
+                    Swal.fire({
+                      position: 'center',
+                      icon: 'success',
+                      title: '' + response.message,
+                      showConfirmButton: false,
+                      timer: 1500
+                    });
+                    $(function () {
+                      function reload_info_modal() {
+                        $('#accInfoModal').modal('hide');
+                        location.reload();
+                      }
+                      window.setTimeout(reload_info_modal, 1500);
+                    });
+                  }
+                }
+              });
+            }
+          }
+        });
+      }
+    })
+
+    $(document).on('click', '.btn-save-info', function () {
+      var buyer_name = $('#buyer_name').val();
+      var buyer_birthday = $('#buyer_birthday').val();
+      var buyer_address = $('#buyer_address').val();
+      var buyer_phone = $('#buyer_phone').val();
+      var buyer_email = $('#buyer_email').val();
+      var buyer_shipping_address = $('#buyer_shipping_address').val();
+
+      //Kiểm tra dữ liệu nhập
+      var flag = true;
+
+      if (buyer_name === "") {
+        $('#error-name').html("Hãy nhập họ tên!");
+        flag = false;
+      }
+      if (buyer_birthday === "") {
+        $('#error-birthday').html("Hãy nhập ngày sinh!");
+        flag = false;
+      }
+      if (buyer_phone === "") {
+        $('#error-phone').html("Hãy nhập số điện thoại!");
+        flag = false;
+      }
+      if (buyer_email === "") {
+        $('#error-email').html("Hãy nhập địa chỉ email!");
+        flag = false;
+      }
+      if (buyer_shipping_address === "") {
+        $('#error-shipAdrr').html("Hãy nhập địa chỉ giao hàng!");
+        flag = false;
+      }
+
+      if (flag) {
+        $('#error-name').html("");
+        $('#error-address').html("");
+        $('#error-phone').html("");
+        $('#error-email').html("");
+        $('#error-shipAdrr').html("");
+
+        if (buyer_address === "") {
+          buyer_address = "Trống";
+        }
+
+        var data = {
+          "buyer_name": buyer_name,
+          "buyer_birthday": buyer_birthday,
+          "buyer_address": buyer_address,
+          "buyer_phone": buyer_phone,
+          "buyer_email": buyer_email,
+          "buyer_shipping_address": buyer_shipping_address
+        };
+
+        $.ajax({
+          url: "/buyer/profile/edit-info",
+          method: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify(data),
+          success: function (response) {
+            if (response.status == 0) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: '' + response.message
+              });
+            } else {
+              Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '' + response.message,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              $(function () {
+                function reload_info_modal() {
+                  $('#accInfoModal').modal('hide');
+                  location.reload();
+                }
+                window.setTimeout(reload_info_modal, 1500);
+              });
+            }
+          }
+        });
+      }
+
+
+    })
+  })
+</script>
 
 {% endblock %}

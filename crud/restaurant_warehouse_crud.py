@@ -14,3 +14,9 @@ def create_restaurant_warehouse_info(db: Session, restaurant_warehouse: schemas.
 def get_restaurant_warehouse_info_by_restaurant_id(db: Session, restaurant_id: int):
     return db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.restaurant_id == restaurant_id).first()
 
+def update_food_quantity_by_food_id(db: Session, restaurant_warehouse: schemas.UpdateRestaurantWarehouse, food_id: int):
+    db_warehouse = db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.food_id == food_id).first()
+    db_warehouse.food_quantity = restaurant_warehouse.food_quantity
+    db.commit()
+    quantity = db_warehouse.food_quantity
+    return quantity

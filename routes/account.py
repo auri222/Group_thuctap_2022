@@ -39,6 +39,11 @@ def update_account_password(account_id: int, account: schemas.UpdateAccountOTPTo
 def delete_account(account_id: int):
     return account_crud.delete_account(db, account_id=account_id)
 
+@router.get("/check-duplicate-username")
+def count_duplicate_username(username: str):
+    count = account_crud.count_duplicate_username(db=db, username=username)
+    return {"count": count}
+
 @router.get("/{id}")
 def get_account(id: int):
     account = account_crud.get_account(db, account_id=id)

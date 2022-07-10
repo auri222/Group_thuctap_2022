@@ -57,7 +57,21 @@ def update_buyer(db:Session,buyer: schemas.UpdateBuyerInfo, buyer_id: int):
     db_buyer.buyer_email = buyer.buyer_email
     db_buyer.buyer_shipping_address = buyer.buyer_shipping_address
 
-    db.commit(db_buyer)
+    db.commit()
+    buyer_id = db_buyer.buyer_id
+    return buyer_id
+
+def update_buyer_return_buyer_id(db:Session, buyer: schemas.UpdateBuyerInfo, account_id: int):
+    db_buyer=db.query(models.Buyer).filter(models.Buyer.account_id == account_id).first()
+
+    db_buyer.buyer_name = buyer.buyer_name
+    db_buyer.buyer_birthday = buyer.buyer_birthday
+    db_buyer.buyer_address = buyer.buyer_address
+    db_buyer.buyer_phone = buyer.buyer_phone
+    db_buyer.buyer_email = buyer.buyer_email
+    db_buyer.buyer_shipping_address = buyer.buyer_shipping_address
+
+    db.commit()
     buyer_id = db_buyer.buyer_id
     return buyer_id
 

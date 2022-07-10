@@ -84,7 +84,16 @@ def restaurant_detail(restaurant_id: int, request: Request):
     }
     return templates.TemplateResponse("buyer_restaurant_index.html", data_res)
 
-# #bắt phải đăng nhập 
+# if __name__ == "__main__":
+#     uvicorn.run(app=app, host="0.0.0.0", port=8088)
+
+@app.get("/read_restaurants", tags=['Root'])
+def get_all_restaurant_info():
+    db = get_database_session()
+    return restaurant_crud.get_all_restaurants(db=db, skip=0, limit=100)
+
+
+# #Bắt phải đăng nhập ----------------------------------------------------------------------
 # class NotAuthenticatedException(Exception):
 #     pass
 
@@ -95,22 +104,34 @@ def restaurant_detail(restaurant_id: int, request: Request):
 # @app.exception_handler(StarletteHTTPException)
 # async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 #     return RedirectResponse(url='/error_auth')
-#     data_res = {
-#         "request": request,
-#     }
-#     return templates.TemplateResponse("/404.html",data_res)
+#     # data_res = {
+#     #     "request": request,
+#     # }
+#     # return templates.TemplateResponse("/404.html",data_res)
 
 # manager.not_authenticated_exception = NotAuthenticatedException
 # # You also have to add an exception handler to your app instance
 # app.add_exception_handler(NotAuthenticatedException, exc_handler)
-# @app.get('/error_auth', response_class=JSONResponse,tags=["account"])
-# async def template_login(response:Response):
-#     return RedirectResponse(url='/login_form')
+# @app.get('/error_auth', response_class=HTMLResponse, tags=["account"])
+# async def template_login(request: Request):
+#     data_res = {
+#         "request": request,
+#         'error': 'Bạn chưa đăng nhập'
+#     }
+#     return templates.TemplateResponse("login.html", data_res)
 
-# if __name__ == "__main__":
-#     uvicorn.run(app=app, host="0.0.0.0", port=8088)
+# Check if login ---------------------------------------------------------------------------
 
-@app.get("/read_restaurants", tags=['Root'])
-def get_all_restaurant_info():
-    db = get_database_session()
-    return restaurant_crud.get_all_restaurants(db=db, skip=0, limit=100)
+manager.useRequest(app=app)
+
+@app.get("/check-login")
+def check_login(request: Request):
+    user = request.state.user
+    status = 1
+    message = ""
+
+    if user is None:
+        status = 0
+        message = "Bạn cần đăng nhập để thực hiện chức năng này!"
+
+    return {"status": status, "message": message}

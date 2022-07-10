@@ -6,11 +6,17 @@ import os
 def get_account(db: Session, account_id: int):
     return db.query(models.Account).filter(models.Account.account_id == account_id).first()
 
+def get_account_username(db: Session, account_id: int):
+    db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()
+    username = db_acc.account_username
+    return username
+
 def get_account_by_name(db: Session, account_name: str):
     return db.query(models.Account).filter(models.Account.account_username == account_name).first()
 
 def count_duplicate_username(db: Session, username: str):
-    return db.query(models.Account).filter(models.Account.account_username == username).count()
+    count = db.execute(f"""SELECT COUNT(*) as TOTAL FROM account WHERE account_username='{username}' """)
+    return count.fetchall()
 
 def create_account(db: Session, account: schemas.Account):
     hashed_password = Hash.bcrypt(account.account_password)
@@ -44,6 +50,14 @@ def create_account_return_ID(db: Session, account: schemas.Account):
     acc_id = db_acc.account_id
     db.refresh(db_acc)
     return acc_id
+
+def update_account_name(db: Session, account: schemas.UpdateAccountName, account_id: int):
+    db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()
+    db_acc.account_username = account.account_username
+    db.commit()
+    #Check dữ liệu trả ra có không
+    username = db_acc.account_username
+    return username
 
 def update_account(db: Session, account: schemas.Account, account_id: int):
     db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()

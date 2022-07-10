@@ -1,3 +1,6 @@
+import string
+from typing import Union
+from unittest import result
 from sqlalchemy.orm import Session
 import models
 import schemas
@@ -5,14 +8,38 @@ import schemas
 def get_all_foods(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Food).offset(skip).limit(limit).all()
 
-def get_food_from_account(db: Session, account_id: int, skip: int = 0, limit: int = 100):
-    result = db.execute(f"""SELECT acc.account_id AS account_ID, sl.seller_id AS seller_ID, res.restaurant_id AS restaurant_ID, f.*, rw.food_quantity
+def count_all_foods_by_account(db: Session, account_id: int, query: Union[str, None] = None):
+    string = f"""
+    SELECT COUNT(*) AS TOTAL_ROW
+    FROM restaurant_warehouse rw
+    JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
+    JOIN seller sl ON sl.seller_id = res.seller_id
+    JOIN account acc ON acc.account_id = sl.account_id
+    JOIN food f ON f.food_id = rw.food_id
+    WHERE (acc.account_id = {account_id}) """
+    # Nếu có seach => str = Pho
+    if query:
+        query_str = f"""AND (f.food_name LIKE '%{query}%')"""
+        string = ''.join([string, query_str])
+    result = db.execute(string)
+    return result.fetchall()
+
+def get_all_foods_by_account(db: Session, account_id: int, query: Union[str, None] = None, skip: int = 0, limit: int = 100):
+    string = f"""SELECT acc.account_id AS account_ID, sl.seller_id AS seller_ID, res.restaurant_id AS restaurant_ID, f.*, rw.food_quantity
 FROM restaurant_warehouse rw
 JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
 JOIN seller sl ON sl.seller_id = res.seller_id
 JOIN account acc ON acc.account_id = sl.account_id
 JOIN food f ON f.food_id = rw.food_id
-WHERE acc.account_id = {account_id}""")
+WHERE acc.account_id = {account_id} """
+    # Nếu có seach => str = Pho
+    pagination = f"""LIMIT {skip}, {limit}"""
+    if query:
+        query_str = f"""AND (f.food_name LIKE '%{query}%') """      
+        string = ''.join([string, query_str, pagination])
+    else:
+        string = ''.join([string, pagination])
+    result = db.execute(string)
     return result.fetchall()
 
 def get_food_from_restaurant(db: Session, restaurant_id: int, skip: int = 0, limit: int = 100):
@@ -22,6 +49,17 @@ JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
 JOIN food f ON f.food_id = rw.food_id
 WHERE res.restaurant_id = {restaurant_id}""")
     return result.fetchall()
+
+def get_food_from_id(db: Session, food_id: int):
+    result = db.execute(f"""SELECT f.*, rw.food_quantity
+FROM food f
+JOIN restaurant_warehouse rw ON rw.food_id = f.food_id
+WHERE f.food_id = {food_id}""")
+    return result.fetchall()
+
+def check_duplicate_image(db: Session, image_name: str):
+    count = db.query(models.Food).filter(models.Food.food_image == image_name).count()
+    return count
 
 def create_food_info(db: Session, food: schemas.Food):
     db_food = models.Food(  food_name = food.food_name,
@@ -47,9 +85,13 @@ def create_food_info_return_ID(db: Session, food: schemas.CreateFoodInfo):
     return food_id
 
 def get_food_info_by_ID(db: Session, food_id: int):
-    food = db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    food = db.execute(f"""SELECT f.*, rw.food_quantity  , ft.food_type_name
+FROM food f
+JOIN restaurant_warehouse rw ON rw.food_id = f.food_id
+JOIN food_type ft ON ft.food_type_id = f.food_type_id
+WHERE f.food_id = {food_id}""")
     
-    return food
+    return food.fetchall()
 
 def update_food_info(db: Session, food: schemas.UpdateFoodInfo, food_id: int):
     db_food = db.query(models.Food).filter(models.Food.food_id == food_id).first()
@@ -57,7 +99,7 @@ def update_food_info(db: Session, food: schemas.UpdateFoodInfo, food_id: int):
     db_food.food_price = food.food_price
     db_food.food_description = food.food_description
     db_food.food_type_id = food.food_type_id
-    db.commit(db_food)
+    db.commit()
     updated_id =  db_food.food_id
     return updated_id
 

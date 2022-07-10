@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+
 :root {
     --primary: #0C63E7;
     --light: #ffffff;
@@ -9,6 +11,7 @@ body{
     overflow: hidden;
     font-weight: 300;
     color: var(--black) !important;
+    font-family: 'Roboto Slab', serif !important;
 }
 
 .bg-main {

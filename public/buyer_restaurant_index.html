@@ -56,20 +56,20 @@ Food Delivery
             </div>
             <div class="col-md-9 px-0" style="background: #fff; border-radius: 5px;">
                 <div class="py-4 border-bottom">
-                    
+
                     <div class="search mx-2" style="text-align: center;">
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-10 mb-2">
                                 <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                            class="border border-warning" type="search" placeholder="Nhập Tên Món.."
-                            aria-label="Search">
+                                    class="border border-warning" type="search" placeholder="Nhập Tên Món.."
+                                    aria-label="Search">
                             </div>
                             <div class="col-12 col-sm-12 col-md-2 mb-2">
                                 <button class="btn btn-outline-warning " type="submit">Tìm Món</button>
                             </div>
                         </div>
-                        
-                        
+
+
                     </div>
                 </div>
 
@@ -96,23 +96,26 @@ Food Delivery
 
                     <div class="row py-2">
                         {% if food_info %}
-                            {% for info in food_info %}
-                            <div class="col-12 col-md-4 col-lg-4 mb-3">
-                                <div class="card h-100 pt-0">
-                                    <img src="{{ url_for('static', path='backend/seller/images/food/') }}{{ info.food_image }}" class="card-img-top" alt="Hình món ăn: {{ info.food_image }}"  width="200px" height="150px">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ info.food_name }}</h5>
-                                        <p class="card-text">Mô tả món ăn: {{ info.food_description }}</p>
-                                        <p>Số lượng còn: {{ info.food_quantity }}</p>
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        <button type="button" class="button" data-restaurant-id="info.restaurant_id">Đặt Món</button>
-                                    </div>
+                        {% for info in food_info %}
+                        <div class="col-12 col-md-4 col-lg-4 mb-3">
+                            <div class="card h-100 pt-0">
+                                <img src="{{ url_for('static', path='backend/seller/images/food/') }}{{ info.food_image }}"
+                                    class="card-img-top" alt="Hình món ăn: {{ info.food_image }}" width="200px"
+                                    height="150px">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ info.food_name }}</h5>
+                                    <p class="card-text">Mô tả món ăn: {{ info.food_description }}</p>
+                                    <p>Số lượng còn: {{ info.food_quantity }}</p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button type="button" class="button btn-add-to-card"
+                                        data-restaurant-id="info.restaurant_id">Đặt Món</button>
                                 </div>
                             </div>
-                            {% endfor %}
+                        </div>
+                        {% endfor %}
                         {% endif %}
-                        
+
                     </div>
 
                 </div>
@@ -122,5 +125,40 @@ Food Delivery
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', '.btn-add-to-card', function () {
+            var flag;
+
+            //Kiểm tra người dùng đã đăng nhập chưa? => not good this way
+            $.ajax({
+                url: "/check-login",
+                method: "GET",
+                contentType: "application/json",
+                success: function (response) {
+                    if (response.status == 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: '' + response.message
+                        });
+                        flag = false;
+                        console.log("Flag inside: "+flag);
+                    }
+                    else {
+                        alert("Bạn đã đăng nhập. :>");
+                    }
+                }
+            })
+
+        })
+    })
+</script>
 
 {% endblock %}

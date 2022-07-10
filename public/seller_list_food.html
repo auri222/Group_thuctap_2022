@@ -13,48 +13,132 @@ Trang thông tin danh sách món ăn
 {% endblock %}
 
 {% block content %}
-<div class="row py-2">
-    <div class="col-md-12">
-        <button type="button" class="btn btn-primary my-2" data-toggle="modal" data-target="#createFoodModal">Thêm món
-            ăn</button>
-        <table class="table  mt-2">
-            <thead class="thead-dark">
-                <tr>
-                    <th>STT </th>
-                    <th>Tên món ăn</th>
-                    <th>Xem</th>
-                    <th>Sửa</th>
-                    <th>Xóa</th>
-                </tr>
-            </thead>
-            <tbody>
+<div class="row py-3">
+    <div class="col-md-12 px-0">
 
-                {% if food_info %}
-                    {% for info in food_info %}
-                    <tr>
-                        <td>{{ info.food_id }}</td>
-                        <td>{{ info.food_name }}</td>
-                        <td>
-                            <a href="#"><i class="bi bi-eye-fill"></i></i></a>
-                        </td>
-                        <td>
-                            <a href="#"><i class="bi bi-pen-fill"></i></a>
-                        </td>
-                        <td>
-                            <a href="#"><i class="bi bi-x-circle-fill"></i></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    <tr>
-                        <td colspan="5"> {{ food_info }} </td>
-                    </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5">Chưa có thông tin</td>
-                </tr>
-                {% endif %}
-            </tbody>
-        </table>
+        <div class="row py-2">
+            <div class="col-sm-12 col-md-8">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createFoodModal">Thêm
+                    món
+                    ăn</button>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="row">
+                    <div class="col-8 px-0">
+                        {% if query %}
+                        <input type="text" id="search" class="form-control" value="{{ query }}">
+                        {% else %}
+                        <input type="text" id="search" class="form-control" placeholder="Tìm kiếm tên món ở đây ...">
+                        {% endif %}
+                    </div>
+                    <div class="col-4 px-0">
+                        <button type="button" class="btn btn-info btn-search ml-2" data-toggle="tooltip"
+                            data-placement="top" title="Click để tìm"><i class="bi bi-search"></i></button>
+                        <button type="button" class="btn btn-del-search btn-warning " data-toggle="tooltip"
+                            data-placement="top" title="Click để xóa tìm kiếm"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <!-- <div class="col-2 px-0 text-center">
+                       
+                    </div> -->
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table  mt-2">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>STT </th>
+                            <th>Tên món ăn</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% if food_info %}
+                        {% for info in food_info %}
+                        <tr>
+                            <td>{{ info.food_id }}</td>
+                            <td>{{ info.food_name }}</td>
+                            <td>
+                                {{ info.food_quantity }}
+                            </td>
+                            <td>
+                                {{ info.food_price }}
+                            </td>
+                            <td>
+
+                                <button type="button" class="btn btn-info btn-view" data-food-id="{{ info.food_id }}" data-toggle="tooltip"
+                            data-placement="top" title="Click để xem chi tiết"><i
+                                        class="bi bi-eye-fill"></i></i></button>
+                                <button type="button" class="btn btn-warning btn-edit"
+                                    data-food-id="{{ info.food_id }}"><i class="bi bi-pen-fill" data-toggle="tooltip"
+                            data-placement="top" title="Click để sửa"></i></button>
+                                <button type="button" class="btn btn-danger btn-delete"
+                                    data-food-id="{{ info.food_id }}"><i class="bi bi-x-circle-fill" data-toggle="tooltip"
+                            data-placement="top" title="Click để xóa"></i></i></button>
+
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5">Chưa có thông tin</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example d-flex" class="mt-2">
+                    <ul class="pagination justify-content-center">
+                        {% if first_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/seller/food?page={{ previous_page }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for i in range(TOTAL_PAGE) %}
+                        {% set num = i + 1 %}
+                        {% if num == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="/seller/food?page={{num}}">{{num}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="/seller/food?page={{num}}">{{num}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if last_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/seller/food?page={{ next_page }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -63,6 +147,7 @@ Trang thông tin danh sách món ăn
 
 {% block modal %}
 
+<!-- Modal create food -->
 <div class="modal fade" id="createFoodModal" tabindex="-1" aria-labelledby="createFoodModalLabel" aria-hidden="true"
     style="color: black;">
     <div class="modal-dialog modal-lg">
@@ -127,13 +212,65 @@ Trang thông tin danh sách món ăn
     </div>
 </div>
 
+<!-- Modal view food detail -->
+<div class="modal fade" id="viewFoodModal" tabindex="-1" aria-labelledby="viewFoodModalLabel" aria-hidden="true"
+    style="color: black;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewFoodModalLabel">Chi tiết món ăn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="food-detail">
+                <!-- Thông tin chi tiết -->
+            </div>
+            <div class=" modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 {% endblock %}
 
 {% block script %}
 <script>
 
     $(document).ready(function () {
-        
+
+        $(document).on('click', '.btn-del-search', function () {
+            var search = $(this).val('');
+            $(function () {
+                function back_to_normal_page() {
+                    location.href = "/seller/food";
+                }
+                window.setTimeout(back_to_normal_page, 1000);
+            });
+        })
+
+        $(document).on('click', '.btn-search', function () {
+            var query = $('#search').val();
+            console.log("Search: " + query);
+            if (query === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Hãy nhập vào khung tìm kiếm trước!'
+                });
+            }
+            else {
+                location.href = "/seller/food?page=1&query=" + query;
+            }
+        })
+
         function check_food_input(name, price, type, quantity, description) {
             var flag = true;
             if (name == "") {
@@ -219,6 +356,7 @@ Trang thông tin danh sách món ăn
             return flag;
         }
 
+        // Lưu thông tin món ăn
         $(document).on('click', '.btn-save-food-info', function () {
             var food_name = $('#food_name').val();
             var food_price = $('#food_price').val();
@@ -264,38 +402,38 @@ Trang thông tin danh sách món ăn
                         else {
                             //2. update food_image
                             var food_id = response.food_id
-                            console.log("Food ID: "+food_id);
+                            console.log("Food ID: " + food_id);
                             $.ajax({
-                                url: "/food/create/image?food_id="+ food_id,
+                                url: "/food/create/image?food_id=" + food_id,
                                 enctype: "multipart/form-data",
                                 method: "PUT",
                                 contentType: false,
                                 cache: false,
                                 processData: false,
                                 data: image,
-                                success: function(output){
+                                success: function (output) {
                                     if (output.status == 0) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Lỗi',
-                                        text: '' + output.message
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        position: 'center',
-                                        icon: 'success',
-                                        title: '' + output.message,
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });
-                                    $(function () {
-                                        function reload_info_modal() {
-                                            $('#createFoodModal').modal('hide');
-                                            location.reload();
-                                        }
-                                        window.setTimeout(reload_info_modal, 1500);
-                                    });
-                                }
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Lỗi',
+                                            text: '' + output.message
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            position: 'center',
+                                            icon: 'success',
+                                            title: '' + output.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        $(function () {
+                                            function reload_info_modal() {
+                                                $('#createFoodModal').modal('hide');
+                                                location.reload();
+                                            }
+                                            window.setTimeout(reload_info_modal, 1500);
+                                        });
+                                    }
                                 }
                             });
                         }
@@ -306,6 +444,98 @@ Trang thông tin danh sách món ăn
                 console.log("ack! sth wrong");
             }
         })
+
+        // Xem chi tiết món ăn
+        $(document).on('click', '.btn-view', function () {
+            var food_id = $(this).data("food-id");
+            console.log("Food ID: " + food_id);
+
+            var data = { "food_id": food_id };
+            $.ajax({
+                url: "/food/fetch?food_id=" + food_id,
+                method: "GET",
+                contentType: "application/json",
+                dataType: "JSON",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    console.log(response);
+                    if (response.status == 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: '' + response.message
+                        });
+                    }
+                    else {
+                        console.log(response.food_detail)
+                        console.log(response.food_detail.food_name)
+                        var detail = response.food_detail
+                        console.log(detail[0].food_name)
+
+                        var table = '<table class="table table-borderless mt-2">';
+                        table += '<tbody>'
+
+                        table += `
+                        <tr>
+                            <th></th>
+                            <td><img style="width:128px;height:128px;" src="{{ url_for('static', path='backend/seller/images/food/') }}`+ detail[0].food_image + `" alt="` + detail[0].food_image + ` " class="rounded" ></td>
+                        </tr>
+                        <tr>
+                            <th>Mã món ăn: </th>
+                            
+                            <td>`+ detail[0].food_id + `</td>
+                        </tr>
+                        <tr>
+                            <th>Tên món ăn: </th>
+                            <td>`+ detail[0].food_name + `</td>
+                        </tr>
+                        <tr>
+                            <th>Tên loại món ăn: </th>
+                            <td>`+ detail[0].food_type_name + `</td>
+                        </tr>
+                        <tr>
+                            <th>Giá: </th>
+                            <td>`+ detail[0].food_price + `</td>
+                        </tr>
+                        <tr>
+                            <th>Số lượng: </th>
+                            <td>`+ detail[0].food_quantity + `</td>
+                        </tr>
+                        <tr>
+                            <th>Mô tả: </th>
+                            <td>`+ detail[0].food_description + `</td>
+                        </tr>
+                        `
+
+                        table += '</tbody>'
+
+                        table += '</table>';
+
+                        $('#food-detail').html(table);
+                        $('#viewFoodModal').modal('show');
+                    }
+                }
+            });
+        })
+
+        //Sửa thông tin món ăn
+        //B1: Chuyển sang trang edit 
+        $(document).on('click', '.btn-edit', function () {
+            var food_id = $(this).data("food-id");
+            console.log("Food ID: " + food_id);
+
+            location.href = "/food/edit?food_id=" + food_id;
+
+        });
+
+        //Xóa món ăn
+        $(document).on('click', '.btn-delete', function () {
+            var food_id = $(this).data("food-id");
+            console.log("Food ID: " + food_id);
+
+
+        })
+
     })
 </script>
 {% endblock %}
