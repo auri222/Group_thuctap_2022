@@ -95,6 +95,114 @@ def update_admin(id: int, admin: schemas.Admin):
 def delete_admin(id: int):
     return admin_crud.delete_admin(db, admin_id=id)
 
+@router.get("/edit_profile", response_class=HTMLResponse)
+def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    admin_info = admin_crud.get_admin_by_account_id(db=db,account_id=account_id)
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if admin_info:
+        data.append(admin_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'admin_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_profile.html", data_res)
+
+
+@router.put("/edit_profile")
+def edit_buyer_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    
+    admin_info = admin_crud.update_admin(db=db, admin=admin, admin_id=account_id )
+    print(f"admin info: {admin_info}")
+    if admin_info:
+        status = 1
+        message = "Sửa thành công"
+    else:
+        status = 0
+        message = "Sửa không thành công. Thử lại sau!"
+    
+
+    return {"status": status,"message": message, "account_id": account_id}
+
+@router.get("/edit_account", response_class=HTMLResponse)
+def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if account_info:
+        data.append(account_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'account_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_account.html", data_res)
+
+
+@router.put("/edit_account")
+def edit_admin_info(account_id: int, update_pass: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    
+
+    account_id = account_crud.update_account_password(db=db,account=update_pass,account_id=account_id)
+    if account_id != None:
+        status = 1
+        message = "Sửa tài khoản thành công!"
+    else:
+        status = 0
+        message = "Hệ thống lỗi! Vui lòng thử lại sau!"
+    
+
+    return {"status": status,"message": message, "account_id": account_id}
+
 @router.get("/foodtype/", response_class=HTMLResponse)
 def read_foodtype(request: Request, user=Depends(manager)):
     if user.account_type != 1:
