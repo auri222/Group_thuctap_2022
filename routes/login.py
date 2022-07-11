@@ -42,6 +42,8 @@ def login_form(request: Request):
     }
     return templates.TemplateResponse("login.html", login_form)
 
+
+
 @manager.user_loader()
 def load_user(username:str):
     user = account_crud.get_account_by_name(db, username)
@@ -90,3 +92,4 @@ def protected_route(request: Request, user=Depends(manager)):
     resp = RedirectResponse(url="/login_form", status_code=status.HTTP_302_FOUND)
     manager.set_cookie(resp, "")
     return resp
+

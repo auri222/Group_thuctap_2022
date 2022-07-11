@@ -92,8 +92,10 @@
               <button type="submit" class="btn-submit border border-warning"
                 style="background-color: orange; color: #fff;">Đăng Nhập</button>
             </div>
-            <div>
-              <p style="text-align: center;">Bạn chưa có tài khoản?<a href="/register/"
+            <div class="py-2">
+              <p style="text-align: center;" class="mb-0 py-2">Quên mật khẩu?<a href="/register/confirm-email"
+                  style="text-decoration: none;" class="text_color_blue"> Click để sửa</a>
+              <p style="text-align: center;" class="mb-0 py-2">Bạn chưa có tài khoản?<a href="/register/"
                   style="color: red;text-decoration: none;"> Đăng Ký</a>
   
             </div>
@@ -107,6 +109,7 @@
 
   <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
 
 
 </body>

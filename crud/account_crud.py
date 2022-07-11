@@ -82,8 +82,8 @@ def update_account_password(db: Session, account: schemas.UpdateAccountPassword,
     hashed_password = Hash.bcrypt(account.account_password)
     db_acc.account_password = hashed_password
     db.commit()
-    acc_id = db_acc.account_id
-    return acc_id
+    password = db_acc.account_password
+    return password
 
 def update_account_otp_token(db: Session, account: schemas.UpdateAccountOTPToken, account_id: int):
     db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()
@@ -103,3 +103,53 @@ def delete_account(db: Session, account_id: int):
     db.delete(db_acc)
     db.commit()
     return {"Success": f"Account with ID {account_id} is deleted"}
+
+# Kiểm tra email từ các bảng admin, seller, buyer
+# Nếu count> 0 thì lấy kết quả kiểm tra và return
+def count_seller_by_email(db: Session, email: str):
+    string = f"""SELECT COUNT(*) AS total_seller
+                FROM seller sl
+                WHERE sl.seller_email = '{email}'"""
+    result = db.execute(string)
+    return result.fetchall()
+
+def count_buyer_by_email(db: Session, email: str):
+    string = f"""SELECT COUNT(*) AS total_buyer
+            FROM buyer b
+            WHERE b.buyer_email = '{email}'"""
+    result = db.execute(string)
+    return result.fetchall()
+
+def count_admin_by_email(db: Session, email: str):
+    string = f"""SELECT COUNT(*) AS total_admin
+            FROM admin ad
+            WHERE ad.admin_email = '{email}'"""
+    result = db.execute(string)
+    return result.fetchall()
+
+def get_account_by_email(db: Session, email: str, type: int):
+    string = ""
+    if type == 1:
+        string = f"""SELECT acc.account_id, acc.account_token
+                FROM admin ad
+                JOIN account acc ON acc.account_id = ad.account_id
+                WHERE ad.admin_email = '{email}'"""
+    if type == 2:
+        string = f"""SELECT acc.account_id, acc.account_token
+                    FROM seller sl
+                    JOIN account acc ON acc.account_id = sl.account_id
+                    WHERE sl.seller_email = '{email}'"""
+    if type == 3:
+        string = f"""SELECT acc.account_id, acc.account_token
+                    FROM buyer b
+                    JOIN account acc ON acc.account_id = b.account_id
+                    WHERE b.buyer_email = '{email}'"""
+    result = db.execute(string)
+    return result.fetchall()
+
+def check_account_token(db: Session, token: str, id: int):
+    string = f"""SELECT COUNT(*) AS TOTAL_ACCOUNT
+FROM account acc
+WHERE (acc.account_id = {id}) AND (acc.account_token = '{token}')"""
+    result = db.execute(string)
+    return result.fetchall()

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
+from rsa import verify
 from starlette.applications import Starlette
 from starlette.routing import Mount
 from starlette.staticfiles import StaticFiles
@@ -161,3 +162,91 @@ def handle_register_buyer_form(register_buyer: schemas.CreateBuyerInfo):
         message = "Lỗi. Vui lòng thử lại sau!"
     print(buyer_info.__dict__)
     return {"status": status,"message": "Đăng ký thành công"}
+
+@router.get("/confirm-email", response_class=HTMLResponse)
+def confirm_email_form(request: Request):
+    data_res = {
+        "request": request,
+        "title": 'Form xác thực tài khoản email'
+    }
+
+    return templates.TemplateResponse("email.html", data_res)
+
+@router.get("/fetch-email")
+def fetch_email(request: Request, email: str):
+    #Tạo biến kiểm tra
+    count = 0
+    account_type = 0
+    data = ""
+
+    db_ = get_database_session()
+
+    #Kiểm tra email thuộc loại nào 
+    count_admin = account_crud.count_admin_by_email(db=db_, email=email)
+    total_admin = count_admin[0]['total_admin']
+
+    count_seller = account_crud.count_seller_by_email(db=db_, email=email)
+    total_seller = count_seller[0]['total_seller']
+
+    count_buyer = account_crud.count_buyer_by_email(db=db_, email=email)
+    total_buyer = count_buyer[0]['total_buyer']
+
+    #Lấy dữ liệu tài khoản theo loại và email
+    if total_admin == 1:
+        account_type = 1
+        data = account_crud.get_account_by_email(db=db_, email=email, type=account_type)
+        count = total_admin
+    
+    if total_seller == 1:
+        account_type = 2
+        data = account_crud.get_account_by_email(db=db_, email=email, type=account_type)
+        count = total_seller
+
+    if total_buyer == 1:
+        account_type = 3
+        data = account_crud.get_account_by_email(db=db_, email=email, type=account_type)
+        count = total_buyer
+
+    return {"count": count, "data": data}
+
+@router.get("/reset-password", response_class=HTMLResponse)
+def reset_password_form(request: Request, data: int):
+    data_res = {
+        "request": request,
+        "title": 'Form nhập lại mật khẩu'
+    }
+
+    return templates.TemplateResponse("resetpassword.html", data_res)
+
+@router.put("/reset-password")
+async def reset_password(data: int, password: schemas.UpdateAccountPassword, request: Request):
+
+    db_ = get_database_session()
+
+    # print(f"password: {password}")
+    plain_pass = password.account_password
+
+    hashed_password = account_crud.update_account_password(db=db_, account=password, account_id=data)
+
+    # print(f"Hashed pw: {hashed_password}")
+
+    verify = Hash.verify(plain_password=plain_pass, hashed_password=hashed_password)
+
+    # print(verify)
+
+    return {"verify": verify}
+
+@router.post("/check_account_token")
+def check_account_token(request: Request, token: schemas.AccountToken):
+
+    string_token = token.account_token
+    token_id = token.account_id
+    count = account_crud.check_account_token(db=db, token=string_token, id=token_id)
+
+    TOTAL_ACCOUNT = count[0]['TOTAL_ACCOUNT']
+    verify = ""
+    if TOTAL_ACCOUNT == 1:
+        verify = True
+    else:
+        verify = False
+    return {"verify": verify}

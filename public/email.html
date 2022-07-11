@@ -68,27 +68,26 @@
       <div class="col-1 col-sm-1 col-md-3 col-lg-4"></div>
       <div class="col-10 col-sm-10 col-md-6 col-lg-4">
         <div class="main-content" style="text-align: center;">
-          <form class="login-form" action="/auth/login" method="post" enctype="application/x-www-form-urlencoded">
-  
-            <h4 style="text-align: center;">Cập Nhật Mật Khẩu</h4>
+          <form class="login-form">
+
+            <h4 style="text-align: center;">Xác minh tài khoản</h4>
             {% if error %}
             <div class="alert alert-warning">{{ error }}</div>
             {% endif %}
             <div class="mb-3">
               <div class="form-floating">
-                <input type="text" class="form-control" id="email" name="email" placeholder="Email"
-                  required>
+                <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
                 <label for="floatingInput">Email</label>
               </div>
             </div>
-        
+
             <div>
-              <button type="submit" class="btn-submit border border-warning"
+              <button type="button" class="btn-submit border border-warning"
                 style="background-color: orange; color: #fff;">Tiếp Theo</button>
             </div>
-       
+
           </form>
-  
+
         </div>
       </div>
       <div class="col-1 col-sm-1 col-md-3 col-lg-4"></div>
@@ -98,7 +97,54 @@
   <script src="{{ url_for('static', path='vendors/jquery/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url_for('static', path='vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
+  <script>
+    $(document).ready(function () {
+      $(document).on('click', '.btn-submit', function () {
+        var email = $('#email').val();
 
+        if (email === "") {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Hãy nhập địa chỉ email!'
+          });
+        }
+        else{
+          //Kiểm tra email có trong đúng không
+          $.ajax({
+            url: "/register/fetch-email?email="+email,
+            method: "GET",
+            contentType: "application/json",
+            success: function(response){
+              console.log(response);
+              if(response.count !== 1){
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Lỗi',
+                  text: 'Email không tồn tại! Hãy nhập tên email đã đăng ký!'
+                });
+              }
+              else{
+                var data = response.data[0].account_id;
+                var token = response.data[0].account_token;
+                Swal.fire({
+                  title: 'OK',
+                  text: "Tài khoản email hợp lệ!",
+                  icon: 'success',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Đi tới bước tiêp theo'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.href = "/register/reset-password?data="+data+"&token="+token;
+                  }
+                })
+              }
+            }
+          });
+        }
+      })
+    });
+  </script>
 </body>
 
 </html>

@@ -31,6 +31,13 @@ class Account(BaseModel):
 class RegisterAccount(Account):
     pass
 
+class AccountToken(BaseModel):
+    account_id: int
+    account_token: str
+
+    class Config:
+        orm_mode = True
+
 class UpdateAccountName(BaseModel):
     account_username: str
 
