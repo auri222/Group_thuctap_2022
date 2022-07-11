@@ -99,13 +99,14 @@ Food Delivery
                                     <h5 class="card-title">{{ info.food_name }}</h5>
                                     <p class="card-text">Mô tả món ăn: {{ info.food_description }}</p>
                                     <p>Số lượng còn: {{ info.food_quantity }}</p>
+                                    <p>Giá : {{ info.food_price}}</p>
                                 </div>
                                 <div class="card-footer text-center">
                                     {% if info.food_quantity == 0 %}
                                     <button type="button" class="button out-of-stock"
                                         data-restaurant-id="info.restaurant_id">Hết hàng</button>
                                     {% else %}
-                                    <button type="button" class="button btn-add-to-card"
+                                    <button type="button" class="button btn-add-to-card" style="border: none;"
                                         data-restaurant-id="info.restaurant_id">Đặt Món</button>
                                     {% endif %}
                                 </div>
