@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+
 :root {
     --primary: #0C63E7;
     --light: #ffffff;
@@ -8,7 +10,8 @@
 body{
     overflow: hidden;
     font-weight: 300;
-    color: var(--primary) !important;
+    color: var(--black) !important;
+    font-family: 'Roboto Slab', serif !important;
 }
 
 .bg-main {
@@ -58,12 +61,16 @@ body{
     padding-bottom: 5rem;
 }
 
-.dashboard-card .card-body i{
-    font-size: 35px;
-    
+.card {
+    border-color: #7209B7;
 }
 
-.dashboard-card .card-body .card-content {
+.card-body i{
+    font-size: 35px;
+    color: #7209B7;
+}
+
+.card-content {
     box-shadow: 2px 2px 5px rgb(185, 183, 183);
 }
 

@@ -60,6 +60,8 @@ Food Delivery
                         {% for food_type in food_type_info %}
                         <li>{{ food_type.food_type_name }}</li>
                         {% endfor %}
+                        {% else %}
+                        <li >Không có thông tin</li>
                         {% endif %}
                     </ul>
                 </div>
@@ -69,30 +71,30 @@ Food Delivery
 
                     <div class="search" style="text-align: center;">
                         <div class="row">
-                            <div class="col-12 col-sm-12 col-md-8 mb-2 px-0">
+                            <div class="col-12 col-sm-12 col-md-10 mb-2 px-0">
                                 {% if username %}
                                 {% if query %}
-                                <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-buyer-food" type="search" value="{{query}}"
+                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
+                                    class="border border-warning search-buyer-food" type="text" value="{{query}}"
                                     aria-label="Search">
                                 {% else %}
-                                <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-buyer-food" type="search"
+                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
+                                    class="border border-warning search-buyer-food" type="text"
                                     placeholder="Nhập Tên Món.." aria-label="Search">
                                 {% endif %}
                                 {% else %}
                                 {% if query %}
-                                <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-food" type="search" value="{{query}}"
+                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
+                                    class="border border-warning search-food" type="text" value="{{query}}"
                                     aria-label="Search">
                                 {% else %}
-                                <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-food" type="search" placeholder="Nhập Tên Món.."
+                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
+                                    class="border border-warning search-food" type="text" placeholder="Nhập Tên Món.."
                                     aria-label="Search">
                                 {% endif %}
                                 {% endif %}
                             </div>
-                            <div class="col-12 col-sm-12 col-md-4 mb-2 px-0">
+                            <div class="col-12 col-sm-12 col-md-2 mb-2 px-0">
                                 <button class="btn btn-outline-warning btn-search" type="button" data-toggle="tooltip"
                                     data-placement="top" title="Click để tìm">Tìm Món</button>
 

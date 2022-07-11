@@ -75,3 +75,29 @@ def update_buyer_return_buyer_id(db:Session, buyer: schemas.UpdateBuyerInfo, acc
     buyer_id = db_buyer.buyer_id
     return buyer_id
 
+# Phân trang admin ----------------------------------------------------------
+def count_all_rows_buyer(db: Session):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW
+FROM account acc
+JOIN buyer b ON b.account_id = acc.account_id"""
+    result = db.execute(query)
+    return result.fetchall()
+
+def get_all_buyers(db: Session, skip: int=0, limit: int=100):
+    string = f"""SELECT acc.account_id, acc.account_username, b.*
+                    FROM account acc
+                    JOIN buyer b ON b.account_id = acc.account_id
+                    """
+
+    pagination = f"""LIMIT {skip}, {limit} """
+    string = ''.join([string, pagination])
+    result = db.execute(string)
+    return result.fetchall()
+
+def get_all_info_buyer(db: Session, buyer_id:int):
+    string = f"""SELECT acc.account_username, acc.account_date_created, b.*
+FROM buyer b
+JOIN account acc ON acc.account_id = b.account_id
+WHERE b.buyer_id = {buyer_id}"""
+    result = db.execute(string)
+    return result.fetchall()

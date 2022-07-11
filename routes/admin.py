@@ -10,8 +10,9 @@ from starlette.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
-from crud import admin_crud, account_crud, food_type_crud
+from crud import admin_crud, account_crud, food_type_crud, seller_crud, buyer_crud
 from routes.login import manager
+import math
 router = APIRouter(
     prefix="/admin",
     tags=['Admins']
@@ -128,7 +129,7 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
 
 
 @router.put("/edit_profile")
-def edit_buyer_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Request, user=Depends(manager)):
+def edit_admin_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -346,6 +347,184 @@ def edit_foodtype(foodtype_id: int, foodtype: schemas.FoodType, request: Request
 
     return {"status": status, "message": message, "account_id": account_id}
         
+# API Dashboard ------------------------------------------------------------------------------
+@router.get("/fetch-all-rows-seller")
+def fetch_all_rows_seller(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
 
-    
+    db_ = get_database_session()
 
+    count = admin_crud.count_all_seller_accounts(db=db_)
+    TOTAL_ROWS_SELLER = count[0]['TOTAL_ROW_SELLER']
+
+    return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER }
+
+@router.get("/fetch-all-rows-buyer")
+def fetch_all_rows_buyer(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    count = admin_crud.count_all_buyer_accounts(db=db_)
+    TOTAL_ROWS_BUYER = count[0]['TOTAL_ROW_BUYER']
+
+    return {"TOTAL_ROWS_BUYER": TOTAL_ROWS_BUYER }
+
+@router.get("/fetch-all-rows-order")
+def fetch_all_rows_order(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    count = admin_crud.count_all_orders(db=db_)
+    TOTAL_ROWS_ORDER = count[0]['TOTAL_ROW_ORDER']
+
+    return {"TOTAL_ROWS_ORDER": TOTAL_ROWS_ORDER}
+# ------------------------------------------------------------------------------------------
+
+# Quan ly danh sach seller
+@router.get("/sellers/", response_class=HTMLResponse)
+def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+    username = user.account_username
+
+    db_ = get_database_session()
+
+    count = seller_crud.count_all_rows_seller(db=db_)
+
+    # Phân trang
+    limit = 5 #1 trang 5 dòng
+    offset = (page - 1)*limit
+    TOTAL_ROWS = count[0]['TOTAL_ROW']
+    TOTAL_PAGES = math.ceil(TOTAL_ROWS/limit)
+    first_page = 'disabled' if page == 1 else ''
+    last_page = ''
+    if TOTAL_PAGES == 0:
+        last_page = 'disabled'
+    elif page == TOTAL_PAGES:
+        last_page = 'disabled'
+
+    next_page = page + 1
+    previous_page = page - 1
+
+    #Lấy dữ liệu 
+    sellers_info = seller_crud.get_all_sellers(db=db_, skip=offset, limit=limit)
+
+    seller_data = []
+    for seller in sellers_info:
+        seller_data.append(seller)
+
+    data_res = {
+        "request": request,
+        "title": 'Danh sách người bán',
+        'username': username,
+        'account_id': account_id,
+        'sellers_info': seller_data,
+        'first_page': first_page,
+        'last_page': last_page,
+        'next_page': next_page,
+        'previous_page': previous_page,
+        'TOTAL_ROW': TOTAL_ROWS,
+        'TOTAL_PAGE': TOTAL_PAGES,
+        'page': page
+    }
+
+    return templates.TemplateResponse("", data_res)
+
+# Quan ly danh sach buyer
+@router.get("/buyers", response_class=HTMLResponse)
+def get_all_buyers(request: Request, page: int=1, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+    username = user.account_username
+
+    db_ = get_database_session()
+
+    count = buyer_crud.count_all_rows_buyer(db=db_)
+
+    # Phân trang
+    limit = 5 #1 trang 5 dòng
+    offset = (page - 1)*limit
+    TOTAL_ROWS = count[0]['TOTAL_ROW']
+    TOTAL_PAGES = math.ceil(TOTAL_ROWS/limit)
+    first_page = 'disabled' if page == 1 else ''
+    last_page = ''
+    if TOTAL_PAGES == 0:
+        last_page = 'disabled'
+    elif page == TOTAL_PAGES:
+        last_page = 'disabled'
+
+    next_page = page + 1
+    previous_page = page - 1
+
+    #Lấy dữ liệu 
+    buyers_info = buyer_crud.get_all_buyers(db=db_, skip=offset, limit=limit)
+
+    buyer_data = []
+    for buyer in buyers_info:
+        buyer_data.append(buyer)
+
+    data_res = {
+        "request": request,
+        "title": 'Danh sách người bán',
+        'username': username,
+        'account_id': account_id,
+        'buyers_info': buyer_data,
+        'first_page': first_page,
+        'last_page': last_page,
+        'next_page': next_page,
+        'previous_page': previous_page,
+        'TOTAL_ROW': TOTAL_ROWS,
+        'TOTAL_PAGE': TOTAL_PAGES,
+        'page': page
+    }
+
+    return templates.TemplateResponse("admin_buyers_list.html", data_res)
+
+@router.get("/fetch-buyer-info")
+def fetch_buyer_info(buyer_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+    buyer_info = buyer_crud.get_all_info_buyer(db=db_, buyer_id=buyer_id)
+
+    return {"buyer_info": buyer_info}

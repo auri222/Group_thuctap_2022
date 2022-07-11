@@ -4,42 +4,6 @@
 Trang admin
 {% endblock %}
 
-{% block sidebar %}
-<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Dashboard</a>
-<a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Profile</a>
-<a href="#" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản buyer</a>
-<a href="#" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản seller</a>
-<a href="#" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản đơn hàng</a>
-<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý loại thức ăn</a>
-{% endblock %}
-
-{% block nav_link %}
-<li class="nav-item dropdown">
-    <a class="nav-link" href="#">
-        {{ username if username != None }}
-    </a>
-</li>
-<li class="nav-item dropdown">
-    <a class="nav-link" href="/logout">
-        Đăng xuất
-    </a>
-</li>
-
-
-{% endblock %}
-
 {% block page_name %}
 Loại thức ăn
 {% endblock %}

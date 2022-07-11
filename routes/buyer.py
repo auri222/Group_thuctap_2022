@@ -228,6 +228,7 @@ def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, No
 
     return templates.TemplateResponse("restaurant_index.html",data_res)
 
+
 @router.get("/", response_class=HTMLResponse)
 def home( request: Request, user= Depends(manager)):
     if user.account_type != 3:
