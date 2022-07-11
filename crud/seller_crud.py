@@ -99,3 +99,13 @@ JOIN restaurant res ON res.seller_id = sl.seller_id
     string = ''.join([string, pagination])
     result = db.execute(string)
     return result.fetchall()
+
+def get_all_info_seller(db: Session, seller_id: int):
+    string = f"""SELECT acc.account_username, acc.account_date_created, sl.*, res.restaurant_name, res.restaurant_address, res.restaurant_image
+FROM seller sl
+JOIN account acc ON acc.account_id = sl.account_id
+JOIN restaurant res ON res.seller_id = sl.seller_id
+WHERE sl.seller_id = {seller_id}"""
+
+    result = db.execute(string)
+    return result.fetchall()

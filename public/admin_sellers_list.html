@@ -7,11 +7,11 @@ Trang admin
 
 
 {% block page_name %}
-Buyer
+Seller
 {% endblock %}
 
 {% block page_name_detail %}
-Trang quản lý danh sách người mua
+Trang quản lý danh sách người bán
 {% endblock %}
 
 {% block content %}
@@ -31,17 +31,17 @@ Trang quản lý danh sách người mua
                             </tr>
                         </thead>
                         <tbody>
-                            {% if buyers_info %}
-                            {% for info in buyers_info %}
+                            {% if sellers_info %}
+                            {% for info in sellers_info %}
                             <tr>
-                                <td>{{ info.buyer_id }}</td>
-                                <td>{{ info.buyer_name }}</td>
-                                <td>{{ info.buyer_email }}</td>
+                                <td>{{ info.seller_id }}</td>
+                                <td>{{ info.seller_name }}</td>
+                                <td>{{ info.seller_email }}</td>
                                 <td>
                                     <button class="btn btn-info btn-view"
-                                        data-buyer-id="{{ info.buyer_id }}">Xem</button>
+                                        data-seller-id="{{ info.seller_id }}">Xem</button>
                                     <button class="btn btn-danger btn-delete"
-                                        data-buyer-id="{{ info.buyer_id }}">Xóa</button>
+                                        data-seller-id="{{ info.seller_id }}">Xóa</button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -57,7 +57,7 @@ Trang quản lý danh sách người mua
                         <ul class="pagination justify-content-center">
                             {% if first_page == "" %}
                             <li class="page-item">
-                                <a class="page-link" href="/admin/buyers?page={{ previous_page }}"
+                                <a class="page-link" href="/admin/sellers?page={{ previous_page }}"
                                     aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
@@ -75,11 +75,11 @@ Trang quản lý danh sách người mua
                             {% set num = i + 1 %}
                             {% if num == page %}
                             <li class="page-item active">
-                                <a class="page-link" href="/admin/buyers?page={{num}}">{{num}}</a>
+                                <a class="page-link" href="/admin/sellers?page={{num}}">{{num}}</a>
                             </li>
                             {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="/admin/buyers?page={{num}}">{{num}}</a>
+                                <a class="page-link" href="/admin/sellers?page={{num}}">{{num}}</a>
                             </li>
                             {% endif %}
                             {% endfor %}
@@ -87,7 +87,7 @@ Trang quản lý danh sách người mua
 
                             {% if last_page == "" %}
                             <li class="page-item">
-                                <a class="page-link" href="/admin/buyers?page={{ next_page }}" aria-label="Next">
+                                <a class="page-link" href="/admin/sellers?page={{ next_page }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -111,12 +111,12 @@ Trang quản lý danh sách người mua
 
 {% block modal %}
 
-<div class="modal fade" id="viewBuyerModal" tabindex="-1" aria-labelledby="viewBuyerModalLabel" aria-hidden="true"
+<div class="modal fade" id="viewSellerModal" tabindex="-1" aria-labelledby="viewSellerModalLabel" aria-hidden="true"
     style="color: black;">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewBuyerModalLabel">Thông tin chi tiết</h5>
+                <h5 class="modal-title" id="viewSellerModalLabel">Thông tin chi tiết</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -140,25 +140,31 @@ Trang quản lý danh sách người mua
     $(document).ready(function () {
 
         $(document).on('click', '.btn-view', function () {
-            var buyer_id = $(this).data("buyer-id");
+            var seller_id = $(this).data("seller-id");
 
             $.ajax({
-                url: "/admin/fetch-buyer-info?buyer_id=" + buyer_id,
+                url: "/admin/fetch-seller-info?seller_id=" + seller_id,
                 method: "GET",
                 contentType: "application/json",
                 success: function (response) {
                     console.log(response);
-                    var info = response.buyer_info[0];
+                    var info = response.seller_info[0];
                     console.log(info);
                     var created_date = new Date(info.account_date_created);
                     var created_date_string = "" + created_date.getHours() + ":" + created_date.getMinutes() + ":" + created_date.getSeconds() + " " + created_date.getDate() + "/" + (created_date.getMonth() + 1) + "/" + created_date.getFullYear();
                     console.log(created_date_string);
 
-                    var buyer_birthday = new Date(info.buyer_birthday);
-                    var buyer_birthday_string = ""+buyer_birthday.getDate()+"/"+(buyer_birthday.getMonth()+1)+"/"+buyer_birthday.getFullYear();
-                    console.log(buyer_birthday_string);
+                    var seller_birthday = new Date(info.seller_birthday);
+                    var seller_birthday_string = "" + seller_birthday.getDate() + "/" + (seller_birthday.getMonth() + 1) + "/" + seller_birthday.getFullYear();
+                    console.log(seller_birthday_string);
 
-                    var content = `<div class="row">
+                    var content = `<div class="row mb-2">
+                                <div class="col-md-12">
+                                    <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}`+ info.restaurant_image + `"
+                    class="mx-auto d-block shadow rounded" width="180px" height="180px">
+                                </div>
+                                </div>`;
+                    content += `<div class="row">
                                 <div class="col-md-12">
                                     <span class="text-primary">Thông tin tài khoản</span>
                                 </div>
@@ -168,14 +174,14 @@ Trang quản lý danh sách người mua
                                 <tbody>
 
                                     <tr>
-                                    <td scope="row">Tên tài khoản:</td>
-                                    <td>
+                                    <td scope="row" style="width: 40%;">Tên tài khoản:</td>
+                                    <td style="width: 60%;">
                                         `+ info.account_username + `
                                     </td>
                                     </tr>
                                     <tr>
-                                    <td scope="row">Ngày tạo tài khoản:</td>
-                                    <td>
+                                    <td scope="row" style="width: 40%;">Ngày tạo tài khoản:</td>
+                                    <td style="width: 60%;">
                                         `+ created_date_string + `
                                     </td>
                                     </tr>
@@ -195,48 +201,68 @@ Trang quản lý danh sách người mua
                                 <tbody>
 
                                     <tr>
-                                    <td scope="row">Họ tên: </td>
-                                    <td>
-                                        `+ info.buyer_name +`
+                                    <td scope="row" style="width: 40%;">Họ tên: </td>
+                                    <td style="width: 60%;">
+                                        `+ info.seller_name + `
                                     </td>
                                     </tr>
 
                                     <tr>
-                                    <td scope="row">Ngày sinh: </td>
-                                    <td>
-                                        `+ buyer_birthday_string +`
+                                    <td scope="row" style="width: 40%;">Ngày sinh: </td>
+                                    <td style="width: 60%;">
+                                        `+ seller_birthday_string + `
                                     </td>
                                     </tr>
                                     <tr>
-                                    <td scope="row">Địa chỉ: </td>
-                                    <td>
-                                        `+ info.buyer_address +`
+                                    <td scope="row" style="width: 40%;">Địa chỉ: </td>
+                                    <td style="width: 60%;">
+                                        `+ info.seller_address + `
                                         </td>
                                     </tr>
                                     <tr>
-                                    <td scope="row">Số điện thoại: </td>
-                                    <td>
-                                        `+ info.buyer_phone +`
+                                    <td scope="row" style="width: 40%;">Số điện thoại: </td>
+                                    <td style="width: 60%;">
+                                        `+ info.seller_phone + `
                                         </td>
                                     </tr>
                                     <tr>
-                                    <td scope="row">Email: </td>
+                                    <td scope="row" style="width: 40%;">Email: </td>
                                     <td>
-                                        `+ info.buyer_email +`
+                                        `+ info.seller_email + `
                                         </td>
-                                    </tr>
-                                    <tr>
-                                    <td scope="row">Địa chỉ giao hàng: </td>
-                                    <td>
-                                        ` + info.buyer_shipping_address + `
-                                    </td>
                                     </tr>
 
                                 </tbody>
 
                                 </table>`;
+                    content += `<div class="row">
+                                <div class="col-md-12">
+                                    <span class="text-primary">Thông tin nhà hàng</span>
+                                </div>
+                                </div>`;
+
+                    content += `<table class="table table-borderless">
+                                <tbody>
+
+                                    <tr>
+                                    <td scope="row" style="width: 40%;">Tên nhà hàng:</td>
+                                    <td style="width: 60%;">
+                                        `+ info.restaurant_name + `
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                    <td scope="row" style="width: 40%;">Địa chỉ nhà hàng:</td>
+                                    <td style="width: 60%;">
+                                        `+ info.restaurant_address + `
+                                    </td>
+                                    </tr>
+
+                                </tbody>
+
+                                </table>
+                                `
                     $('#info-detail').html(content);
-                    $('#viewBuyerModal').modal("show");
+                    $('#viewSellerModal').modal("show");
 
                 }
             });

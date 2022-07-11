@@ -401,7 +401,7 @@ def fetch_all_rows_order(request: Request, user=Depends(manager)):
 # ------------------------------------------------------------------------------------------
 
 # Quan ly danh sach seller
-@router.get("/sellers/", response_class=HTMLResponse)
+@router.get("/sellers", response_class=HTMLResponse)
 def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -455,7 +455,7 @@ def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
         'page': page
     }
 
-    return templates.TemplateResponse("", data_res)
+    return templates.TemplateResponse("admin_sellers_list.html", data_res)
 
 # Quan ly danh sach buyer
 @router.get("/buyers", response_class=HTMLResponse)
@@ -528,3 +528,19 @@ def fetch_buyer_info(buyer_id: int, request: Request, user=Depends(manager)):
     buyer_info = buyer_crud.get_all_info_buyer(db=db_, buyer_id=buyer_id)
 
     return {"buyer_info": buyer_info}
+    
+@router.get("/fetch-seller-info")
+def fetch_seller_info(seller_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    seller_info = seller_crud.get_all_info_seller(db=db_, seller_id=seller_id)
+
+    return {"seller_info": seller_info}
