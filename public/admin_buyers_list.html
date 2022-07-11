@@ -1,0 +1,158 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+Trang admin
+{% endblock %}
+
+
+
+{% block page_name %}
+Buyer
+{% endblock %}
+
+{% block page_name_detail %}
+Trang quản lý danh sách người mua
+{% endblock %}
+
+{% block content %}
+<div class="row py-3">
+    <div class="col-md-12">
+        
+        <div class="card border-0">
+            <div class="card-body px-0 py-2">
+                <div id="data_content" class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if buyers_info %}
+                            {% for info in buyers_info %}
+                            <tr>
+                                <td>{{ info.buyer_id }}</td>
+                                <td>{{ info.buyer_name }}</td>
+                                <td>{{ info.buyer_email }}</td>
+                                <td>
+                                    <button class="btn btn-info btn-view"
+                                        data-buyer-id="{{ info.buyer_id }}">Xem</button>
+                                    <button class="btn btn-danger btn-delete"
+                                        data-buyer-id="{{ info.buyer_id }}">Xóa</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="3">Không có thông tin</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example d-flex" class="mt-2">
+                        <ul class="pagination justify-content-center">
+                            {% if first_page == "" %}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/buyers?page={{ previous_page }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+    
+                            {% if TOTAL_PAGE %}
+                            {% for i in range(TOTAL_PAGE) %}
+                            {% set num = i + 1 %}
+                            {% if num == page %}
+                            <li class="page-item active">
+                                <a class="page-link" href="/admin/buyers?page={{num}}">{{num}}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/buyers?page={{num}}">{{num}}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+    
+                            {% if last_page == "" %}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/buyers?page={{ next_page }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block modal %}
+
+<div class="modal fade" id="viewBuyerModal" tabindex="-1" aria-labelledby="viewBuyerModalLabel" aria-hidden="true"
+    style="color: black;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewBuyerModalLabel">Thông tin chi tiết</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="info-detail">
+                <!-- Thông tin chi tiết -->
+
+            </div>
+            <div class=" modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', '.btn-view', function(){
+            var buyer_id = $(this).data("buyer-id");
+
+            $.ajax({
+                url: "/admin/fetch-buyer-info?buyer_id="+buyer_id,
+                method: "GET",
+                contentType: "application/json",
+                success: function(response){
+                    console.log(response);
+                    var info = response.buyer_info[0];
+                    console.log(info);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock %}

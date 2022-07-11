@@ -81,4 +81,28 @@ def delete_admin(db: Session, admin_id: int):
 #     db.commit()
 #     return db_food
     
+# API cho Admin dashboard -------------------------------------------------
+def count_all_seller_accounts(db: Session):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW_SELLER
+                FROM account acc
+                WHERE acc.account_type = 2"""
 
+    result = db.execute(query)
+    return result.fetchall()
+
+def count_all_buyer_accounts(db: Session):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW_BUYER
+                FROM account acc
+                WHERE acc.account_type = 3"""
+
+    result = db.execute(query)
+    return result.fetchall()
+
+def count_all_orders(db: Session):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW_ORDER
+                FROM account acc
+                JOIN seller sl ON sl.account_id = acc.account_id
+                JOIN `order` od ON od.seller_id = sl.seller_id"""
+
+    result = db.execute(query)
+    return result.fetchall()

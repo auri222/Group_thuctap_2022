@@ -1,19 +1,106 @@
 {% extends "admin_layout.html" %}
 
 {% block title %}
-    Trang admin
+Trang admin
 {% endblock %}
 
 
 {% block page_name %}
-    Dashboard
+Dashboard
 {% endblock %}
 
 {% block page_name_detail %}
-    Trang tổng hợp thông tin
+Trang tổng hợp thông tin
 {% endblock %}
 
 {% block content %}
-    <h2>Xin chào admin {{ username if username != None }}</h2>
+<div class="row py-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 my-2">
+                        <div
+                            class="p-3 bg-white d-flex justify-content-around align-items-center rounded card-content py-4">
+                            <div>
+                                <p class="text-muted">Số tài khoản seller</p>
+                                <h3 class="font-weight-bold" id="baocao_soluong_seller"></h3>
+                            </div>
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4 my-2">
+                        <div
+                            class="p-3 bg-white d-flex justify-content-around align-items-center rounded card-content py-4">
+                            <div>
+                                <p class="text-muted">Số tài khoản buyer</p>
+                                <h3 class="font-weight-bold" id="baocao_soluong_buyer"></h3>
+                            </div>
+                            <i class="bi bi-person-rolodex"></i>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4 my-2">
+                        <div
+                            class="p-3 bg-white d-flex justify-content-around align-items-center rounded card-content py-4">
+                            <div>
+                                <p class="text-muted">Số đơn hàng</p>
+                                <h3 class="font-weight-bold" id="baocao_soluong_don_hang"></h3>
+                            </div>
+                            <i class="bi bi-bag-check-fill"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function(){
+
+        //Số lượng tài khoản seller
+        $.ajax({
+        url: "/admin/fetch-all-rows-seller",
+        method: "GET",
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response.TOTAL_ROWS_SELLER);
+            $('#baocao_soluong_seller').html(""+response.TOTAL_ROWS_SELLER);
+        }
+        });
+
+        //Số lượng tài khoản buyer
+        $.ajax({
+        url: "/admin/fetch-all-rows-buyer",
+        method: "GET",
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response.TOTAL_ROWS_BUYER);
+            $('#baocao_soluong_buyer').html(""+response.TOTAL_ROWS_BUYER);
+        }
+        });
+
+
+        //Số lượng đơn hàng
+        $.ajax({
+        url: "/admin/fetch-all-rows-order",
+        method: "GET",
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response.TOTAL_ROWS_ORDER);
+            $('#baocao_soluong_don_hang').html(""+response.TOTAL_ROWS_ORDER);
+        }
+        });
+    });
+</script>
 
 {% endblock %}
