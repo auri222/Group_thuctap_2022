@@ -67,8 +67,14 @@ def root(request: Request):
 def root(request: Request):
 
     db_ = get_database_session()
+    
+    # Lấy dữ liệu để phân trang
+    count = restaurant_crud.count_all_restaurants(db=db_)
+    TOTAL_ROWS = count[0]['TOTAL_RESTAURANT']
+    offset = 0
+    limit = TOTAL_ROWS
 
-    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=0, limit=100)
+    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=offset, limit=limit)
 
     restaurant_data = []
     for info in restaurant_info:

@@ -64,3 +64,9 @@ def get_list_food_type_by_restaurant_id(db: Session, restaurant_id: int):
                 GROUP BY ft.food_type_id"""
     result = db.execute(query)
     return result.fetchall()
+
+def count_all_restaurants(db: Session):
+    query = f"""SELECT COUNT(*) AS TOTAL_RESTAURANT
+                FROM restaurant res"""
+    result = db.execute(query)
+    return result.fetchall()

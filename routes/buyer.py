@@ -132,8 +132,13 @@ def home( request: Request, user= Depends(manager)):
     account_info = account_crud.get_account(db=db_, account_id=account_id)
     username = account_info.account_username
     
+    # Lấy dữ liệu để phân trang
+    count = restaurant_crud.count_all_restaurants(db=db_)
+    TOTAL_ROWS = count[0]['TOTAL_RESTAURANT']
+    offset = 0
+    limit = TOTAL_ROWS
 
-    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=0, limit=100)
+    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=offset, limit=limit)
 
     restaurant_data = []
     for info in restaurant_info:

@@ -137,6 +137,10 @@ Food Delivery
                             </div>
                         </div>
                         {% endfor %}
+                        {% else %}
+                        <div class="col-12 col-md-4 col-lg-4 mb-3 text-center ">
+                            <h5>Chưa có thông tin món ăn</h5>
+                        </div>
                         {% endif %}
 
                     </div>
@@ -161,18 +165,20 @@ Food Delivery
                         </li>
                         {% endif %}
 
-                        {% for i in range(TOTAL_PAGE) %}
-                        {% set num = i + 1 %}
-                        {% if num == page %}
-                        <li class="page-item active">
-                            <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                        </li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                        </li>
+                        {% if TOTAL_PAGE %}
+                            {% for i in range(TOTAL_PAGE) %}
+                            {% set num = i + 1 %}
+                            {% if num == page %}
+                            <li class="page-item active">
+                                <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
                         {% endif %}
-                        {% endfor %}
 
                         {% if last_page == "" %}
                         <li class="page-item">
@@ -205,18 +211,20 @@ Food Delivery
                         </li>
                         {% endif %}
 
-                        {% for i in range(TOTAL_PAGE) %}
-                        {% set num = i + 1 %}
-                        {% if num == page %}
-                        <li class="page-item active">
-                            <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                        </li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                        </li>
+                        {% if TOTAL_PAGE %}
+                            {% for i in range(TOTAL_PAGE) %}
+                            {% set num = i + 1 %}
+                            {% if num == page %}
+                            <li class="page-item active">
+                                <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
                         {% endif %}
-                        {% endfor %}
 
                         {% if last_page == "" %}
                         <li class="page-item">

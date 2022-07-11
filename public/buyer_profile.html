@@ -268,7 +268,7 @@ Food Delivery
           contentType: "application/json",
           success: function (response) {
 
-
+            console.log(response.count);
             console.log(response.count[0].TOTAL);
             if (response.count[0].TOTAL > 0) {
               $('#error-username').html("Trùng tên đăng nhập. Hãy nhập tên khác!");
