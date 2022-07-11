@@ -1,0 +1,173 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+Trang admin
+{% endblock %}
+
+{% block sidebar %}
+<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Dashboard</a>
+<a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Profile</a>
+<a href="/admin/admin_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+        <i class="bi bi-clipboard-data mr-2"></i>
+        Quản lý tài khoản admin</a>
+<a href="/admin/buyer_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản buyer</a>
+<a href="/admin/seller_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản seller</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản đơn hàng</a>
+<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý loại thức ăn</a>
+{% endblock %}
+
+{% block nav_link %}
+<li class="nav-item dropdown">
+    <a class="nav-link" href="#">
+        {{ username if username != None }}
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a class="nav-link" href="/logout">
+        Đăng xuất
+    </a>
+</li>
+
+
+{% endblock %}
+
+{% block page_name %}
+Thông tin admin
+{% endblock %}
+
+{% block page_name_detail %}
+Trang chỉnh sửa thông tin admin
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-0">
+            <div class="card-body px-0 py-2">
+                <div class="row">
+                    <div class="col-md-9">
+                        <form>
+                            {% for info in admin_info %}
+                            <div class="form-group">
+                                <label for="admin_name">Họ tên:</label>
+                                <input type="text" class="form-control" id="admin_name" name="admin_name"
+                                    value="{{ info.admin_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_birthday">Ngày sinh:</label>
+                                <input type="date" class="form-control" id="admin_birthday" name="admin_birthday"
+                                    value="{{ info.admin_birthday }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_address">Địa chỉ:</label>
+                                <input type="text" class="form-control" id="admin_address" name="admin_address"
+                                    value="{{ info.admin_address }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_phone">Số điện thoại:</label>
+                                <input type="text" class="form-control" id="admin_phone" name="admin_phone"
+                                    value="{{ info.admin_phone }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_email">Email:</label>
+                                <input type="text" class="form-control" id="admin_email" name="admin_email"
+                                    value="{{ info.admin_email }}">
+                            </div>
+
+                            <button type="button" class="btn btn-warning btn-edit px-4">Sửa</button>
+
+                            {% endfor %}
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        var url = window.location.href;
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var account_id = urlParams.get('account_id');
+        var account_admin_id = urlParams.get('account_admin_id');
+        console.log("URL: " + url);
+        console.log("account_id: " + account_id);
+        console.log("account_admin_id: " + account_admin_id);
+
+        $(document).on('click', '.btn-edit', function () {
+            var admin_name = $('#admin_name').val();
+            var admin_birthday = $('#admin_birthday').val();
+            var admin_address = $('#admin_address').val();
+            var admin_phone = $('#admin_phone').val();
+            var admin_email = $('#admin_email').val();
+            console.log("admin_name: " + admin_name);
+            console.log("admin_birthday: " + admin_birthday);
+            console.log("admin_address: " + admin_address);
+            console.log("admin_phone: " + admin_phone);
+            console.log("admin_email: " + admin_email);
+            if (admin_name == "" || admin_birthday == "" || admin_address == "" || admin_phone == "" || admin_email == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu...',
+                    text: 'Không được để trống!'
+                });
+            }
+            else {
+                var data = {
+                    "admin_name": admin_name,
+                    "admin_birthday": admin_birthday,
+                    "admin_address": admin_address,
+                    "admin_phone": admin_phone,
+                    "admin_email": admin_email
+                };
+                $.ajax({
+                    url: "",
+                    method: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.status == 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: ''+response.message
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                title: '' + response.message,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Quay lại'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/admin/profile/?account_id=" + response.account_id;
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+        })
+    })
+</script>
+{% endblock %}
