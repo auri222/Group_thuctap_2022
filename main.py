@@ -154,31 +154,31 @@ def get_all_restaurant_info():
 
 
 # #Bắt phải đăng nhập ----------------------------------------------------------------------
-# class NotAuthenticatedException(Exception):
-#     pass
+class NotAuthenticatedException(Exception):
+    pass
 
-# # these two argument are mandatory
-# def exc_handler(request, exc):
-#     return RedirectResponse(url='/error_auth')
+# these two argument are mandatory
+def exc_handler(request, exc):
+    return RedirectResponse(url='/error_auth')
 
-# @app.exception_handler(StarletteHTTPException)
-# async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-#     return RedirectResponse(url='/error_auth')
-#     # data_res = {
-#     #     "request": request,
-#     # }
-#     # return templates.TemplateResponse("/404.html",data_res)
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return RedirectResponse(url='/error_auth')
+    # data_res = {
+    #     "request": request,
+    # }
+    # return templates.TemplateResponse("/404.html",data_res)
 
-# manager.not_authenticated_exception = NotAuthenticatedException
-# # You also have to add an exception handler to your app instance
-# app.add_exception_handler(NotAuthenticatedException, exc_handler)
-# @app.get('/error_auth', response_class=HTMLResponse, tags=["account"])
-# async def template_login(request: Request):
-#     data_res = {
-#         "request": request,
-#         'error': 'Bạn chưa đăng nhập'
-#     }
-#     return templates.TemplateResponse("login.html", data_res)
+manager.not_authenticated_exception = NotAuthenticatedException
+# You also have to add an exception handler to your app instance
+app.add_exception_handler(NotAuthenticatedException, exc_handler)
+@app.get('/error_auth', response_class=HTMLResponse, tags=["account"])
+async def template_login(request: Request):
+    data_res = {
+        "request": request,
+        'error': 'Bạn chưa đăng nhập'
+    }
+    return templates.TemplateResponse("login.html", data_res)
 
 # Check if login ---------------------------------------------------------------------------
 
