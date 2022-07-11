@@ -1,0 +1,113 @@
+{% extends "buyer_layout.html" %}
+
+{% block title %}
+Food Delivery
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.14/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', path='frontend/css/buyer_index.css') }}">
+
+{% endblock %}
+
+{% block banner %}
+<!-- banner -->
+<section class="parallax_buyer_profile">
+    <div class="container py-5 text-white text-center">
+        <div class="row py-5">
+            <div class="col-lg-9 mx-auto">
+                <h1 class="aaa"><span>Danh sách nhà hàng </span></h1>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    .parallax_buyer_profile {
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://cdn.pixabay.com/photo/2014/09/04/15/41/restaurant-435588_960_720.jpg');
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        width: 100%;
+        min-height: 350px;
+    }
+
+    .aaa {
+        font-size: 60px;
+        color: lightyellow;
+        cursor: pointer;
+
+        transition: all 0.5s;
+    }
+
+    .aaa:hover {
+        color: azure;
+        transform: scaleX(1.05);
+    }
+
+    .card {
+        cursor: pointer;
+        transition: transform .3s;
+    }
+
+    .card:hover {
+        transform: translateY(5px);
+    }
+</style>
+<!-- banner end -->
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    {% if username %}
+        {% if restaurant_info %}
+                {% for restaurant in restaurant_info %}
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="card" style="width: 16rem;">
+                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
+                            class="card-img-top rounded" alt="..." height="170px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                            <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
+                            <a href="/buyer/restaurant-detail?restaurant_id={{ restaurant.restaurant_id }}"
+                                class="border border-warning">Xem Thêm</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        {% endif %}
+    {% else %}
+        {% if restaurant_info %}
+                {% for restaurant in restaurant_info %}
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="card" style="width: 16rem;">
+                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
+                            class="card-img-top rounded" alt="..." height="170px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                            <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
+                            <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}"
+                                class="border border-warning">Xem Thêm</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        {% endif %}
+    {% endif %}
+
+</div>
+
+
+
+{% endblock %}
+
+
+{% block modal %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
