@@ -41,7 +41,7 @@ def create_admin_return_ID(db: Session, admin: schemas.Admin, account_id: int):
 
 
 def update_admin(db: Session, admin: schemas.Admin, admin_id: int):
-    db_admin = db.query(models.Admin).filter(models.Admin.admin_id == admin_id).first()
+    db_admin = db.query(models.Admin).filter(models.Admin.account_id == admin_id).first()
     if db_admin is None:
         return {"Error": None}
     db_admin.admin_name = admin.admin_name
