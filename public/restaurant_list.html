@@ -53,7 +53,6 @@ Food Delivery
     .card:hover {
         transform: translateY(5px);
     }
-
 </style>
 <!-- banner end -->
 {% endblock %}
@@ -61,23 +60,46 @@ Food Delivery
 {% block content %}
 
 <div class="row">
-    {% if restaurant_info %}
-    {% for restaurant in restaurant_info %}
-    <div class="col-12 col-md-4 col-lg-3">
-        <div class="card" style="width: 16rem;">
-            <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
-                class="card-img-top rounded" alt="..." height="170px">
-            <div class="card-body">
-                <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
-                <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
-                <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}"
-                    class="border border-warning">Xem Thêm</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
+
+    {% if username %}
+        {% if restaurant_info %}
+                {% for restaurant in restaurant_info %}
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="card" style="width: 16rem;">
+                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
+                            class="card-img-top rounded" alt="..." height="170px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                            <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
+                            <a href="/buyer/restaurant-detail?restaurant_id={{ restaurant.restaurant_id }}"
+                                class="border border-warning">Xem Thêm</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        {% endif %}
+    {% else %}
+        {% if restaurant_info %}
+                {% for restaurant in restaurant_info %}
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="card" style="width: 16rem;">
+                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
+                            class="card-img-top rounded" alt="..." height="170px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                            <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
+                            <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}"
+                                class="border border-warning">Xem Thêm</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        {% endif %}
     {% endif %}
+
 </div>
+
+
 
 {% endblock %}
 
