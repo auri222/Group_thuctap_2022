@@ -204,7 +204,7 @@ Food Delivery
                             </a>
                         </li>
                         {% else %}
-                        <li class="page-item disabled">
+                        <li class="page-item {{ first_page }}">
                             <a class="page-link" href="#" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -233,7 +233,7 @@ Food Delivery
                             </a>
                         </li>
                         {% else %}
-                        <li class="page-item disabled">
+                        <li class="page-item {{last_page}}">
                             <a class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>

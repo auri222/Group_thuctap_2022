@@ -102,7 +102,12 @@ def restaurant_detail(restaurant_id: int, request: Request, page: int=1, query: 
     TOTAL_ROWS = count[0]['TOTAL_ROW']
     TOTAL_PAGES = math.ceil(TOTAL_ROWS/limit)
     first_page = 'disabled' if page == 1 else ''
-    last_page = 'disabled' if page == TOTAL_PAGES else ''
+    last_page = ''
+    if TOTAL_PAGES == 0:
+        last_page = 'disabled'
+    elif page == TOTAL_PAGES:
+        last_page = 'disabled'
+
     next_page = page + 1
     previous_page = page - 1
 

@@ -9,6 +9,9 @@ from fastapi.templating import Jinja2Templates
 import models, schemas
 from crud import buyer_crud, account_crud, restaurant_crud, food_crud
 from routes.login import manager
+from typing import Union
+import math
+
 router = APIRouter(
     prefix="/buyer",
     tags=['Buyers']
@@ -154,7 +157,7 @@ def home( request: Request, user= Depends(manager)):
     return templates.TemplateResponse("restaurant_list.html",data_res)
 
 @router.get("/restaurant-detail", response_class=HTMLResponse)
-def home(restaurant_id: int, request: Request, user= Depends(manager)):
+def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, None]=None, user= Depends(manager)):
     if user.account_type != 3:
         error_data = {
             "request": request,
@@ -167,6 +170,25 @@ def home(restaurant_id: int, request: Request, user= Depends(manager)):
     account_info = account_crud.get_account(db=db_, account_id=account_id)
     username = account_info.account_username
     
+    # Lấy tổng số dòng món ăn
+    count = food_crud.get_total_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+
+    # Phân trang
+    limit = 6
+    offset = (page - 1)*limit
+    TOTAL_ROWS = count[0]['TOTAL_ROW']
+    TOTAL_PAGES = math.ceil(TOTAL_ROWS/limit)
+    first_page = 'disabled' if page == 1 else ''
+    last_page = ''
+    if TOTAL_PAGES == 0:
+        last_page = 'disabled'
+    elif page == TOTAL_PAGES:
+        last_page = 'disabled'
+
+    next_page = page + 1
+    previous_page = page - 1
+
+
     # Lấy thông tin nhà hàng dựa trên ID
     restaurant_info = restaurant_crud.get_restaurant_info_by_ID(db=db_, restaurant_id=restaurant_id)
 
@@ -174,11 +196,11 @@ def home(restaurant_id: int, request: Request, user= Depends(manager)):
     restaurant_data.append(restaurant_info.__dict__)
 
     # Lấy danh sách món ăn dựa trên ID nhà hàng
-    food_info = food_crud.get_food_from_restaurant(db=db_, restaurant_id=restaurant_id, skip=0, limit=100)
+    food_info = food_crud.get_all_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id, query=query, skip=offset, limit=limit)
     food_data = []
     for food in food_info:
         food_data.append(food)
-    
+
     # Lấy loại thức ăn của nhà hàng 
     food_type_info = restaurant_crud.get_list_food_type_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
     food_type_data = []
@@ -191,8 +213,17 @@ def home(restaurant_id: int, request: Request, user= Depends(manager)):
         'account_id': account_id,
         'username': username,
         'restaurant_info': restaurant_data,
+        'restaurant_id': restaurant_id,
         'food_info': food_data,
-        'food_type_info': food_type_data
+        'food_type_info': food_type_data,
+        'first_page': first_page,
+        'last_page': last_page,
+        'next_page': next_page,
+        'previous_page': previous_page,
+        'query': query,
+        'TOTAL_ROW': TOTAL_ROWS,
+        'TOTAL_PAGE': TOTAL_PAGES,
+        'page': page
     }
 
     return templates.TemplateResponse("restaurant_index.html",data_res)
