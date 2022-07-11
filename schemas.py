@@ -87,7 +87,15 @@ class CreateAdminInfo(BaseModel):
 
     class Config:
         orm_mode = True
+class UpdateAdminInfo(BaseModel):
+    admin_name: str
+    admin_birthday: date = None
+    admin_address: Union[str, None] = None
+    admin_phone: str
+    admin_email: str
 
+    class Config:
+        orm_mode = True
 #End Admin
 #----------------------------------------------------------
 

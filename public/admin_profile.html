@@ -11,10 +11,13 @@
     <a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Profile</a>
-    <a href="#" class="d-block text-light p-3">
+    <a href="/admin/admin_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+            <i class="bi bi-clipboard-data mr-2"></i>
+            Quản lý tài khoản admin</a>
+    <a href="/admin/buyer_info/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Quản lý tài khoản buyer</a>
-    <a href="#" class="d-block text-light p-3">
+    <a href="/admin/seller_info/?account_id={{ account_id }}" class="d-block text-light p-3">
         <i class="bi bi-clipboard-data mr-2"></i>
         Quản lý tài khoản seller</a>
     <a href="#" class="d-block text-light p-3">
@@ -76,11 +79,18 @@
                         <th>Email: </th>
                         <td>{{ info.admin_email }}</td>
                     </tr>
+                    <tr>
+                        <td>
+                            <a href="/admin/edit_profile?account_id={{ account_id }}" class="btn btn-primary"> Sửa thông tin </a>
+                            <a href="/admin/edit_account?account_id={{ account_id }}" class="btn btn-primary"> Sửa tài khoản </a>
+                        </td>
+                    </tr>
 
                 </tbody>
             </table>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-3">
+        </div>
     </div>
     {% endfor %}
 {% endblock %}
