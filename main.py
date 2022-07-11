@@ -1,4 +1,4 @@
-from ctypes import Union
+from typing import Union
 from fastapi import FastAPI, Depends, Request,Response,Form
 import models, schemas
 from config.db import engine, SessionLocal
@@ -122,6 +122,7 @@ def restaurant_detail(restaurant_id: int, request: Request, page: int=1, query: 
         "request": request,
         "title": "Trang chủ",
         'restaurant_info': restaurant_data,
+        'restaurant_id': restaurant_id,
         'food_info': food_data,
         'food_type_info': food_type_data,
         'first_page': first_page,
