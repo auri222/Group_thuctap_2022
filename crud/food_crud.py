@@ -119,6 +119,34 @@ def delete_food(db: Session, food_id: int):
     db.commit()
     return {"Success": "Delete food successfully"}
 
+# Phân trang món ăn ở buyer page
+def get_total_rows_food_by_restaurant_id(db: Session, restaurant_id: int):
+    query = f"""SELECT COUNT(*) AS TOTAL_ROW
+                FROM restaurant res
+                JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
+                JOIN food f ON f.food_id = rw.food_id
+                WHERE res.restaurant_id = {restaurant_id}"""
+    result = db.execute(query)
+    return result.fetchall()
+
+def get_all_rows_food_by_restaurant_id(db: Session, restaurant_id, query: Union[str, None]=None, skip: int = 0, limit: int = 10):
+    string = f"""SELECT f.*, rw.food_quantity
+    FROM restaurant res
+    JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
+    JOIN food f ON f.food_id = rw.food_id
+    WHERE (res.restaurant_id = {restaurant_id}) """
+
+    # Nếu có seach => str = Pho
+    pagination = f"""LIMIT {skip}, {limit} """
+    if query:
+        query_str = f"""AND (f.food_name LIKE '%{query}%') """      
+        string = ''.join([string, query_str, pagination])
+    else:
+        string = ''.join([string, pagination])
+    result = db.execute(string)
+    return result.fetchall()
+
+
 # API cho dashboard -----------------------------------------------------------------
 def get_total_rows_food(db: Session, account_id: int):
     query = f"""SELECT COUNT(*) AS TOTAL_ROW_FOOD

@@ -1,3 +1,4 @@
+from ctypes import Union
 from fastapi import FastAPI, Depends, Request,Response,Form
 import models, schemas
 from config.db import engine, SessionLocal
@@ -14,6 +15,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.templating import Jinja2Templates
 from crud import restaurant_crud, food_crud
 import uvicorn
+import math
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
@@ -81,9 +83,22 @@ def root(request: Request):
     return templates.TemplateResponse("restaurant_list.html",data_res)
 
 @app.get("/restaurant_detail", response_class=HTMLResponse, tags=["Restaurant Detail"])
-def restaurant_detail(restaurant_id: int, request: Request):
+def restaurant_detail(restaurant_id: int, request: Request, page: int=1, query: Union[str, None]=None):
     # Lấy phiên làm việc database
     db_ = get_database_session()
+
+    # Lấy tổng số dòng món ăn
+    count = food_crud.get_total_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+
+    # Phân trang
+    limit = 6
+    offset = (page - 1)*limit
+    TOTAL_ROWS = count[0]['TOTAL_ROW']
+    TOTAL_PAGES = math.ceil(TOTAL_ROWS/limit)
+    first_page = 'disabled' if page == 1 else ''
+    last_page = 'disabled' if page == TOTAL_PAGES else ''
+    next_page = page + 1
+    previous_page = page - 1
 
     # Lấy thông tin nhà hàng dựa trên ID
     restaurant_info = restaurant_crud.get_restaurant_info_by_ID(db=db_, restaurant_id=restaurant_id)
@@ -92,7 +107,7 @@ def restaurant_detail(restaurant_id: int, request: Request):
     restaurant_data.append(restaurant_info.__dict__)
 
     # Lấy danh sách món ăn dựa trên ID nhà hàng
-    food_info = food_crud.get_food_from_restaurant(db=db_, restaurant_id=restaurant_id, skip=0, limit=100)
+    food_info = food_crud.get_all_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id, query=query, skip=offset, limit=limit)
     food_data = []
     for food in food_info:
         food_data.append(food)
@@ -108,7 +123,15 @@ def restaurant_detail(restaurant_id: int, request: Request):
         "title": "Trang chủ",
         'restaurant_info': restaurant_data,
         'food_info': food_data,
-        'food_type_info': food_type_data
+        'food_type_info': food_type_data,
+        'first_page': first_page,
+        'last_page': last_page,
+        'next_page': next_page,
+        'previous_page': previous_page,
+        'query': query,
+        'TOTAL_ROW': TOTAL_ROWS,
+        'TOTAL_PAGE': TOTAL_PAGES,
+        'page': page
     }
     return templates.TemplateResponse("restaurant_index.html", data_res)
 

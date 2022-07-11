@@ -62,13 +62,35 @@ Food Delivery
 
                     <div class="search mx-2" style="text-align: center;">
                         <div class="row">
-                            <div class="col-12 col-sm-12 col-md-10 mb-2">
-                                <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning" type="search" placeholder="Nhập Tên Món.."
-                                    aria-label="Search">
+                            <div class="col-12 col-sm-12 col-md-8 mb-2 px-0">
+                                {% if username %}
+                                    {% if query %}
+                                    <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
+                                        class="border border-warning search-buyer-food" type="search" value="{{query}}"
+                                        aria-label="Search" >
+                                    {% else %}
+                                    <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
+                                        class="border border-warning search-buyer-food" type="search" placeholder="Nhập Tên Món.."
+                                        aria-label="Search" >
+                                    {% endif %}
+                                {% else %}
+                                    {% if query %}
+                                    <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
+                                        class="border border-warning search-food" type="search" value="{{query}}"
+                                        aria-label="Search" >
+                                    {% else %}
+                                    <input style="width:100%; height:40px;border-radius:5px;font-size:15px"
+                                        class="border border-warning search-food" type="search" placeholder="Nhập Tên Món.."
+                                        aria-label="Search" >
+                                    {% endif %}
+                                {% endif %}
                             </div>
-                            <div class="col-12 col-sm-12 col-md-2 mb-2">
-                                <button class="btn btn-outline-warning " type="submit">Tìm Món</button>
+                            <div class="col-12 col-sm-12 col-md-4 mb-2 px-0">
+                                <button class="btn btn-outline-warning btn-search" type="button" data-toggle="tooltip"
+                                data-placement="top" title="Click để tìm">Tìm Món</button>
+                            
+                                <button class="btn btn-outline-warning btn-del-search" type="button" data-toggle="tooltip"
+                                data-placement="top" title="Click để xóa tìm kiếm"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
 
@@ -112,6 +134,95 @@ Food Delivery
 
                 </div>
 
+                <nav aria-label="Page navigation example d-flex" class="mt-2">
+                    {% if username %}
+                    <ul class="pagination justify-content-center">
+                        {% if first_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/buyer/restaurant-detail?page={{ previous_page }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for i in range(TOTAL_PAGE) %}
+                        {% set num = i + 1 %}
+                        {% if num == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="/buyer/restaurant-detail?page={{num}}">{{num}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="/buyer/restaurant-detail?page={{num}}">{{num}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if last_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/buyer/restaurant-detail?page={{ next_page }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% else %}
+                    <ul class="pagination justify-content-center">
+                        {% if first_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/restaurant_detail?page={{ previous_page }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for i in range(TOTAL_PAGE) %}
+                        {% set num = i + 1 %}
+                        {% if num == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="/restaurant_detail?page={{num}}">{{num}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="/restaurant_detail?page={{num}}">{{num}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if last_page == "" %}
+                        <li class="page-item">
+                            <a class="page-link" href="/restaurant_detail?page={{ next_page }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
             </div>
 
         </div>
@@ -124,6 +235,38 @@ Food Delivery
 
 <script>
     $(document).ready(function () {
+
+        //Xử lý khi click "Tìm món"
+        $(document).on('click', '.btn-search', function(){
+            var search_food = $('.search-food').val();
+            var search_buyer_food = $('.search-buyer-food').val();
+            console.log("Search: ");
+            if ((search_food !== "") || (search_food !== "undefined") ) {
+                console.log("Not login search: "+search_food);
+                
+            }
+
+            if((search_buyer_food !== "") || (search_buyer_food !== "undefined") ){
+                console.log("Logged search: "+search_buyer_food);
+                
+            }
+        })
+
+        //Xử lý xóa bộ lọc
+        $(document).on('click', '.btn-del-search', function(){
+            var search_food = $('.search-food').val();
+            var search_buyer_food = $('.search-buyer-food').val();
+            console.log("Delete filter: ");
+            if ((search_food !== "") || (search_food !== "undefined") ) {
+                console.log("Not login search: "+search_food);
+                $('.search-food').val('');
+            }
+
+            if((search_buyer_food !== "") || (search_buyer_food !== "undefined") ){
+                console.log("Logged search: "+search_buyer_food);
+                $('.search-buyer-food').val('');
+            }
+        })
 
         $(document).on('click', '.btn-add-to-card', function () {
             var flag;
