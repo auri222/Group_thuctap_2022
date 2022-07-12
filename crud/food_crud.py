@@ -111,13 +111,6 @@ def update_food_image(db: Session, food: schemas.UpdateFoodImage, food_id: int):
     updated_id =  db_food.food_id
     return updated_id
 
-def delete_food(db: Session, food_id: int):
-    db_food = db.query(models.Food).filter(models.Food.food_id == food_id).first()
-    if db_food is None:
-        return {"Error": f"Food with ID {food_id} is not exists"}
-    db.delete(db_food)
-    db.commit()
-    return {"Success": "Delete food successfully"}
 
 # Phân trang món ăn ở buyer page
 def get_total_rows_food_by_restaurant_id(db: Session, restaurant_id: int):
@@ -169,3 +162,21 @@ def get_list_foods_out_of_stock(db: Session, account_id: int):
                 WHERE (acc.account_id = {account_id}) AND (rw.food_quantity = 0)"""
     result = db.execute(query)
     return result.fetchall()
+
+# Seller delete food => not check data on order and order detail --------------------
+def delete_food_in_warehouse(db: Session, food_id: int):
+    db_food = db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.food_id == food_id).first()
+    db.delete(db_food)
+    db.commit()
+    return {"Success": True}
+
+def delete_food(db: Session, food_id: int):
+    db_food = db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    # if db_food is None:
+    #     return {"Error": f"Food with ID {food_id} is not exists"}
+    db.delete(db_food)
+    db.commit()
+    return {"Success": True}
+
+
+

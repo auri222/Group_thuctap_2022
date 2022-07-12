@@ -10,7 +10,7 @@ from starlette.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
-from crud import admin_crud, account_crud, food_type_crud, payment_crud
+from crud import admin_crud, account_crud, food_type_crud, payment_crud, seller_crud, buyer_crud
 from routes.login import manager
 import math
 router = APIRouter(
@@ -492,6 +492,23 @@ def edit_payment_method(payment_id: int, payment_method: schemas.PaymentMethod, 
 
     return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER }
 
+@router.get("/fetch-all-rows-seller")
+def fetch_all_rows_seller(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    count = admin_crud.count_all_seller_accounts(db=db_)
+    TOTAL_ROWS_SELLER = count[0]['TOTAL_ROW_SELLER']
+
+    return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER }
+
 @router.get("/fetch-all-rows-buyer")
 def fetch_all_rows_buyer(request: Request, user=Depends(manager)):
     if user.account_type != 1:
@@ -666,7 +683,11 @@ def fetch_seller_info(seller_id: int, request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    return {"status": status, "message": message, "account_id": account_id}
+    db_ = get_database_session()
+    seller_info = seller_crud.get_all_info_seller(db=db_, seller_id=seller_id)
+
+
+    return {"seller_info": seller_info}
 
 @router.delete("/payment_method/delete")
 def edit_payment_method(payment_id: int, request: Request, user=Depends(manager)):

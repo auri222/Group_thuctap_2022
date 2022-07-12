@@ -14,6 +14,10 @@ body{
     font-family: 'Roboto Slab', serif !important;
 }
 
+.text-color-primary {
+    color: var(--primary) !important;
+}
+
 .bg-main {
     background-color: var(--primary) !important;
 }

@@ -1,7 +1,9 @@
+from email import message
 from typing import Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, Request, File, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from regex import D
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
@@ -250,6 +252,32 @@ def fetch_total_rows_order(request: Request, user = Depends(manager)):
     print(f"total: {TOTAL_ROWS_ORDER}")
 
     return {"TOTAL_ROWS_ORDER": TOTAL_ROWS_ORDER}
+
+@router.delete("/delete-food")
+def delete_food(food_id: int, request: Request, user = Depends(manager)):
+
+    db_ = get_database_session()
+
+    # Tạo biến phản hồi
+    status = 1
+    message = ""
+
+    # Xóa món ăn ở warehouse trước
+    check_delete_warehouse = food_crud.delete_food_in_warehouse(db=db_, food_id=food_id)
+
+    print(check_delete_warehouse)
+
+    if check_delete_warehouse:
+        check_delete_food = food_crud.delete_food(db=db_, food_id=food_id)
+        print(check_delete_food)
+        if check_delete_food:
+            status = 1
+            message = "Xóa món ăn thành công"
+        else:
+            status = 0
+            message = "Xóa món ăn không thành công"
+
+    return {"status": status, "message": message}
 
 @router.get("/", response_class=HTMLResponse)
 def seller_index_page( request: Request, user = Depends(manager)):

@@ -4,8 +4,6 @@
 Trang admin
 {% endblock %}
 
-
-
 {% block page_name %}
 Loại thức ăn
 {% endblock %}
@@ -17,7 +15,7 @@ Trang quản lý loại thức ăn
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="/admin/foodtype/create?account_id={{ account_id }}" class="btn btn-primary"> Thêm mới </a>
+        <a href="/admin/foodtype/create" class="btn btn-primary"> Thêm mới </a>
         <div class="card border-0">
             <div class="card-body px-0 py-2">
                 <div id="data_content" class="table-responsive">
@@ -63,17 +61,11 @@ Trang quản lý loại thức ăn
 {% block script %}
 <script>
     $(document).ready(function () {
-        var url = window.location.href;
-        var queryString = window.location.search;
-        var urlParams = new URLSearchParams(queryString);
-        var account_id = urlParams.get('account_id');
-        console.log("URL: " + url);
-        console.log("account_id: " + account_id);
 
         $(document).on('click', '.btn-edit', function () {
             var foodtype_ID = $(this).data("foodtype-id");
             console.log("ID: " + foodtype_ID);
-            location.href = "/admin/foodtype/edit?account_id=" + account_id + "&foodtype_id=" + foodtype_ID;
+            location.href = "/admin/foodtype/edit?foodtype_id=" + foodtype_ID;
         })
     })
 </script>

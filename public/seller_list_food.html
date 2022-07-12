@@ -38,7 +38,7 @@ Trang thông tin danh sách món ăn
                             data-placement="top" title="Click để xóa tìm kiếm"><i class="bi bi-trash"></i></button>
                     </div>
                     <!-- <div class="col-2 px-0 text-center">
-                       
+                    
                     </div> -->
                 </div>
 
@@ -71,15 +71,16 @@ Trang thông tin danh sách món ăn
                             </td>
                             <td>
 
-                                <button type="button" class="btn btn-info btn-view" data-food-id="{{ info.food_id }}" data-toggle="tooltip"
-                            data-placement="top" title="Click để xem chi tiết"><i
+                                <button type="button" class="btn btn-info btn-view" data-food-id="{{ info.food_id }}"
+                                    data-toggle="tooltip" data-placement="top" title="Click để xem chi tiết"><i
                                         class="bi bi-eye-fill"></i></i></button>
                                 <button type="button" class="btn btn-warning btn-edit"
                                     data-food-id="{{ info.food_id }}"><i class="bi bi-pen-fill" data-toggle="tooltip"
-                            data-placement="top" title="Click để sửa"></i></button>
+                                        data-placement="top" title="Click để sửa"></i></button>
                                 <button type="button" class="btn btn-danger btn-delete"
-                                    data-food-id="{{ info.food_id }}"><i class="bi bi-x-circle-fill" data-toggle="tooltip"
-                            data-placement="top" title="Click để xóa"></i></i></button>
+                                    data-food-id="{{ info.food_id }}"><i class="bi bi-x-circle-fill"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Click để xóa"></i></i></button>
 
 
                             </td>
@@ -533,7 +534,36 @@ Trang thông tin danh sách món ăn
             var food_id = $(this).data("food-id");
             console.log("Food ID: " + food_id);
 
-
+            $.ajax({
+                url: "/seller/delete-food?food_id=" + food_id,
+                method: "DELETE",
+                contentType: "application/json",
+                success: function (success) {
+                    console.log(response);
+                    if (response.status == 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: '' + response.message
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: '' + response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $(function () {
+                            function reload_page() {
+                                location.reload();
+                            }
+                            window.setTimeout(reload_page, 1500);
+                        });
+                    }
+                }
+            });
         })
 
     })

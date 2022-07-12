@@ -14,7 +14,7 @@ Trang quản lý loại thức ăn
 {% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row py-3">
     <div class="col-md-12">
         <div class="card border-0">
             <div class="card-body px-0 py-2">
@@ -49,10 +49,10 @@ Trang quản lý loại thức ăn
         var url = window.location.href;
         var queryString = window.location.search;
         var urlParams = new URLSearchParams(queryString);
-        var account_id = urlParams.get('account_id');
+        
         var foodtype_id = urlParams.get('foodtype_id');
         console.log("URL: " + url);
-        console.log("account_id: " + account_id);
+
         console.log("foodtype_id: " + foodtype_id);
 
         $(document).on('click', '.btn-edit', function () {
@@ -70,7 +70,7 @@ Trang quản lý loại thức ăn
                     "food_type_name": food_type_name
                 };
                 $.ajax({
-                    url: "",
+                    url: "/admin/foodtype/edit?foodtype_id="+foodtype_id,
                     method: "PUT",
                     contentType: "application/json",
                     data: JSON.stringify(data),
@@ -90,7 +90,7 @@ Trang quản lý loại thức ăn
                                 confirmButtonText: 'Quay lại'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    location.href = "/admin/foodtype/?account_id=" + response.account_id;
+                                    location.href = "/admin/foodtype/";
                                 }
                             })
                         }

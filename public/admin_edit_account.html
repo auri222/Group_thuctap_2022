@@ -4,45 +4,6 @@
 Trang admin
 {% endblock %}
 
-{% block sidebar %}
-<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Dashboard</a>
-<a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Profile</a>
-<a href="/admin/admin_info/?account_id={{ account_id }}" class="d-block text-light p-3">
-        <i class="bi bi-clipboard-data mr-2"></i>
-        Quản lý tài khoản admin</a>
-<a href="/admin/buyer_info/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản buyer</a>
-<a href="/admin/seller_info/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản seller</a>
-<a href="#" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý tài khoản đơn hàng</a>
-<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
-    <i class="bi bi-clipboard-data mr-2"></i>
-    Quản lý loại thức ăn</a>
-{% endblock %}
-
-{% block nav_link %}
-<li class="nav-item dropdown">
-    <a class="nav-link" href="#">
-        {{ username if username != None }}
-    </a>
-</li>
-<li class="nav-item dropdown">
-    <a class="nav-link" href="/logout">
-        Đăng xuất
-    </a>
-</li>
-
-
-{% endblock %}
-
 {% block page_name %}
 Thông tin admin
 {% endblock %}
@@ -52,7 +13,7 @@ Trang chỉnh sửa thông tin admin
 {% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row py-3">
     <div class="col-md-12">
         <div class="card border-0">
             <div class="card-body px-0 py-2">
