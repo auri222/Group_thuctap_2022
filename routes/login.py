@@ -3,7 +3,7 @@ from config.db import SessionLocal
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Request, Depends, status, Form
 from fastapi.responses import RedirectResponse, JSONResponse
-
+from datetime import timedelta
 from fastapi_login import LoginManager
 from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.staticfiles import StaticFiles
@@ -62,7 +62,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
     elif not Hash.verify(password,user.account_password):
         # raise InvalidCredentialsException
         return {"Error": "Sai mật khẩu"}
-    access_token = manager.create_access_token(data = dict(sub=username)
+    access_token = manager.create_access_token(data = dict(sub=username), expires=timedelta(hours=1)
     )
     account_type = user.account_type
     account_id = user.account_id
