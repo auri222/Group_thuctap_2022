@@ -74,7 +74,7 @@ def admin_page(request: Request, user = Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
     account_id = user.account_id
-    username = user.account_username
+    username = account_info.account_username
     admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
     account_info = account_crud.get_account(db, account_id=account_id)
 
@@ -263,7 +263,8 @@ def create_foodtype_form(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
     
     data_res = {
         "request": request,
@@ -408,7 +409,8 @@ def create_payment_form(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
     
     data_res = {
         "request": request,
@@ -446,7 +448,8 @@ def edit_payment_form(payment_id: int,request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
 
     payment_info = payment_crud.get_payment_method_by_ID(db=db, payment_id=payment_id)
 
