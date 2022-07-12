@@ -216,6 +216,123 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
 
     return {"status": status, "message": message}
 
+@router.get("/profile/edit_password", response_class=HTMLResponse)
+def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if account_info:
+        data.append(account_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'account_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_password.html", data_res)
+
+
+@router.post("/profile/edit_password")
+async def edit_account(account: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+
+    #Biến response kết quả
+    status = 1
+    message = ""
+
+    #password lấy từ form
+    account_password = account.account_password
+    
+    if not Hash.verify(account_password,user.account_password):
+        status = 0
+        message = "Sai mật khẩu!"
+    else:
+        status = 1
+        message = "Đúng mật khẩu"
+
+    return {"status": status, "message": message}
+
+@router.get("/profile/edit_new_password", response_class=HTMLResponse)
+def edit_admin_form(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if account_info:
+        data.append(account_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'account_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_new_password.html", data_res)
+
+
+@router.put("/profile/edit_new_password")
+async def edit_account(account: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+
+    #Biến response kết quả
+    status = 1
+    message = ""
+
+    #password lấy từ form
+    
+    account_info = account_crud.update_account_password(db=db,account=account, account_id=account_id)
+    if account_info != None:
+        
+        status = 1
+        message = "Cập nhật mật khẩu thành công"
+    else:
+        status = 0
+        message = "Cập nhật mật khẩu không thành công"
+
+    return {"status": status, "message": message, "account_info": account_info}
+
 @router.get("/foodtype/", response_class=HTMLResponse)
 def read_foodtype(request: Request, user=Depends(manager)):
     if user.account_type != 1:
