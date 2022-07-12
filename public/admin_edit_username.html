@@ -1,0 +1,147 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+Trang admin
+{% endblock %}
+
+{% block sidebar %}
+<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Dashboard</a>
+<a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Profile</a>
+<a href="/admin/admin_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+        <i class="bi bi-clipboard-data mr-2"></i>
+        Quản lý tài khoản admin</a>
+<a href="/admin/buyer_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản buyer</a>
+<a href="/admin/seller_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản seller</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản đơn hàng</a>
+<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý loại thức ăn</a>
+{% endblock %}
+
+{% block nav_link %}
+<li class="nav-item dropdown">
+    <a class="nav-link" href="#">
+        {{ username if username != None }}
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a class="nav-link" href="/logout">
+        Đăng xuất
+    </a>
+</li>
+
+
+{% endblock %}
+
+{% block page_name %}
+Thông tin admin
+{% endblock %}
+
+{% block page_name_detail %}
+Trang chỉnh sửa thông tin admin
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-0">
+            <div class="card-body px-0 py-2">
+                <div class="row">
+                    <div class="col-md-9">
+                        <form>
+                            {% for info in account_info %}
+                            <div class="form-group">
+                                <label for="account_username">Tên tài khoản:</label>
+                                <input type="text" class="form-control" id="account_username" name="account_username"
+                                    value="{{ info.account_username }}">
+                                    <small id="error-username" style="color: red;"></small>
+                            </div>
+
+                            <button type="button" class="btn btn-warning btn-edit-username px-4">Sửa</button>
+
+                            {% endfor %}
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).on('click', '.btn-edit-username', function () {
+      var account_username = $('#account_username').val();
+
+      var count;
+      if (account_username == "") {
+        $('#error-username').html("Hãy nhập tên đăng nhập muốn sửa");
+
+      }
+      else {
+        $.ajax({
+          url: "/account/check-duplicate-username?username=" + account_username,
+          method: "GET",
+          contentType: "application/json",
+          success: function (response) {
+
+            console.log(response.count);
+            console.log(response.count[0].TOTAL);
+            if (response.count[0].TOTAL > 0) {
+              $('#error-username').html("Trùng tên đăng nhập. Hãy nhập tên khác!");
+
+            }
+            else {
+              $('#error-username').html("");
+
+              var data = { "account_username": account_username };
+
+              $.ajax({
+                url: "/admin/profile/edit_username/",
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                  if (response.status == 0) {
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Lỗi',
+                      text: '' + response.message
+                    });
+                  } else {
+                    Swal.fire({
+                      position: 'center',
+                      icon: 'success',
+                      title: '' + response.message,
+                      confirmButtonText: 'Trở về'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                          location.href = "/admin/profile";
+                        }
+                      })
+                
+                  }
+                }
+              });
+            }
+          }
+        });
+      }
+    })
+  
+  </script>
+{% endblock %}
