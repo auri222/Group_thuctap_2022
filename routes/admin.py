@@ -227,7 +227,8 @@ def read_foodtype(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
     foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
 
     error = ""
@@ -370,7 +371,8 @@ def read_payment_method(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
     payment_method = payment_crud.get_all_payment_method(db=db, skip=0, limit=10)
 
     error = ""
@@ -585,7 +587,8 @@ def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
 
     db_ = get_database_session()
 
@@ -642,7 +645,8 @@ def get_all_buyers(request: Request, page: int=1, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    account_info = account_crud.get_account(db=db,account_id=account_id)
+    username = account_info.account_username
 
     db_ = get_database_session()
 
