@@ -49,7 +49,7 @@ def read_profile_admin(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
-    username = user.account_username
+    username = account_info.account_username
     admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
     account_info = account_crud.get_account(db, account_id=account_id)
 
@@ -97,7 +97,7 @@ def update_admin(id: int, admin: schemas.Admin):
 def delete_admin(id: int):
     return admin_crud.delete_admin(db, admin_id=id)
 
-@router.get("/edit_profile", response_class=HTMLResponse)
+@router.get("/profile/edit_profile", response_class=HTMLResponse)
 def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -129,7 +129,7 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
     return templates.TemplateResponse("admin_edit_profile.html", data_res)
 
 
-@router.put("/edit_profile")
+@router.put("/profile/edit_profile")
 def edit_admin_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -152,7 +152,7 @@ def edit_admin_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Re
 
     return {"status": status,"message": message, "account_id": account_id}
 
-@router.get("/edit_account", response_class=HTMLResponse)
+@router.get("/profile/edit_username", response_class=HTMLResponse)
 def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
@@ -180,11 +180,11 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
         'account_info': data,
         'error': error   
     }
-    return templates.TemplateResponse("admin_edit_account.html", data_res)
+    return templates.TemplateResponse("admin_edit_username.html", data_res)
 
 
-@router.put("/edit_account")
-def edit_admin_info(account_id: int, update_pass: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+@router.put("/profile/edit_username")
+async def edit_account(account: schemas.UpdateAccountName, request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -192,18 +192,29 @@ def edit_admin_info(account_id: int, update_pass: schemas.UpdateAccountPassword,
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
-    
+    account_id = user.account_id
 
-    account_id = account_crud.update_account_password(db=db,account=update_pass,account_id=account_id)
-    if account_id != None:
-        status = 1
-        message = "Sửa tài khoản thành công!"
-    else:
+    #Biến response kết quả
+    status = 1
+    message = ""
+
+    #username lấy từ form
+    username = account.account_username
+    
+    account_username = account_crud.update_account_name(db=db, account=account, account_id=account_id)
+
+    if account_username:
+        if account_username == username:
+            status = 1
+            message = "Cập nhật thông tin thành công"
+        else:
+            status = 0
+            message = "Cập nhật thông tin không thành công"
+    else: 
         status = 0
-        message = "Hệ thống lỗi! Vui lòng thử lại sau!"
-    
+        message = "Cập nhật không thành công. Thử lại sau!"
 
-    return {"status": status,"message": message, "account_id": account_id}
+    return {"status": status, "message": message}
 
 @router.get("/foodtype/", response_class=HTMLResponse)
 def read_foodtype(request: Request, user=Depends(manager)):
