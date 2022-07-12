@@ -1,0 +1,143 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}
+Trang admin
+{% endblock %}
+
+{% block sidebar %}
+<a href="/admin/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Dashboard</a>
+<a href="/admin/profile/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Profile</a>
+<a href="/admin/admin_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản admin</a>
+<a href="/admin/buyer_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản buyer</a>
+<a href="/admin/seller_info/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản seller</a>
+<a href="#" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý tài khoản đơn hàng</a>
+<a href="/admin/foodtype/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý loại thức ăn</a>
+<a href="/admin/payment_method/?account_id={{ account_id }}" class="d-block text-light p-3">
+    <i class="bi bi-clipboard-data mr-2"></i>
+    Quản lý phương thức thanh toán</a>
+{% endblock %}
+
+{% block nav_link %}
+<li class="nav-item dropdown">
+    <a class="nav-link" href="#">
+        {{ username if username != None }}
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a class="nav-link" href="/logout">
+        Đăng xuất
+    </a>
+</li>
+
+
+{% endblock %}
+
+{% block page_name %}
+Loại thức ăn
+{% endblock %}
+
+{% block page_name_detail %}
+Trang quản lý loại thức ăn
+{% endblock %}
+
+{% block content %}
+
+<section class="content-main py-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-0">
+                    <div class="card-body px-0 py-2">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="payment_method">Tên phương thức thanh toán</label>
+                                        <input type="text" class="form-control" id="payment_method_name"
+                                            name="payment_method_name" placeholder="Nhập tên phương thức thanh toán ở đây">
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary btn-add">Thêm</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.btn-add', function () {
+            var payment_method_name = $('#payment_method_name').val();
+            var url = window.location.href;
+            var queryString = window.location.search;
+            var urlParams = new URLSearchParams(queryString);
+            var account_id = urlParams.get('account_id');
+            console.log("URL: " + url);
+            console.log("account_id: " + account_id);
+
+
+            if (payment_method_name == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Nhập thiếu...',
+                    text: 'Hãy nhập tên phương thức thanh toán'
+                });
+            }
+            else {
+                var data = {
+                    'payment_method_name': payment_method_name
+                };
+                $.ajax({
+                    url: "/admin/payment_method/create",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.status == 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: '' + response.message
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                title: '' + response.message,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/admin/payment_method/?account_id="+account_id;
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+        })
+    });
+</script>
+{% endblock %}
