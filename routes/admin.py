@@ -10,7 +10,7 @@ from starlette.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
-from crud import admin_crud, account_crud, food_type_crud, seller_crud, buyer_crud
+from crud import admin_crud, account_crud, food_type_crud, payment_crud
 from routes.login import manager
 import math
 router = APIRouter(
@@ -347,9 +347,8 @@ def edit_foodtype(foodtype_id: int, foodtype: schemas.FoodType, request: Request
 
     return {"status": status, "message": message, "account_id": account_id}
         
-# API Dashboard ------------------------------------------------------------------------------
-@router.get("/fetch-all-rows-seller")
-def fetch_all_rows_seller(request: Request, user=Depends(manager)):
+@router.get("/payment_method/", response_class=HTMLResponse)
+def read_payment_method(request: Request, user=Depends(manager)):
     if user.account_type != 1:
         error_data = {
             "request": request,
@@ -357,6 +356,134 @@ def fetch_all_rows_seller(request: Request, user=Depends(manager)):
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+    username = user.account_username
+    payment_method = payment_crud.get_all_payment_method(db=db, skip=0, limit=10)
+
+    error = ""
+    if payment_method:
+        error = None
+    else: 
+        error = "Không có dữ liệu"
+    print(error)
+    print(payment_method)
+    data = []
+    for payment in payment_method:
+        data.append(payment.__dict__)
+    print(f"payment info {data}")
+    data_res = {
+        "request": request,
+        "title": 'Phương thức thanh toán',
+        'username': username,
+        'account_id': account_id,
+        'payment_info': data,
+        'error': error
+    }
+    return templates.TemplateResponse("admin_payment.html", data_res)
+    
+
+@router.get("/payment_method/create", response_class=HTMLResponse)
+def create_payment_form(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+    username = user.account_username
+    
+    data_res = {
+        "request": request,
+        "title": 'Phương thức thanh toán',
+        'username': username,
+        'account_id': account_id   
+    }
+    return templates.TemplateResponse("admin_payment_create.html", data_res)
+
+@router.post("/payment_method/create")
+def create_food_type(payment_method: schemas.PaymentMethod):
+    #Khởi tạo biến thông báo
+    status = 1
+    message = ""
+
+    db_payment_method = payment_crud.create_payment_method(db=db,payment_method=payment_method)
+    
+    if db_payment_method:
+        status = 1
+        message = "Thêm thông tin thành công"
+    else:
+        status = 0
+        message = "Lỗi. Thử lại sau"
+    
+    return {"status": status, "message": message}
+
+@router.get("/payment_method/edit", response_class=HTMLResponse)
+def edit_payment_form(payment_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+    username = user.account_username
+
+    payment_info = payment_crud.get_payment_method_by_ID(db=db, payment_id=payment_id)
+
+    data = []
+    if payment_info:
+        data.append(payment_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    
+    data_res = {
+        "request": request,
+        "title": 'Phương thức thanh toán',
+        'username': username,
+        'account_id': account_id,
+        'payment_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_payment_edit.html", data_res)
+
+@router.put("/payment_method/edit")
+def edit_payment_method(payment_id: int, payment_method: schemas.PaymentMethod, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_id = user.account_id
+
+    #Kiểm tra nếu tên nhập trùng
+    payment_method_name = payment_method.payment_method_name
+    row_count = payment_crud.count_payment_method(db=db,payment_method_name=payment_method_name)
+    status = 1
+    message = ""
+    print(f"Số tên trùng: {row_count}")
+    if row_count > 0:
+        status = 0
+        message = "Tên phương thức thanh toán bị trùng!"
+    else:
+        payment_info = payment_crud.update_payment_method(db=db,payment_method=payment_method, payment_id=payment_id)
+        print(f"Food type info: {payment_info}")
+        if payment_info:
+            status = 1
+            message = "Sửa thành công"
+        else:
+            status = 0
+            message = "Sửa không thành công. Thử lại sau!"
 
     db_ = get_database_session()
 
@@ -539,8 +666,28 @@ def fetch_seller_info(seller_id: int, request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    db_ = get_database_session()
+    return {"status": status, "message": message, "account_id": account_id}
 
-    seller_info = seller_crud.get_all_info_seller(db=db_, seller_id=seller_id)
+@router.delete("/payment_method/delete")
+def edit_payment_method(payment_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
 
-    return {"seller_info": seller_info}
+    account_id = user.account_id
+    payment_info = payment_crud.delete_payment_method(db=db, payment_id=payment_id)
+    print(f"Payment method: {payment_info}")
+    if payment_info:
+        status = 1
+        message = "Xóa thành công"
+    else:
+        status = 0
+        message = "Xóa không thành công. Thử lại sau!"
+
+    
+
+    return {"status": status, "message": message, "account_id": account_id}
