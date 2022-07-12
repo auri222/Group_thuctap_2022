@@ -56,7 +56,7 @@ async def handle_register_account_form(register_account: schemas.RegisterAccount
     print(username)
     dupplicate_row = account_crud.count_duplicate_username(db, username=username)
 
-    if dupplicate_row > 0:
+    if dupplicate_row[0]['TOTAL'] > 0:
         status = 0
         message = "Tên đăng nhập bị trùng! Hãy nhập lại"
         account_id = 0

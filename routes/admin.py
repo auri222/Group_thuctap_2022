@@ -1,5 +1,6 @@
 from email import message
 from re import template
+from urllib import response
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.requests import Request
@@ -544,6 +545,23 @@ def fetch_all_rows_order(request: Request, user=Depends(manager)):
     return {"TOTAL_ROWS_ORDER": TOTAL_ROWS_ORDER}
 # ------------------------------------------------------------------------------------------
 
+@router.get("/orders", response_class=HTMLResponse)
+def get_orders(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    data_res = {
+        "request": request,
+        "title": "Trang đơn hàng"
+    }
+    return templates.TemplateResponse("admin_order_list.html", data_res)
+
+
 # Quan ly danh sach seller
 @router.get("/sellers", response_class=HTMLResponse)
 def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
@@ -712,3 +730,135 @@ def edit_payment_method(payment_id: int, request: Request, user=Depends(manager)
     
 
     return {"status": status, "message": message, "account_id": account_id}
+
+# Xóa tài khoản seller --------------------------------------------------
+# Giả sử không có bất cứ đơn hàng
+# Quy trình xóa: 
+# 1. Kiểm tra seller có thông tin restaurant không
+#    - CÓ thì kiểm tra warehouse
+#    - Nếu warehouse > 0 -> Lấy danh sách id món ăn 
+#    - Nếu warehouse < 0 -> không cần kiểm tra món ăn 
+#    - KHÔNG thì không cần kiểm tra warehouse
+#    - Lấy account id từ seller
+# 2. Xóa:  
+#    - warehouse với restaurant_id
+#    - xóa món ăn 
+#    - xóa restaurant
+#    - xóa seller 
+#    - xóa account của seller đó 
+@router.delete("/delete-seller")
+def delete_seller(seller_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    #Khởi tạo các biến cần thiết
+    flag = 0 # Cờ
+    seller_account_id = 0
+    restaurant_id = 0
+    result_delete_warehouse_food = 0 #-> Trả ra kết quả là biến thông báo
+    result_delete_restaurant = 0 #-> Trả ra số dòng xóa được
+    result_delete_seller = 0
+    result_delete_account = 0
+    total_restaurant_info = 0 #Seller có thông tin nhà hàng
+    total_warehouse_info = 0 #Số lượng món ăn có trong warehouse
+    data = []
+    result = 0 #Check xem có xóa warehouse không
+    #Lấy account_id của seller
+    seller_info = seller_crud.get_acccount_id(db=db_, seller_id=seller_id)
+    seller_account_id = seller_info[0]['account_id']
+
+    #Count restaurant info
+    count_restaurant = seller_crud.count_restaurant_info(db=db_, seller_id=seller_id)
+    print(count_restaurant)
+
+    #Tạo biến kiểm tra
+    total_restaurant_info = count_restaurant[0]['TOTAL_RESTAURANT_ROW']
+    
+    # Nếu có thông tin nhà hàng thì kiểm tra warehouse có gì không 
+    # Nếu warehouse có số dòng > 0 -> thì xóa từ warehouse & food -> restaurant -> seller -> account (TH1)
+    #                          < 0 -> thì xóa từ restaurant -> seller -> account (TH2)
+    
+    if total_restaurant_info == 1: 
+        restaurant_id = count_restaurant[0]['restaurant_id']
+        #count all items in warehouse
+        count_warehouse = seller_crud.count_warehouse_info(db=db_, seller_id=seller_id)
+
+        total_warehouse_info = count_warehouse[0]['TOTAL_WAREHOUSE_ROW']
+        # > 0:
+        if total_warehouse_info > 0: #TH1
+            result_delete_warehouse_food = seller_crud.delete_warehouse_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+            
+            if result_delete_warehouse_food:
+                result = 1
+            result_delete_restaurant = seller_crud.delete_restaurant(db=db_, restaurant_id=restaurant_id)
+            result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
+            result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+            flag =1
+
+        # <0:
+        else: #TH2
+            result_delete_restaurant = seller_crud.delete_restaurant(db=db_, restaurant_id=restaurant_id)
+            result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
+            result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+            flag = 2
+    # Nếu restaurant info không có thì xóa từ seller -> account (TH3)
+    else: #TH3
+        result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
+        result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+        flag = 3
+
+    data.append(result)
+    data.append(result_delete_restaurant)
+    data.append(result_delete_seller)
+    data.append(result_delete_account)
+    
+
+    return {"flag": flag, "seller_account_id": seller_account_id, "result": data}
+
+# ---------------------------------------------------------------------
+
+#Xóa tài khoản buyer
+@router.delete("/delete-buyer")
+def delete_buyer(buyer_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+    
+    #Tạo biến kiểm tra
+    status = 1
+    message = ""
+    row_buyer_deleted = 0
+    row_account_deleted = 0
+
+    buyer_account_id = buyer_crud.get_account_buyer(db=db_, buyer_id=buyer_id)
+
+    row_buyer_deleted = buyer_crud.delete_buyer(db=db_, buyer_id=buyer_id)
+
+    row_account_deleted = buyer_crud.delete_account_buyer(db=db_, account_id=buyer_account_id)
+
+    if row_buyer_deleted > 0:
+        if row_account_deleted > 0:
+            status = 1
+            message = "Xóa tài khoản thành công"
+        else:
+            status = 0
+            message = "Xóa tài khoản không thành công"
+    else:
+        status = 0
+        message = "Xóa thông tin người bán bị lỗi"
+
+    return {"status": status, "message": message}
+

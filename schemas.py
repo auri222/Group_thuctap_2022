@@ -311,3 +311,12 @@ class OrderDetail(BaseModel):
 
 #End Order Detail
 #----------------------------------------------------------
+
+class DeleteSellerChecker(BaseModel):
+    warehouse_food: Union[int, None] = None
+    restaurant: Union[int, None] = None
+    seller: Union[int, None] = None
+    account: Union[int, None] = None
+
+    class Config:
+        orm_mode = True

@@ -101,3 +101,20 @@ JOIN account acc ON acc.account_id = b.account_id
 WHERE b.buyer_id = {buyer_id}"""
     result = db.execute(string)
     return result.fetchall()
+
+#Delete tài khoản buyer -----------------------------------------------------
+def get_account_buyer(db: Session, buyer_id: int):
+    db_account = db.query(models.Buyer).filter(models.Buyer.buyer_id == buyer_id).first()
+    account_id = db_account.account_id
+
+    return account_id
+
+def delete_buyer(db: Session, buyer_id: int):
+    num_row_deleted = db.query(models.Buyer).filter(models.Buyer.buyer_id == buyer_id).delete()
+    db.commit()
+    return num_row_deleted
+
+def delete_account_buyer(db: Session, account_id: int):
+    num_row_deleted = db.query(models.Account).filter(models.Account.account_id == account_id).delete()
+    db.commit()
+    return num_row_deleted

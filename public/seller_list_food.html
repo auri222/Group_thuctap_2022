@@ -534,36 +534,51 @@ Trang thông tin danh sách món ăn
             var food_id = $(this).data("food-id");
             console.log("Food ID: " + food_id);
 
-            $.ajax({
-                url: "/seller/delete-food?food_id=" + food_id,
-                method: "DELETE",
-                contentType: "application/json",
-                success: function (success) {
-                    console.log(response);
-                    if (response.status == 0) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: '' + response.message
-                        });
-                    }
-                    else {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: '' + response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        $(function () {
-                            function reload_page() {
-                                location.reload();
+            Swal.fire({
+                title: 'Bạn chắc chứ?',
+                text: "Hành động này sẽ xóa các thông tin liên quan đến món ăn này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Chắc chắn xóa',
+                cancelButtonText: 'Đóng',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/seller/delete-food?food_id=" + food_id,
+                        method: "DELETE",
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log(response);
+                            if (response.status == 0) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: '' + response.message
+                                });
                             }
-                            window.setTimeout(reload_page, 1500);
-                        });
-                    }
+                            else {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: '' + response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                $(function () {
+                                    function reload_page() {
+                                        location.reload();
+                                    }
+                                    window.setTimeout(reload_page, 1500);
+                                });
+                            }
+                        }
+                    });
                 }
-            });
+            })
+
+
         })
 
     })

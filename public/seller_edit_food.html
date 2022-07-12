@@ -42,10 +42,11 @@ Trang sửa thông tin món ăn
                         value="{{ info.food_price }}">
                 </div>
                 <div class="form-group col-md-4">
+
                     <label for="food_type">Loại thức ăn</label>
                     <select name="food_type" id="food_type" class="form-control">
 
-                        {% set type = info.food_type %}
+                        {% set type = info.food_type_id %}
 
                         {% if food_type_info %}
                         {% for food_type in food_type_info %}
@@ -215,7 +216,6 @@ Trang sửa thông tin món ăn
                     var file = document.getElementById('food_image').files[0];
                     var size = file.size;
                     var file_name = file.name;
-                    var flag = true;
                     if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
 
                         Swal.fire({
@@ -223,93 +223,92 @@ Trang sửa thông tin món ăn
                             title: 'Lỗi',
                             text: 'File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg'
                         });
-                        flag = false;
                     }
-                    if (size > 2000000) {
+                    else if (size > 2000000) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Lỗi',
                             text: 'Hãy upload ảnh nhỏ hơn 2MB'
                         });
-                        flag = false;
                     }
-
-                    //Kiểm tra hình upload có trùng không
-
-                    $.ajax({
-                        url: "/food/edit/check_duplicate_image?image_name=" + file_name,
-                        method: "GET",
-                        contentType: "application/json",
-                        success: function (response) {
-                            if (response.count > 0) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Lỗi',
-                                    text: 'Ảnh trùng. Hãy chọn ảnh khác!'
-                                });
-                                flag = false;
-                            }
-                        }
-                    });
-
-                    //Hình upload không lỗi thì bắt đầu sửa các thông tin 
-                    if (flag) {
-                        // Lấy giá trị ảnh
-                        var img_file = document.getElementById('food_image').files[0];
-                        var img = new FormData();
-                        img.append("food_image", img_file);
-                        console.log("It's ok. Start...");
+                    else {
+                        //Kiểm tra hình upload có trùng không
                         $.ajax({
-                            url: "/food/edit/info?food_id=" + food_id,
-                            method: "PUT",
+                            url: "/food/edit/check_duplicate_image?image_name=" + file_name,
+                            method: "GET",
                             contentType: "application/json",
-                            data: JSON.stringify({ food, warehouse }),
                             success: function (response) {
-                                if (response.status == 0) {
+                                if (response.count > 0) {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Lỗi',
-                                        text: '' + response.message
+                                        text: 'Ảnh trùng. Hãy chọn ảnh khác!'
                                     });
                                 }
                                 else {
-                                    //Sửa hình
+                                    //Hình upload không lỗi thì bắt đầu sửa các thông tin 
+
+                                    // Lấy giá trị ảnh
+                                    var img_file = document.getElementById('food_image').files[0];
+                                    var img = new FormData();
+                                    img.append("food_image", img_file);
+                                    console.log("It's ok. Start...");
                                     $.ajax({
-                                        url: "/food/edit/image?food_id=" + food_id,
-                                        enctype: "multipart/form-data",
+                                        url: "/food/edit/info?food_id=" + food_id,
                                         method: "PUT",
-                                        contentType: false,
-                                        cache: false,
-                                        processData: false,
-                                        data: img,
-                                        success: function (output) {
-                                            if (output.status == 0) {
+                                        contentType: "application/json",
+                                        data: JSON.stringify({ food, warehouse }),
+                                        success: function (response) {
+                                            if (response.status == 0) {
                                                 Swal.fire({
                                                     icon: 'error',
                                                     title: 'Lỗi',
-                                                    text: '' + output.message
-                                                });
-                                            } else {
-                                                Swal.fire({
-                                                    position: 'center',
-                                                    icon: 'success',
-                                                    title: '' + output.message,
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                });
-                                                $(function () {
-                                                    function redirect_page() {
-                                                        location.href = "/seller/food";
-                                                    }
-                                                    window.setTimeout(redirect_page, 1500);
+                                                    text: '' + response.message
                                                 });
                                             }
+                                            else {
+                                                //Sửa hình
+                                                $.ajax({
+                                                    url: "/food/edit/image?food_id=" + food_id,
+                                                    enctype: "multipart/form-data",
+                                                    method: "PUT",
+                                                    contentType: false,
+                                                    cache: false,
+                                                    processData: false,
+                                                    data: img,
+                                                    success: function (output) {
+                                                        if (output.status == 0) {
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'Lỗi',
+                                                                text: '' + output.message
+                                                            });
+                                                        } else {
+                                                            Swal.fire({
+                                                                position: 'center',
+                                                                icon: 'success',
+                                                                title: '' + output.message,
+                                                                showConfirmButton: false,
+                                                                timer: 1500
+                                                            });
+                                                            $(function () {
+                                                                function redirect_page() {
+                                                                    location.href = "/seller/food";
+                                                                }
+                                                                window.setTimeout(redirect_page, 1500);
+                                                            });
+                                                        }
+                                                    }
+                                                })
+                                            }
                                         }
-                                    })
+                                    });
+
                                 }
                             }
                         });
                     }
+
                 }
                 //Không
                 else {

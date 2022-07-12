@@ -166,7 +166,11 @@ def read_profile_seller(request: Request, page: int = 1, query: Union[str, None]
     TOTAL_ROW = count[0]['TOTAL_ROW'] # => Lấy tổng số dòng
     TOTAL_PAGE = math.ceil(TOTAL_ROW/limit) # => Tổng số trang
     first_page = 'disabled' if page == 1 else ''
-    last_page = 'disabled' if page == TOTAL_PAGE else ''
+    last_page = ''
+    if TOTAL_PAGE == 0:
+        last_page = 'disabled' 
+    elif page == TOTAL_PAGE:
+        last_page = 'disabled'
     next_page = page + 1
     previous_page = page - 1
 

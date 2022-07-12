@@ -155,7 +155,7 @@ Trang quản lý danh sách người mua
                     console.log(created_date_string);
 
                     var buyer_birthday = new Date(info.buyer_birthday);
-                    var buyer_birthday_string = ""+buyer_birthday.getDate()+"/"+(buyer_birthday.getMonth()+1)+"/"+buyer_birthday.getFullYear();
+                    var buyer_birthday_string = "" + buyer_birthday.getDate() + "/" + (buyer_birthday.getMonth() + 1) + "/" + buyer_birthday.getFullYear();
                     console.log(buyer_birthday_string);
 
                     var content = `<div class="row">
@@ -197,32 +197,32 @@ Trang quản lý danh sách người mua
                                     <tr>
                                     <td scope="row" style="width: 50%;">Họ tên: </td>
                                     <td style="width: 50%;">
-                                        `+ info.buyer_name +`
+                                        `+ info.buyer_name + `
                                     </td>
                                     </tr>
 
                                     <tr>
                                     <td scope="row" style="width: 50%;">Ngày sinh: </td>
                                     <td style="width: 50%;">
-                                        `+ buyer_birthday_string +`
+                                        `+ buyer_birthday_string + `
                                     </td>
                                     </tr>
                                     <tr>
                                     <td scope="row" style="width= 40%;">Địa chỉ: </td>
                                     <td style="width: 50%;">
-                                        `+ info.buyer_address +`
+                                        `+ info.buyer_address + `
                                         </td>
                                     </tr>
                                     <tr>
                                     <td scope="row" style="width: 50%;">Số điện thoại: </td>
                                     <td style="width: 50%;">
-                                        `+ info.buyer_phone +`
+                                        `+ info.buyer_phone + `
                                         </td>
                                     </tr>
                                     <tr>
                                     <td scope="row" style="width: 50%;">Email: </td>
                                     <td style="width: 50%;">
-                                        `+ info.buyer_email +`
+                                        `+ info.buyer_email + `
                                         </td>
                                     </tr>
                                     <tr>
@@ -242,6 +242,53 @@ Trang quản lý danh sách người mua
             });
         });
 
+        $(document).on('click', '.btn-delete', function () {
+            var buyer_id = $(this).data("buyer-id");
+            console.log("buyer id: " + buyer_id);
+
+            Swal.fire({
+                title: 'Bạn chắc chứ?',
+                text: "Hành động này sẽ xóa toàn bộ thông tin liên quan đến người dùng này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Chắc chắn xóa!',
+                cancelButtonText: 'Đóng',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/admin/delete-buyer?buyer_id="+buyer_id,
+                        method: "DELETE",
+                        contentType: "application/json",
+                        success: function(response){
+                            if(response.status == 0){
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: ''+response.message
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: ''+response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                $(function () {
+                                    function reload_page() {
+                                        location.href = "/admin/buyers";
+                                    }
+                                    window.setTimeout(reload_page, 1500);
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        })
     });
 </script>
 {% endblock %}

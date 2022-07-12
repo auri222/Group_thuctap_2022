@@ -1,5 +1,7 @@
+from operator import mod
 import string
 from typing import Union
+from unittest import result
 from sqlalchemy.orm import Session
 import models
 import schemas
@@ -44,13 +46,13 @@ def create_seller_return_ID(db: Session, seller: schemas.CreateSellerInfo):
     db.refresh(db_seller)
     return seller_id
 
-def delete_seller(db: Session, Seller_ID: int):
-    db_seller = db.query(models.Seller),filter(models.Seller.seller_id == Seller_ID).first()
-    if db_seller is None:
-        return {"Error": f"Seller with ID {Seller_ID} is not exits"}
-    db.delete(db_seller)
-    db.commit()
-    return {"Success": f"Seller with ID {Seller_ID} is deleted"}
+# def delete_seller(db: Session, Seller_ID: int):
+#     db_seller = db.query(models.Seller),filter(models.Seller.seller_id == Seller_ID).first()
+#     if db_seller is None:
+#         return {"Error": f"Seller with ID {Seller_ID} is not exits"}
+#     db.delete(db_seller)
+#     db.commit()
+#     return {"Success": f"Seller with ID {Seller_ID} is deleted"}
 
 def update_seller_return_ID(db: Session, seller: schemas.Seller, Seller_ID: int):
     update_sel = db.query(models.Seller).filter(models.Seller.seller_id == Seller_ID).first()
@@ -109,3 +111,71 @@ WHERE sl.seller_id = {seller_id}"""
 
     result = db.execute(string)
     return result.fetchall()
+
+# Xóa tài khoản seller ----------------------------------------------------------------------
+def count_restaurant_info(db: Session, seller_id: int): # kết quả trả ra có thể là (0, NULL)
+    string = f"""SELECT COUNT(*) AS TOTAL_RESTAURANT_ROW, res.restaurant_id
+FROM restaurant res
+JOIN seller sl ON sl.seller_id = res.seller_id
+WHERE sl.seller_id = {seller_id}"""
+
+    result = db.execute(string)
+    return result.fetchall()
+
+def count_warehouse_info(db: Session, seller_id: int):
+    string = f"""SELECT COUNT(*) AS TOTAL_WAREHOUSE_ROW
+/*SELECT rw.food_id*/
+FROM restaurant_warehouse rw
+JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
+JOIN seller sl ON sl.seller_id = res.seller_id
+WHERE sl.seller_id = {seller_id}"""
+
+    result = db.execute(string)
+    return result.fetchall()
+
+# Nếu TOTAL_WAREHOUSE_ROW > 0
+def get_list_foods(db: Session, seller_id: int):
+    string = f"""SELECT rw.food_id
+FROM restaurant_warehouse rw
+JOIN restaurant res ON res.restaurant_id = rw.restaurant_id
+JOIN seller sl ON sl.seller_id = res.seller_id
+WHERE sl.seller_id = {seller_id}"""
+
+    result = db.execute(string)
+    return result.fetchall()
+
+def get_acccount_id(db: Session, seller_id):
+    string = f"""SELECT sl.account_id
+FROM seller sl
+WHERE sl.seller_id = {seller_id}"""
+
+    result = db.execute(string)
+    return result.fetchall()
+
+def delete_warehouse_food_by_restaurant_id(db: Session, restaurant_id: int):
+    # num_row_deleted = db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.restaurant_id == restaurant_id).delete()
+    # db.commit()
+    # return num_row_deleted
+    string = f"""DELETE rw, f
+FROM restaurant_warehouse rw
+JOIN food f ON f.food_id = rw.food_id
+WHERE rw.restaurant_id = {restaurant_id}"""
+    db.execute(string) #-> Thực thi lệnh trong string
+    db.commit() #-> commit để cập nhật những thay đổi đối với database (xóa)
+    return {"success": True}
+
+def delete_restaurant(db: Session, restaurant_id: int):
+    num_row_deleted = db.query(models.Restaurant).filter(models.Restaurant.restaurant_id == restaurant_id).delete()
+    db.commit()
+    return num_row_deleted
+
+def delete_seller(db: Session, seller_id: int):
+    num_row_deleted = db.query(models.Seller).filter(models.Seller.seller_id == seller_id).delete()
+    db.commit()
+    return num_row_deleted
+
+def delete_account(db: Session, account_id: int):
+    num_row_deleted = db.query(models.Account).filter(models.Account.account_id == account_id).delete()
+    db.commit()
+    return num_row_deleted
+

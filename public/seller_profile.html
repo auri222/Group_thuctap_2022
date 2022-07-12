@@ -31,13 +31,13 @@ Trang thông tin cá nhân
                 <table class="table table-borderless mt-2">
                     <tbody>
                         <tr>
-                            <th>Tên đăng nhập: </th>
-                            <td>{{ username }}</td>
+                            <th style="width: 50%;" >Tên đăng nhập: </th>
+                            <td style="width: 50%;" >{{ username }}</td>
                         </tr>
                         <tr>
-                            <th>Ngày tạo tài khoản: </th>
+                            <th style="width: 50%;" >Ngày tạo tài khoản: </th>
                             {% if created_date %}
-                            <td>{{ created_date.strftime("%H:%M:%S %d/%m/%Y") }}</td>
+                            <td style="width: 50%;" >{{ created_date.strftime("%H:%M:%S %d/%m/%Y") }}</td>
                             {% endif %}
                         </tr>
                     </tbody>
@@ -61,25 +61,25 @@ Trang thông tin cá nhân
                 <table class="table table-borderless mt-2">
                     <tbody>
                         <tr>
-                            <th>Họ tên: </th>
-                            <td>{{ info.seller_name }}</td>
+                            <th style="width: 50%;" >Họ tên: </th>
+                            <td style="width: 50%;" >{{ info.seller_name }}</td>
                         </tr>
                         <tr>
-                            <th>Ngày sinh: </th>
+                            <th style="width: 50%;" >Ngày sinh: </th>
                             {% set birthday = info.seller_birthday %}
-                            <td>{{ birthday.strftime("%d/%m/%Y") }}</td>
+                            <td style="width: 50%;" >{{ birthday.strftime("%d/%m/%Y") }}</td>
                         </tr>
                         <tr>
-                            <th>Địa chỉ: </th>
-                            <td>{{ info.seller_address }}</td>
+                            <th style="width: 50%;" >Địa chỉ: </th>
+                            <td style="width: 50%;" >{{ info.seller_address }}</td>
                         </tr>
                         <tr>
-                            <th>Số điện thoại: </th>
-                            <td>{{ info.seller_phone }}</td>
+                            <th style="width: 50%;" >Số điện thoại: </th>
+                            <td style="width: 50%;" >{{ info.seller_phone }}</td>
                         </tr>
                         <tr>
-                            <th>Email: </th>
-                            <td>{{ info.seller_email }}</td>
+                            <th style="width: 50%;" >Email: </th>
+                            <td style="width: 50%;" >{{ info.seller_email }}</td>
                         </tr>
 
                     </tbody>

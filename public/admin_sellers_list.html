@@ -268,6 +268,118 @@ Trang quản lý danh sách người bán
             });
         });
 
+
+        $(document).on('click', '.btn-delete', function () {
+            var seller_id = $(this).data("seller-id");
+            console.log(seller_id);
+            Swal.fire({
+                title: 'Bạn chắc chứ?',
+                text: "Hành động này sẽ xóa toàn bộ thông tin liên quan đến người bán này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Chắc chắn xóa',
+                cancelButtonText: 'Đóng'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/admin/delete-seller?seller_id=" + seller_id,
+                        method: "DELETE",
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("flag: " + response.flag);
+                            console.log("seller account id: " + response.seller_account_id);
+                            console.log("data: " + response.result); //4 phần tử
+                            var flag = true;
+                            var TH = response.flag; //TH1, TH2, TH3
+                            var length = response.result.length;
+                            var data = response.result;
+                            if (TH == 1) {
+                                //4 giá trị trong danh sách phải >0 => true
+                                for (let i = 0; i < length; i++) {
+                                    if (data[i] > 0) {
+                                        flag = flag && true;
+                                    }
+                                    else {
+                                        flag = flag && false;
+                                    }
+                                }
+                            }
+
+                            if (TH == 2) {
+                                //giá trị đầu == 0, 3 giá trị còn lại >0 => true
+                                for (let i = 0; i < length; i++) {
+                                    if (i == 0) {
+                                        if (data[i] == 0) {
+                                            flag = flag && true;
+                                        }
+                                        else {
+                                            flag = flag && false;
+                                        }
+                                    }
+                                    else {
+                                        if (data[i] > 0) {
+                                            flag = flag && true;
+                                        }
+                                        else {
+                                            flag = flag && false;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (TH = 3) {
+                                //2 giá trị đầu == 0, 2 giá trị còn lại >0 => true
+                                for (let i = 0; i < length; i++) {
+                                    if (i  <= 1) {
+                                        if (data[i] == 0) {
+                                            flag = flag && true;
+                                        }
+                                        else {
+                                            flag = flag && false;
+                                        }
+                                    }
+                                    else {
+                                        if (data[i] > 0) {
+                                            flag = flag && true;
+                                        }
+                                        else {
+                                            flag = flag && false;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            //Chưa check result => thông báo xóa không công không ổn
+                            if (flag == false) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Xóa không thành công'
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'Xóa thành công',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                $(function () {
+                                    function reload_page() {
+                                        location.href = "/admin/sellers";
+                                    }
+                                    window.setTimeout(reload_page, 1500);
+                                });
+                            }
+                        }
+                    });
+                }
+            })
+        })
     });
 </script>
 {% endblock %}
