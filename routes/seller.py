@@ -213,7 +213,7 @@ def read_profile_seller(request: Request, page: int = 1, query: Union[str, None]
 def check_duplicate_username(username: str):
     count = account_crud.count_duplicate_username(db=db, username=username)
 
-    return count
+    return {"TOTAL_ROW": count[0]['TOTAL']}
 
 @router.get("/fetch-total-rows-food")
 def fetch_total_rows_food(request: Request, user = Depends(manager)):
@@ -226,8 +226,8 @@ def fetch_total_rows_food(request: Request, user = Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     # Lấy tổng số món ăn của tài khoản này
-    account_id = user.account_id
     db_ = get_database_session()
+    account_id = user.account_id
     count = food_crud.get_total_rows_food(db=db_, account_id=account_id)
     TOTAL_ROWS_FOOD = count[0]['TOTAL_ROW_FOOD']
 
@@ -247,8 +247,8 @@ def fetch_total_rows_order(request: Request, user = Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     # Lấy tổng số đơn hàng của tài khoản này
-    account_id = user.account_id
     db_ = get_database_session()
+    account_id = user.account_id
     count = order_crud.get_total_rows_order(db=db_, account_id=account_id)
     TOTAL_ROWS_ORDER = count[0]['TOTAL_ROW_ORDER']
 
@@ -260,26 +260,25 @@ def fetch_total_rows_order(request: Request, user = Depends(manager)):
 @router.delete("/delete-food")
 def delete_food(food_id: int, request: Request, user = Depends(manager)):
 
-    db_ = get_database_session()
 
     # Tạo biến phản hồi
     status = 1
     message = ""
 
     # Xóa món ăn ở warehouse trước
-    check_delete_warehouse = food_crud.delete_food_in_warehouse(db=db_, food_id=food_id)
+    num_row_deleted = food_crud.delete_food_in_warehouse(db=db, food_id=food_id)
 
-    print(check_delete_warehouse)
-
-    if check_delete_warehouse:
-        check_delete_food = food_crud.delete_food(db=db_, food_id=food_id)
-        print(check_delete_food)
-        if check_delete_food:
+    if num_row_deleted > 0:
+        num_row_food_deleted = food_crud.delete_food(db=db, food_id=food_id)
+        if num_row_food_deleted > 0:
             status = 1
             message = "Xóa món ăn thành công"
         else:
             status = 0
             message = "Xóa món ăn không thành công"
+    else:
+        status = 0
+        message = "Lỗi khi xóa ở warehouse"
 
     return {"status": status, "message": message}
 
@@ -297,11 +296,11 @@ def seller_index_page( request: Request, user = Depends(manager)):
     username = user.account_username
 
     #Lấy thông tin tài khoản
-    db_ = get_database_session()
-    seller_info = seller_crud.get_seller_by_account_id(db=db_, account_id=account_id)
+
+    seller_info = seller_crud.get_seller_by_account_id(db=db, account_id=account_id)
 
     # Lấy danh sách món ăn hết hàng
-    list_foods_out_of_stock = food_crud.get_list_foods_out_of_stock(db=db_, account_id=account_id)
+    list_foods_out_of_stock = food_crud.get_list_foods_out_of_stock(db=db, account_id=account_id)
 
     print(f"out of stock: {list_foods_out_of_stock}")
 

@@ -1,5 +1,3 @@
-from email import message
-from re import template
 from urllib import response
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -14,6 +12,7 @@ import models, schemas
 from crud import admin_crud, account_crud, food_type_crud, payment_crud, seller_crud, buyer_crud
 from routes.login import manager
 import math
+from ultilities import Hash
 router = APIRouter(
     prefix="/admin",
     tags=['Admins']
@@ -37,6 +36,8 @@ def create_admin(acc_id: int, admin: schemas.CreateAdminInfo):
 def read_admins(skip: int = 0, limit: int=100):
     admins = admin_crud.get_all_admins(db, skip=0, limit=10)
     return admins
+
+#PROFILE -----------------------------------------------------------------------------------------
 
 @router.get("/profile/", response_class=HTMLResponse)
 def read_profile_admin(request: Request, user=Depends(manager)):
@@ -128,7 +129,6 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
     }
     return templates.TemplateResponse("admin_edit_profile.html", data_res)
 
-
 @router.put("/profile/edit_profile")
 def edit_admin_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Request, user=Depends(manager)):
     if user.account_type != 1:
@@ -216,6 +216,125 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
 
     return {"status": status, "message": message}
 
+@router.get("/profile/edit_password", response_class=HTMLResponse)
+def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if account_info:
+        data.append(account_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'account_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_password.html", data_res)
+
+
+@router.post("/profile/edit_password")
+async def edit_account(account: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+
+    #Biến response kết quả
+    status = 1
+    message = ""
+
+    #password lấy từ form
+    account_password = account.account_password
+    
+    if not Hash.verify(account_password,user.account_password):
+        status = 0
+        message = "Sai mật khẩu!"
+    else:
+        status = 1
+        message = "Đúng mật khẩu"
+
+    return {"status": status, "message": message}
+
+@router.get("/profile/edit_new_password", response_class=HTMLResponse)
+def edit_admin_form(request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+    account_info = account_crud.get_account(db, account_id=account_id)
+    username = account_info.account_username
+    error = ""
+    data = []
+    if account_info:
+        data.append(account_info.__dict__)
+        error = None
+    else:
+        error = "Không có dữ liệu"    
+    
+    data_res = {
+        "request": request,
+        "title": 'Thông tin tài khoản Admin',
+        'username': username,
+        'account_id': account_id,
+        'account_info': data,
+        'error': error   
+    }
+    return templates.TemplateResponse("admin_edit_new_password.html", data_res)
+
+
+@router.put("/profile/edit_new_password")
+async def edit_account(account: schemas.UpdateAccountPassword, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    account_id = user.account_id
+
+    #Biến response kết quả
+    status = 1
+    message = ""
+
+    #password lấy từ form
+    
+    account_info = account_crud.update_account_password(db=db,account=account, account_id=account_id)
+    if account_info != None:
+        
+        status = 1
+        message = "Cập nhật mật khẩu thành công"
+    else:
+        status = 0
+        message = "Cập nhật mật khẩu không thành công"
+
+    return {"status": status, "message": message, "account_info": account_info}
+
+#FOODTYPE --------------------------------------------------------------------------------------------
+
 @router.get("/foodtype/", response_class=HTMLResponse)
 def read_foodtype(request: Request, user=Depends(manager)):
     if user.account_type != 1:
@@ -228,7 +347,8 @@ def read_foodtype(request: Request, user=Depends(manager)):
 
     account_id = user.account_id
     username = user.account_username
-    foodtype_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=10)
+    db_ =get_database_session()
+    foodtype_info = food_type_crud.get_all_food_type(db=db_, skip=0, limit=10)
 
     error = ""
     if foodtype_info:
@@ -289,7 +409,6 @@ def create_food_type(foodtype: schemas.FoodType):
         message = "Lỗi. Thử lại sau"
     
     return {"status": status, "message": message}
-
 
 @router.get("/foodtype/edit", response_class=HTMLResponse)
 def edit_foodtype_form(foodtype_id: int,request: Request, user=Depends(manager)):
@@ -358,7 +477,99 @@ def edit_foodtype(foodtype_id: int, foodtype: schemas.FoodType, request: Request
     
 
     return {"status": status, "message": message, "account_id": account_id}
-        
+
+@router.get("/foodtype/fetch-restaurant")
+def fetch_retaurant_name(food_type_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    TOTAL_FOOD = 0
+    restaurant = []
+
+    total = food_type_crud.fetch_total_row_food(db=db_, food_type_id=food_type_id)
+    TOTAL_FOOD = total[0]['TOTAL_FOOD']
+    if TOTAL_FOOD > 0:
+        restaurant_data = food_type_crud.fetch_restaurant_list(db=db_, food_type_id=food_type_id)
+        for info in restaurant_data:
+            restaurant.append(info)
+    return {"TOTAL_FOOD": TOTAL_FOOD, "restaurant": restaurant}
+
+#Xóa foodtype bản đầy đủ
+@router.delete("/foodtype/delete-all")
+def delete_foodtype(food_type_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    status = 0
+    message = ""
+    result_delete_warehouse_food = 0
+    result_delete_food = 0
+    result_delete_foodtype = 0
+
+    #Xóa food từ warehouse trước
+    warehouse = food_type_crud.delete_food_from_warehouse(db=db_, food_type_id=food_type_id)
+    if warehouse:
+        result_delete_warehouse_food = 1
+    
+    #Xóa food
+    result_delete_food = food_type_crud.delete_food(db=db_, food_type_id=food_type_id)
+
+    #Xóa foodtype
+    result_delete_foodtype = food_type_crud.delete_foodtype(db=db_, food_type_id=food_type_id)
+
+    if (result_delete_warehouse_food > 0) and (result_delete_food > 0) and (result_delete_foodtype > 0):
+        status = 1
+        message = "Xóa loại món ăn thành công";
+    else:
+        status = 1
+        message = "Xóa loại món ăn không thành công";
+    
+    return {"status": status, "message": message}
+
+#Xóa chỉ ên foodtype
+@router.delete("/foodtype/delete-only")
+def delete_only_foodtype(food_type_id: int, request: Request, user=Depends(manager)):
+    if user.account_type != 1:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    db_ = get_database_session()
+
+    status = 0
+    message = ""
+    result_delete_foodtype = 0
+
+    #Xóa foodtype
+    result_delete_foodtype = food_type_crud.delete_foodtype(db=db_, food_type_id=food_type_id)
+
+    if result_delete_foodtype > 0:
+        status = 1
+        message = "Xóa loại món ăn thành công";
+    else:
+        status = 1
+        message = "Xóa loại món ăn không thành công";
+    
+    return {"status": status, "message": message}
+
+#PAYMENT METHOD ------------------------------------------------------------------------------------      
 @router.get("/payment_method/", response_class=HTMLResponse)
 def read_payment_method(request: Request, user=Depends(manager)):
     if user.account_type != 1:
@@ -392,8 +603,7 @@ def read_payment_method(request: Request, user=Depends(manager)):
         'payment_info': data,
         'error': error
     }
-    return templates.TemplateResponse("admin_payment.html", data_res)
-    
+    return templates.TemplateResponse("admin_payment.html", data_res)  
 
 @router.get("/payment_method/create", response_class=HTMLResponse)
 def create_payment_form(request: Request, user=Depends(manager)):
@@ -504,6 +714,7 @@ def edit_payment_method(payment_id: int, payment_method: schemas.PaymentMethod, 
 
     return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER }
 
+# DASHBOARD -----------------------------------------------------------------------------------------
 @router.get("/fetch-all-rows-seller")
 def fetch_all_rows_seller(request: Request, user=Depends(manager)):
     if user.account_type != 1:
@@ -586,7 +797,7 @@ def get_all_sellers(request: Request, page: int=1, user=Depends(manager)):
 
     account_id = user.account_id
     username = user.account_username
-
+    # status = user.account_active_status
     db_ = get_database_session()
 
     count = seller_crud.count_all_rows_seller(db=db_)

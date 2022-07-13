@@ -122,6 +122,15 @@ async def update_restaurant_image(restaurant_id: int, request: Request, restaura
 
     return {"status": status, "message": message}
 
+@router.get("/fetch-query")
+def fetch_query_row(restaurant_id: int, request: Request, query: str):
+
+    db_ = get_database_session()
+
+    count = restaurant_crud.fetch_row_query(db=db_, restaurant_id=restaurant_id, query=query)
+    TOTAL_ROW = count[0]['TOTAL_ROW']
+
+    return {"TOTAL_ROW": TOTAL_ROW}
 
 @router.get("/{id}")
 def get_restaurant(id: int):

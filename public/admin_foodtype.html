@@ -66,6 +66,123 @@ Trang quản lý loại thức ăn
             var foodtype_ID = $(this).data("foodtype-id");
             console.log("ID: " + foodtype_ID);
             location.href = "/admin/foodtype/edit?foodtype_id=" + foodtype_ID;
+        });
+
+        $(document).on('click', '.btn-delete', function () {
+            var foodtype_ID = $(this).data("foodtype-id");
+            console.log("ID: " + foodtype_ID);
+
+            $.ajax({
+                url: "/admin/foodtype/fetch-restaurant?food_type_id=" + foodtype_ID,
+                method: "GET",
+                contentType: "application/json",
+                success: function (response) {
+                    console.log(response);
+                    console.log(response.restaurant);
+                    var length = response.restaurant.length;
+                    var data = response.restaurant;
+                    var string = "";
+                    for (let i = 0; i < length; i++) {
+                        if (i == (length - 1)) {
+                            string += data[i]['restaurant_name'];
+                        }
+                        else {
+                            string += data[i]['restaurant_name'] + ", ";
+                        }
+                    }
+                    console.log(length);
+                    console.log(string);
+
+                    if (response.TOTAL_FOOD > 0) {
+                        Swal.fire({
+                            title: 'Bạn chắc chứ',
+                            text: "Danh sách nhà hàng có loại món ăn này: " + string,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Chắc chắn xóa',
+                            cancelButtonText: 'Đóng'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "/admin/foodtype/delete-all?food_type_id=" + foodtype_ID,
+                                    method: "DELETE",
+                                    contentType: "application/json",
+                                    success: function (output) {
+                                        if (output.status == 0) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Lỗi',
+                                                text: '' + output.message
+                                            })
+                                        }
+                                        else {
+                                            Swal.fire({
+                                                position: 'center',
+                                                icon: 'success',
+                                                title: '' + output.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                            $(function () {
+                                                function reload_page() {
+                                                    location.reload();
+                                                }
+                                                window.setTimeout(reload_page, 1500);
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            title: 'Bạn chắc chứ',
+                            text: "Xóa loại món ăn này",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Chắc chắn xóa',
+                            cancelButtonText: 'Đóng'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "/admin/foodtype/delete-only?food_type_id=" + foodtype_ID,
+                                    method: "DELETE",
+                                    contentType: "application/json",
+                                    success: function (output) {
+                                        if (output.status == 0) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Lỗi',
+                                                text: '' + output.message
+                                            })
+                                        }
+                                        else {
+                                            Swal.fire({
+                                                position: 'center',
+                                                icon: 'success',
+                                                title: '' + output.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                            $(function () {
+                                                function reload_page() {
+                                                    location.reload();
+                                                }
+                                                window.setTimeout(reload_page, 1500);
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                    }
+                }
+            });
         })
     })
 </script>

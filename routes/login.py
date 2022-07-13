@@ -46,26 +46,45 @@ def login_form(request: Request):
 
 @manager.user_loader()
 def load_user(username:str):
-    user = account_crud.get_account_by_name(db, username)
+    db_ = get_database_session()
+    user = account_crud.get_account_by_name(db_, username)
     return user
 
 @router.post("/auth/login")
-async def login(username: str = Form(...), password: str = Form(...)):
+async def login( request: Request, username: str = Form(...), password: str = Form(...)):
     
 
     print(username)
     print(password)
     user = load_user(username)
     if not user:
-        # raise InvalidCredentialsException
-        return {"Error": f"Không tìm thấy người dùng với tên đăng nhập là {username} "}
+        error = f"Không tìm thấy người dùng với tên đăng nhập là {username}"
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': error,
+            'username': username
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
     elif not Hash.verify(password,user.account_password):
-        # raise InvalidCredentialsException
-        return {"Error": "Sai mật khẩu"}
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': "Mật khẩu chưa đúng!",
+            'username': username
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    
     access_token = manager.create_access_token(data = dict(sub=username), expires=timedelta(hours=1)
     )
     account_type = user.account_type
     account_id = user.account_id
+
+    # Đúng thông tin đăng nhập thì set status = 1
+    active_status = account_crud.update_account_active_status(db=db, account_id=account_id, status=1)
+    print(f"active status: {active_status}")
+
     if account_type == 1:
         url = f"/admin/"
         resp = RedirectResponse(url=url,status_code=status.HTTP_302_FOUND)
@@ -89,6 +108,11 @@ def getPrivateendpoint(username=Depends(manager)):
 
 @router.get('/logout', response_class=HTMLResponse)
 def protected_route(request: Request, user=Depends(manager)):
+    account_id = user.account_id
+
+    # Đúng thông tin đăng nhập thì set status = 1
+    active_status = account_crud.update_account_active_status(db=db, account_id=account_id, status=0)
+    print(f"active status: {active_status}")
     resp = RedirectResponse(url="/login_form", status_code=status.HTTP_302_FOUND)
     manager.set_cookie(resp, "")
     return resp

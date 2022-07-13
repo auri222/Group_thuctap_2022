@@ -96,6 +96,14 @@ def update_account_otp_token(db: Session, account: schemas.UpdateAccountOTPToken
     db.commit()
     return db_acc
 
+def update_account_active_status(db: Session, account_id: int, status: int = 1):
+    db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()
+
+    db_acc.account_active_status = status
+    db.commit()
+    result = db_acc.account_active_status
+    return result
+
 def delete_account(db: Session, account_id: int):
     db_acc = db.query(models.Account).filter(models.Account.account_id == account_id).first()
     if db_acc is None:

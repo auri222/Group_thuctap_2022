@@ -1,4 +1,5 @@
 from msilib import schema
+import string
 from sqlalchemy.orm import Session
 import models
 import schemas
@@ -7,8 +8,24 @@ def get_all_restaurants(db: Session, skip: int =0, limit: int = 10):
     result = db.execute(f"""SELECT * FROM restaurant LIMIT {skip}, {limit} """)
     return result.fetchall()
 
+def get_random_restaurant(db: Session, limit: int = 10):
+    result = db.execute(f"""SELECT res.restaurant_id, res.restaurant_name, res.restaurant_address, res.restaurant_image
+FROM restaurant res 
+ORDER BY RAND()
+LIMIT {limit} """)
+    return result.fetchall()
+
+
 def get_restaurant_info_by_ID(db: Session, restaurant_id: int):
     return db.query(models.Restaurant).filter(models.Restaurant.restaurant_id == restaurant_id).first()
+
+def restaurant_info_for_restaurant_index(db: Session, restaurant_id: int):
+    string = f"""SELECT res.*, sl.seller_phone, sl.seller_email
+FROM restaurant res
+JOIN seller sl ON sl.seller_id = res.seller_id
+WHERE res.restaurant_id = {restaurant_id}"""
+    result = db.execute(string)
+    return result.fetchall()
 
 def get_restaurant_info_by_seller_ID(db: Session, seller_id: int):
     return db.query(models.Restaurant).filter(models.Restaurant.seller_id == seller_id).first()
@@ -69,4 +86,13 @@ def count_all_restaurants(db: Session):
     query = f"""SELECT COUNT(*) AS TOTAL_RESTAURANT
                 FROM restaurant res"""
     result = db.execute(query)
+    return result.fetchall()
+
+def fetch_row_query(db: Session, restaurant_id: int, query: str):
+    string = f"""SELECT COUNT(rw.food_id) AS TOTAL_ROW
+FROM restaurant res
+JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
+JOIN food f ON f.food_id = rw.food_id
+WHERE (res.restaurant_id = {restaurant_id}) AND (f.food_name LIKE '%{query}%')"""
+    result = db.execute(string)
     return result.fetchall()

@@ -84,7 +84,7 @@ JOIN buyer b ON b.account_id = acc.account_id"""
     return result.fetchall()
 
 def get_all_buyers(db: Session, skip: int=0, limit: int=100):
-    string = f"""SELECT acc.account_id, acc.account_username, b.*
+    string = f"""SELECT acc.account_id, acc.account_username, acc.account_active_status, b.*
                     FROM account acc
                     JOIN buyer b ON b.account_id = acc.account_id
                     """

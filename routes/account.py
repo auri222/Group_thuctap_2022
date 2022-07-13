@@ -41,6 +41,7 @@ def delete_account(account_id: int):
 
 @router.get("/check-duplicate-username")
 def count_duplicate_username(username: str):
+    db_ = get_database_session()
     count = account_crud.count_duplicate_username(db=db, username=username)
     return {"count": count}
 

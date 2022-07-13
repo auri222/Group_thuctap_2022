@@ -27,6 +27,7 @@ Trang quản lý danh sách người bán
                                 <th>ID</th>
                                 <th>Họ tên</th>
                                 <th>Email</th>
+                                <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
@@ -37,6 +38,11 @@ Trang quản lý danh sách người bán
                                 <td>{{ info.seller_id }}</td>
                                 <td>{{ info.seller_name }}</td>
                                 <td>{{ info.seller_email }}</td>
+                                {% if info.account_active_status == 1 %}
+                                <td><span class="badge badge-success">Active</span></td>
+                                {% else %}
+                                <td><span class="badge badge-secondary">Inactive</span></td>
+                                {% endif %}
                                 <td>
                                     <button class="btn btn-info btn-view"
                                         data-seller-id="{{ info.seller_id }}">Xem</button>
@@ -254,6 +260,12 @@ Trang quản lý danh sách người bán
                                     <td scope="row" style="width: 40%;">Địa chỉ nhà hàng:</td>
                                     <td style="width: 60%;">
                                         `+ info.restaurant_address + `
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                    <td scope="row" style="width: 40%;">Số món ăn hiện có:</td>
+                                    <td style="width: 60%;">
+                                        `+ info.TOTAL_FOOD + `
                                     </td>
                                     </tr>
 

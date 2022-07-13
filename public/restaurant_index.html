@@ -33,7 +33,24 @@ Food Delivery
                     <br>
 
                     <h3 style="color: orange;font-size: 40px;"> <b>{{ info.restaurant_name }}</b> </h3>
-                    <p>Địa Chỉ : {{ info.restaurant_address }}</p>
+                    <table class="table table-borderless mt-2">
+                        <tbody>
+                            <tr>
+                                <th style="width: 40%;">Địa Chỉ: </th>
+                                <td style="width: 60%;">{{ info.restaurant_address }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 40%;">Số điện thoại liên hệ:</th>
+                                <td style="width: 60%;">{{ info.seller_phone }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 40%;">Email liên hệ:</th>
+                                <td style="width: 60%;">{{ info.seller_email }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
                 </div>
             </div>
             <div class="col-md-2">
@@ -61,52 +78,46 @@ Food Delivery
                         <li>{{ food_type.food_type_name }}</li>
                         {% endfor %}
                         {% else %}
-                        <li >Không có thông tin</li>
+                        <li>Không có thông tin</li>
                         {% endif %}
                     </ul>
                 </div>
             </div>
             <div class="col-md-9 px-0" style="background: #fff; border-radius: 5px;">
-                <div class="py-4 border-bottom">
+                <div class="search">
 
-                    <div class="search" style="text-align: center;">
-                        <div class="row">
-                            <div class="col-12 col-sm-12 col-md-10 mb-2 px-0">
-                                {% if username %}
-                                {% if query %}
-                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-buyer-food" type="text" value="{{query}}"
-                                    aria-label="Search">
-                                {% else %}
-                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-buyer-food" type="text"
-                                    placeholder="Nhập Tên Món.." aria-label="Search">
-                                {% endif %}
-                                {% else %}
-                                {% if query %}
-                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-food" type="text" value="{{query}}"
-                                    aria-label="Search">
-                                {% else %}
-                                <input style="width:90%; height:40px;border-radius:5px;font-size:15px"
-                                    class="border border-warning search-food" type="text" placeholder="Nhập Tên Món.."
-                                    aria-label="Search">
-                                {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="col-12 col-sm-12 col-md-2 mb-2 px-0">
-                                <button class="btn btn-outline-warning btn-search" type="button" data-toggle="tooltip"
-                                    data-placement="top" title="Click để tìm">Tìm Món</button>
-
-                                <button class="btn btn-outline-warning btn-del-search" type="button"
-                                    data-toggle="tooltip" data-placement="top" title="Click để xóa tìm kiếm"><i
-                                        class="bi bi-trash"></i></button>
-                            </div>
+                    <div class="row py-3">
+                        <div class="col-8">
+                            {% if username %}
+                            {% if query %}
+                            <input class="form-control search-buyer-food" type="text"
+                                value="{{query}}" aria-label="Search">
+                            {% else %}
+                            <input class="form-control search-buyer-food" type="text"
+                                placeholder="Nhập Tên Món.." aria-label="Search">
+                            {% endif %}
+                            {% else %}
+                            {% if query %}
+                            <input class="form-control search-food" type="text" value="{{query}}"
+                                aria-label="Search">
+                            {% else %}
+                            <input class="form-control search-food" type="text" placeholder="Nhập Tên Món.."
+                                aria-label="Search">
+                            {% endif %}
+                            {% endif %}
+                            <input type="hidden" id="restaurant_id" value="{{restaurant_id}}">
                         </div>
+                        <div class="col-4 pl-0">
+                            <button class="btn btn-outline-warning btn-search" type="button" data-toggle="tooltip"
+                                data-placement="top" title="Click để tìm">Tìm Món</button>
 
-
+                            <button class="btn btn-outline-warning btn-del-search" type="button" data-toggle="tooltip"
+                                data-placement="top" title="Click để xóa tìm kiếm"><i class="bi bi-trash"></i></button>
+                        </div>
                     </div>
+
                 </div>
+
 
                 <div class="food-list">
 
@@ -154,7 +165,8 @@ Food Delivery
                     <ul class="pagination justify-content-center">
                         {% if first_page == "" %}
                         <li class="page-item">
-                            <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{ previous_page }}"
+                            <a class="page-link"
+                                href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{ previous_page }}"
                                 aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -168,23 +180,27 @@ Food Delivery
                         {% endif %}
 
                         {% if TOTAL_PAGE %}
-                            {% for i in range(TOTAL_PAGE) %}
-                            {% set num = i + 1 %}
-                            {% if num == page %}
-                            <li class="page-item active">
-                                <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                            </li>
-                            {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                            </li>
-                            {% endif %}
-                            {% endfor %}
+                        {% for i in range(TOTAL_PAGE) %}
+                        {% set num = i + 1 %}
+                        {% if num == page %}
+                        <li class="page-item active">
+                            <a class="page-link"
+                                href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
                         {% endif %}
 
                         {% if last_page == "" %}
                         <li class="page-item">
-                            <a class="page-link" href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{ next_page }}" aria-label="Next">
+                            <a class="page-link"
+                                href="/buyer/restaurant-detail?restaurant_id={{ restaurant_id }}&page={{ next_page }}"
+                                aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -200,7 +216,8 @@ Food Delivery
                     <ul class="pagination justify-content-center">
                         {% if first_page == "" %}
                         <li class="page-item">
-                            <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{ previous_page }}"
+                            <a class="page-link"
+                                href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{ previous_page }}"
                                 aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -214,23 +231,27 @@ Food Delivery
                         {% endif %}
 
                         {% if TOTAL_PAGE %}
-                            {% for i in range(TOTAL_PAGE) %}
-                            {% set num = i + 1 %}
-                            {% if num == page %}
-                            <li class="page-item active">
-                                <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                            </li>
-                            {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
-                            </li>
-                            {% endif %}
-                            {% endfor %}
+                        {% for i in range(TOTAL_PAGE) %}
+                        {% set num = i + 1 %}
+                        {% if num == page %}
+                        <li class="page-item active">
+                            <a class="page-link"
+                                href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{num}}">{{num}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
                         {% endif %}
 
                         {% if last_page == "" %}
                         <li class="page-item">
-                            <a class="page-link" href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{ next_page }}" aria-label="Next">
+                            <a class="page-link"
+                                href="/restaurant_detail?restaurant_id={{ restaurant_id }}&page={{ next_page }}"
+                                aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -261,14 +282,60 @@ Food Delivery
         $(document).on('click', '.btn-search', function () {
             var search_food = $('.search-food').val();
             var search_buyer_food = $('.search-buyer-food').val();
-            console.log("Search: ");
-            if ((search_food !== "") || (search_food !== "undefined")) {
-                console.log("Not login search: " + search_food);
+            var restaurant_id = $('#restaurant_id').val();
+            console.log("Search: " + search_food + " - " + search_buyer_food);
+
+            //search khi chưa đăng nhập
+            if (search_food !== undefined) {
+                if (search_food !== "") {
+                    console.log("Not login search: " + search_food);
+
+                    $.ajax({
+                        url: "/restaurant/fetch-query?restaurant_id=" + restaurant_id + "&query=" + search_food,
+                        method: "GET",
+                        contentType: "application/json",
+                        success: function (response) {
+                            if (response.TOTAL_ROW > 0) {
+                                location.href = "/restaurant_detail?restaurant_id=" + restaurant_id + "&page=1&query=" + search_food;
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Không tìm thấy món có tên ' + search_food
+                                });
+                            }
+                        }
+                    });
+
+
+                }
 
             }
 
-            if ((search_buyer_food !== "") || (search_buyer_food !== "undefined")) {
-                console.log("Logged search: " + search_buyer_food);
+            //search khi đã đăng nhập
+            if (search_buyer_food !== undefined) {
+                if (search_buyer_food !== "") {
+                    console.log("Logged search: " + search_buyer_food);
+                    $.ajax({
+                        url: "/restaurant/fetch-query?restaurant_id=" + restaurant_id + "&query=" + search_food,
+                        method: "GET",
+                        contentType: "application/json",
+                        success: function (response) {
+                            if (response.TOTAL_ROW > 0) {
+                                location.href = "/buyer/restaurant-detail?restaurant_id=" + restaurant_id + "&page=1&query=" + search_buyer_food;
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Không tìm thấy món có tên ' + search_buyer_food
+                                });
+                            }
+                        }
+                    });
+
+                }
 
             }
         })
@@ -277,15 +344,38 @@ Food Delivery
         $(document).on('click', '.btn-del-search', function () {
             var search_food = $('.search-food').val();
             var search_buyer_food = $('.search-buyer-food').val();
+            var restaurant_id = $('#restaurant_id').val();
             console.log("Delete filter: ");
-            if ((search_food !== "") || (search_food !== "undefined")) {
+            if (search_food !== undefined) {
                 console.log("Not login search: " + search_food);
-                $('.search-food').val('');
+                if (search_food !== "") {
+                    $('.search-food').val('');
+                    location.href = "/restaurant_detail?restaurant_id=" + restaurant_id;
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không có gì để xóa!'
+                    });
+                }
+
+
             }
 
-            if ((search_buyer_food !== "") || (search_buyer_food !== "undefined")) {
+            if (search_buyer_food !== undefined) {
                 console.log("Logged search: " + search_buyer_food);
-                $('.search-buyer-food').val('');
+                if (search_buyer_food !== "") {
+                    $('.search-buyer-food').val('');
+                    location.href = "/buyer/restaurant-detail?restaurant_id=" + restaurant_id;
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không có gì để xóa!'
+                    });
+                }
             }
         })
 

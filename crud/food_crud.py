@@ -113,13 +113,16 @@ def update_food_image(db: Session, food: schemas.UpdateFoodImage, food_id: int):
 
 
 # Phân trang món ăn ở buyer page
-def get_total_rows_food_by_restaurant_id(db: Session, restaurant_id: int):
-    query = f"""SELECT COUNT(*) AS TOTAL_ROW
+def get_total_rows_food_by_restaurant_id(db: Session, restaurant_id: int, query: Union[str, None]=None):
+    string = f"""SELECT COUNT(*) AS TOTAL_ROW
                 FROM restaurant res
                 JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
                 JOIN food f ON f.food_id = rw.food_id
-                WHERE res.restaurant_id = {restaurant_id}"""
-    result = db.execute(query)
+                WHERE res.restaurant_id = {restaurant_id} """
+    if query:
+        query_str = f"""AND (f.food_name LIKE '%{query}%')"""
+        string = ''.join([string, query_str])
+    result = db.execute(string)
     return result.fetchall()
 
 def get_all_rows_food_by_restaurant_id(db: Session, restaurant_id, query: Union[str, None]=None, skip: int = 0, limit: int = 10):
@@ -165,18 +168,16 @@ def get_list_foods_out_of_stock(db: Session, account_id: int):
 
 # Seller delete food => not check data on order and order detail --------------------
 def delete_food_in_warehouse(db: Session, food_id: int):
-    db_food = db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.food_id == food_id).first()
-    db.delete(db_food)
+    num_row_deleted = db.query(models.RestaurantWarehouse).filter(models.RestaurantWarehouse.food_id == food_id).delete()
     db.commit()
-    return {"Success": True}
+    return num_row_deleted
 
 def delete_food(db: Session, food_id: int):
-    db_food = db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    num_row_deleted = db.query(models.Food).filter(models.Food.food_id == food_id).delete()
     # if db_food is None:
     #     return {"Error": f"Food with ID {food_id} is not exists"}
-    db.delete(db_food)
     db.commit()
-    return {"Success": True}
+    return num_row_deleted
 
 
 

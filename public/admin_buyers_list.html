@@ -27,6 +27,7 @@ Trang quản lý danh sách người mua
                                 <th>ID</th>
                                 <th>Họ tên</th>
                                 <th>Email</th>
+                                <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
@@ -37,6 +38,11 @@ Trang quản lý danh sách người mua
                                 <td>{{ info.buyer_id }}</td>
                                 <td>{{ info.buyer_name }}</td>
                                 <td>{{ info.buyer_email }}</td>
+                                {% if info.account_active_status == 1 %}
+                                <td><span class="badge badge-success">Active</span></td>
+                                {% else %}
+                                <td><span class="badge badge-secondary">Inactive</span></td>
+                                {% endif %}
                                 <td>
                                     <button class="btn btn-info btn-view"
                                         data-buyer-id="{{ info.buyer_id }}">Xem</button>

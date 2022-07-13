@@ -1,7 +1,7 @@
 {% extends "buyer_layout.html" %}
 
 {% block title %}
-    Food Delivery
+Food Delivery
 {% endblock %}
 
 {% block style %}
@@ -65,7 +65,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="food-box" >
+<div class="food-box">
     <div class="food_header">
         <p class="navbar-brand"
             style="font-family:'Raleway', sans-serif;font-size: 25px;text-align: center; color: orange;">
@@ -73,27 +73,36 @@
         </p>
     </div>
     <div class="listitems">
-        <div class="row">
 
+
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 ">
             {% if restaurant_info %}
-                {% for restaurant in restaurant_info %}
-                <div class="col-12 col-md-4 col-lg-3">
-                    <div class="card" style="width: 16rem;">
-                        <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}" class="card-img-top rounded" alt="..." height="170px">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
-                            <p class="card-text">{{ restaurant.restaurant_address }}</p>
-                            <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}" class="border border-warning">Xem Thêm</a>
-                        </div>
+            {% for restaurant in restaurant_info %}
+            <div class="col ">
+                <div class="card h-100 mx-auto" style="width: 16rem;">
+                    <img src="{{ url_for('static', path='backend/seller/images/restaurant_avatar/') }}{{ restaurant.restaurant_image }}"
+                        class="card-img-top rounded" alt="..." height="170px">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ restaurant.restaurant_name }}</h5>
+                        <p class="card-text">Địa chỉ: {{ restaurant.restaurant_address }}</p>
+
+                    </div>
+                    <div class="card-footer py-3 text-center">
+                        <a href="/restaurant_detail?restaurant_id={{ restaurant.restaurant_id }}"
+                            class="px-3 py-2 border border-warning mx-auto">Xem Thêm</a>
                     </div>
                 </div>
-                {% endfor %}
+            </div>
+            {% endfor %}
             {% endif %}
         </div>
 
-        
+
+
+
     </div>
-    
+
 
 </div>
 {% endblock %}

@@ -23,6 +23,8 @@ Food Delivery
   </div>
 </section>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Tapestry&display=swap');
+
   .parallax_buyer_profile {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://cdn.pixabay.com/photo/2015/05/07/15/08/cookie-756601_960_720.jpg');
     background-attachment: fixed;
@@ -33,19 +35,21 @@ Food Delivery
   }
 
   .aaa {
+    font-family: 'Tapestry', cursive !important;
     font-size: 60px;
-    color: lightyellow;
+    color: rgba(199, 243, 254, 0.947);
     cursor: pointer;
 
     transition: all 0.5s;
   }
 
   .aaa:hover {
-    color: azure;
+    color: rgb(158, 255, 255);
     transform: scaleX(1.05);
   }
 
-  .table-profile th, td{
+  .table-profile th,
+  td {
     font-size: 16px;
   }
 </style>
@@ -74,14 +78,14 @@ Food Delivery
       <tbody>
 
         <tr>
-          <th scope="row">Tên tài khoản:</th>
-          <td>
+          <th scope="row" style="width: 50%;">Tên tài khoản:</th>
+          <td style="width: 50%;">
             {{ account.account_username }}
           </td>
         </tr>
         <tr>
-          <th scope="row">Ngày tạo tài khoản:</th>
-          <td>
+          <th scope="row" style="width: 50%;">Ngày tạo tài khoản:</th>
+          <td style="width: 50%;">
             {% set date_created = account.account_date_created %}
             {{ date_created.strftime("%d/%m/%Y %H:%M:%S") }}
           </td>
@@ -109,32 +113,32 @@ Food Delivery
       <tbody>
 
         <tr>
-          <th scope="row">Họ tên: </th>
-          <td>{{ info.buyer_name }}</td>
+          <th scope="row" style="width: 50%;">Họ tên: </th>
+          <td style="width: 50%;">{{ info.buyer_name }}</td>
         </tr>
 
         <tr>
-          <th scope="row">Ngày sinh: </th>
-          <td>
+          <th scope="row" style="width: 50%;">Ngày sinh: </th>
+          <td style="width: 50%;">
             {% set birthday = info.buyer_birthday %}
             {{ birthday.strftime("%d/%m/%Y") }}
           </td>
         </tr>
         <tr>
-          <th scope="row">Địa chỉ: </th>
-          <td>{{ info.buyer_address }}</td>
+          <th scope="row" style="width: 50%;">Địa chỉ: </th>
+          <td style="width: 50%;">{{ info.buyer_address }}</td>
         </tr>
         <tr>
-          <th scope="row">Số điện thoại: </th>
-          <td>{{ info.buyer_phone }}</td>
+          <th scope="row" style="width: 50%;">Số điện thoại: </th>
+          <td style="width: 50%;">{{ info.buyer_phone }}</td>
         </tr>
         <tr>
-          <th scope="row">Email: </th>
-          <td>{{ info.buyer_email }}</td>
+          <th scope="row" style="width: 50%;">Email: </th>
+          <td style="width: 50%;">{{ info.buyer_email }}</td>
         </tr>
         <tr>
-          <th scope="row">Địa chỉ giao hàng: </th>
-          <td>{{ info.buyer_shipping_address }}</td>
+          <th scope="row" style="width: 50%;">Địa chỉ giao hàng: </th>
+          <td style="width: 50%;">{{ info.buyer_shipping_address }}</td>
         </tr>
 
       </tbody>

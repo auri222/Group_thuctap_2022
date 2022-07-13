@@ -93,6 +93,7 @@ Trang thông tin danh sách món ăn
                         {% endif %}
                     </tbody>
                 </table>
+                {% if food_info %}
                 <nav aria-label="Page navigation example d-flex" class="mt-2">
                     <ul class="pagination justify-content-center">
                         {% if first_page == "" %}
@@ -137,6 +138,7 @@ Trang thông tin danh sách món ăn
                         {% endif %}
                     </ul>
                 </nav>
+                {% endif %}
             </div>
         </div>
 
@@ -165,16 +167,18 @@ Trang thông tin danh sách món ăn
                     <div class="form-group">
                         <label for="food_name" class="col-form-label">Tên món ăn: </label>
                         <input type="text" class="form-control" id="food_name" name="food_name" required />
+                        <small id="error-name" style="color: red;"></small>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="food_price">Giá</label>
                             <input type="text" class="form-control" id="food_price" name="food_price">
+                            <small id="error-price" style="color: red;"></small>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="food_type">Loại thức ăn</label>
                             <select name="food_type" id="food_type" class="form-control">
-                                <option selected>-- Chọn loại --</option>
+                                <option selected value="">-- Chọn loại --</option>
                                 {% if food_type_info %}
                                 {% for food_type in food_type_info %}
                                 <option value="{{ food_type.food_type_id }}">{{ food_type.food_type_name }}</option>
@@ -183,21 +187,24 @@ Trang thông tin danh sách món ăn
                                 <option>Chưa có loại thức ăn</option>
                                 {% endif %}
                             </select>
+                            <small id="error-type" style="color: red;"></small>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="food_quantity">Số lượng</label>
                             <input type="text" class="form-control" name="food_quantity" id="food_quantity">
+                            <small id="error-quantity" style="color: red;"></small>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="food_discription" class="col-form-label">Mô tả món ăn: </label>
-                        <textarea class="form-control" name="food_discription" id="food_discription" cols="30"
-                            rows="5"></textarea>
+                        <textarea class="form-control" name="food_description" id="food_description" cols="30"
+                            rows="5"></textarea><small id="error-text" style="color: red;"></small>
                     </div>
 
                     <div class="form-group">
                         <label for="food_image" class="col-form-label">Hình món ăn: </label>
                         <input type="file" class="form-control" id="food_image" name="food_image" />
+                        <small id="error-image" style="color: red;"></small>
                     </div>
 
 
@@ -206,7 +213,7 @@ Trang thông tin danh sách món ăn
 
             </div>
             <div class=" modal-footer">
-                <button type="button" class="btn btn-primary btn-save-food-info" data-dismiss="modal">Lưu</button>
+                <button type="button" class="btn btn-primary btn-save-food-info">Lưu</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
@@ -275,58 +282,66 @@ Trang thông tin danh sách món ăn
         function check_food_input(name, price, type, quantity, description) {
             var flag = true;
             if (name == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu ..',
-                    text: 'Hãy nhập tên món ăn'
-                });
+                $('#error-name').html("Hãy nhập tên món ăn!");
+                // $('#food_name').toggleClass("is-invalid");
                 flag = false;
+            } else {
+                $('#error-name').html("");
+                $('#food_name').toggleClass("is-valid");
+                flag = true;
             }
+
             if (price == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu ..',
-                    text: 'Hãy nhập giá'
-                });
+                $('#error-price').html("Hãy nhập giá!");
+                // $('#food_price').toggleClass("is-invalid");
                 flag = false;
+            } else {
+                $('#error-price').html("");
+                $('#food_price').toggleClass("is-valid");
+                flag = true;
             }
+
             if (type == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu ..',
-                    text: 'Hãy chọn loại'
-                });
+                $('#error-type').html("Hãy chọn loại món ăn");
+                // $('#food_type').toggleClass("is-invalid");
                 flag = false;
+            } else {
+                $('#error-type').html("");
+                $('#food_type').toggleClass("is-valid");
+                flag = true;
             }
+
             if (quantity == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu ..',
-                    text: 'Hãy nhập số lượng'
-                });
+                $('#error-quantity').html("Hãy nhập số lượng món ăn!");
+                // $('#food_quantity').toggleClass("is-invalid");
                 flag = false;
+            } else {
+                $('#error-quantity').html("");
+                $('#food_quantity').toggleClass("is-valid");
+                flag = true;
             }
+
             if (description == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Nhập thiếu ..',
-                    text: 'Hãy nhập mô tả món ăn'
-                });
+                $('#error-text').html("Hãy nhập mô tả");
+                // $('#food_description').toggleClass("is-invalid");
                 flag = false;
+            } else {
+                $('#error-text').html("");
+                $('#food_description').toggleClass("is-valid");
+                flag = true;
             }
+
             return flag;
         }
 
         function check_food_image() {
-            var flag = true
+            var check = true
             var image = $('#food_image').val();
+            console.log("image: " + image);
             if (image == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi',
-                    text: 'Hãy chọn hình'
-                });
-                flag = false;
+                $('#error-image').html("Hãy chọn hình!");
+                // $('#food_image').toggleClass("is-invalid");
+                check = false;
             }
             else {
                 var extension = image.split('.').pop().toLowerCase();
@@ -336,25 +351,26 @@ Trang thông tin danh sách món ăn
                 console.log(extension);
                 console.log(size);
                 if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg'
-                    });
-                    flag = false;
+                    $('#error-image').html("File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg");
+                    // $('#food_image').toggleClass("is-invalid");
+                    check = false;
                 }
 
                 if (size > 2000000) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Hãy upload ảnh nhỏ hơn 2MB'
-                    });
-                    flag = false
+                    $('#error-image').html("Hãy upload ảnh nhỏ hơn 2MB");
+                    // $('#food_image').toggleClass("is-invalid");
+                    check = false;
                 }
+
+
+
             }
-            return flag;
+
+            if (check) {
+                $('#food_image').toggleClass("is-valid");
+            }
+
+            return check;
         }
 
         // Lưu thông tin món ăn
@@ -363,15 +379,49 @@ Trang thông tin danh sách món ăn
             var food_price = $('#food_price').val();
             var food_type = $('#food_type').val();
             var food_quantity = $('#food_quantity').val();
-            var food_discription = $('#food_discription').val();
-            var food_image = $('#food_image').val();
+            var food_description = $('#food_description').val();
 
-            if ((check_food_input(food_name, food_price, food_type, food_quantity, food_discription) == true) && (check_food_image() == true)) {
+            var check = true
+            var image = $('#food_image').val();
+            console.log("image: " + image);
+            if (image == "") {
+                $('#error-image').html("Hãy chọn hình!");
+                // $('#food_image').toggleClass("is-invalid");
+                check = false;
+            }
+            else {
+                var extension = image.split('.').pop().toLowerCase();
+                var file = document.getElementById('food_image').files[0];
+                var size = file.size;
+                console.log(image);
+                console.log(extension);
+                console.log(size);
+                if (jQuery.inArray(extension, ['jpg', 'png', 'jpeg']) == -1) {
+                    $('#error-image').html("File không hợp lệ. Hãy upload ảnh với đuôi là *.jpg, *.png, *.jpeg");
+                    // $('#food_image').toggleClass("is-invalid");
+                    check = false;
+                }
+
+                if (size > 2000000) {
+                    $('#error-image').html("Hãy upload ảnh nhỏ hơn 2MB");
+                    // $('#food_image').toggleClass("is-invalid");
+                    check = false;
+                }
+            }
+            if(check == true){
+                $('#error-image').html("");
+                $('#food_image').toggleClass("is-valid");
+            }
+
+            if ((check_food_input(food_name, food_price, food_type, food_quantity, food_description) == true) && (check == true)) {
+                
+                $('#error-name').html("");
+
                 var food = {
                     "food_name": food_name,
                     "food_image": "",
                     "food_price": food_price,
-                    "food_description": food_discription,
+                    "food_description": food_description,
                     "food_type_id": food_type
                 };
 
@@ -539,8 +589,8 @@ Trang thông tin danh sách món ăn
                 text: "Hành động này sẽ xóa các thông tin liên quan đến món ăn này!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Chắc chắn xóa',
                 cancelButtonText: 'Đóng',
             }).then((result) => {
@@ -568,7 +618,7 @@ Trang thông tin danh sách món ăn
                                 });
                                 $(function () {
                                     function reload_page() {
-                                        location.reload();
+                                        location.href = "/seller/food";
                                     }
                                     window.setTimeout(reload_page, 1500);
                                 });

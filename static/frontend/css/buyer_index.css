@@ -81,22 +81,27 @@ a.nav-link {
     transform: translateY(5px);
 }
 
-.card-body a {
+.card-footer {
+    background-color: #f8f9fa !important;
+    border: none !important;
+}
+
+.card-footer a {
     cursor: pointer;
     display: inline-block;
     padding: 8px 20px;
-    border-radius: 30px;
-    margin-left: 70px;
+    border-radius: 30px !important;
     text-decoration: none;
-    background-color: orange;
+    background-color: orange !important;
     color: #fff;
     transition: scaleY scaleX 0.5s;
 }
 
-.card-body a:hover {
+.card-footer a:hover {
     transform: scaleY(1.05) scaleX(1.05);
 }
 
 h5.card-title {
     text-align: center;
 }
+

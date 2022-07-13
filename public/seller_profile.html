@@ -211,7 +211,7 @@ Trang thông tin cá nhân
                     method: "GET",
                     contentType: "application/json",
                     success: function (response) {
-                        if (response.count[0].TOTAL > 0) {
+                        if (response.TOTAL_ROW > 0) {
                             $('#error_username').html("Tên đăng nhập bị trùng!");
                         }
                         else {

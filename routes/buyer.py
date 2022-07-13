@@ -171,7 +171,7 @@ def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, No
     username = account_info.account_username
     
     # Lấy tổng số dòng món ăn
-    count = food_crud.get_total_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+    count = food_crud.get_total_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id, query=query)
 
     # Phân trang
     limit = 6
@@ -190,10 +190,7 @@ def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, No
 
 
     # Lấy thông tin nhà hàng dựa trên ID
-    restaurant_info = restaurant_crud.get_restaurant_info_by_ID(db=db_, restaurant_id=restaurant_id)
-
-    restaurant_data = []
-    restaurant_data.append(restaurant_info.__dict__)
+    restaurant_data = restaurant_crud.restaurant_info_for_restaurant_index(db=db_, restaurant_id=restaurant_id)
 
     # Lấy danh sách món ăn dựa trên ID nhà hàng
     food_info = food_crud.get_all_rows_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id, query=query, skip=offset, limit=limit)
@@ -228,7 +225,6 @@ def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, No
 
     return templates.TemplateResponse("restaurant_index.html",data_res)
 
-
 @router.get("/", response_class=HTMLResponse)
 def home( request: Request, user= Depends(manager)):
     if user.account_type != 3:
@@ -244,7 +240,7 @@ def home( request: Request, user= Depends(manager)):
     username = account_info.account_username
     
 
-    restaurant_info = restaurant_crud.get_all_restaurants(db=db_, skip=0, limit=10)
+    restaurant_info = restaurant_crud.get_random_restaurant(db=db_, limit=4)
 
     restaurant_data = []
     for info in restaurant_info:
