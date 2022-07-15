@@ -147,9 +147,9 @@ def read_profile_seller(request: Request, page: int = 1, query: Union[str, None]
     # Data cần sử dụng
     account_id = user.account_id
     username = user.account_username
-    
+    db_ = get_database_session()
     # -------------------------------------------------------------
-    count = food_crud.count_all_foods_by_account(db=db, account_id=account_id, query=query)
+    count = food_crud.count_all_foods_by_account(db=db_, account_id=account_id, query=query)
     # print(f"Count: {count}")
     # print(f"Type Count: {type(count)}") => List
     
@@ -175,14 +175,14 @@ def read_profile_seller(request: Request, page: int = 1, query: Union[str, None]
     previous_page = page - 1
 
     # Lấy loại thức ăn
-    food_type_info = food_type_crud.get_all_food_type(db=db, skip=0, limit=100)
+    food_type_info = food_type_crud.get_all_food_type(db=db_, skip=0, limit=100)
 
     food_type_data = []
     for food_type in food_type_info:
         food_type_data.append(food_type.__dict__)
     
     # Lấy danh sách thức ăn của nhà hàng thuộc seller thuộc tài khoản
-    db_ = get_database_session()
+    
     food_info = food_crud.get_all_foods_by_account(db=db_, account_id=account_id, query=query, skip=offset, limit=limit)
     
     food_data = []
@@ -215,6 +215,26 @@ def check_duplicate_username(username: str):
 
     return {"TOTAL_ROW": count[0]['TOTAL']}
 
+@router.get("/food/fetch-total-row")
+def fetch_total_row_food(request: Request, query: Union[str, None] = None, user=Depends(manager)):
+    if user.account_type != 2:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    # Data cần sử dụng
+    db_ = get_database_session()
+    account_id = user.account_id
+    username = user.account_username
+    count = food_crud.count_all_foods_by_account(db=db_, account_id=account_id, query=query)
+    TOTAL_ROW = count[0]['TOTAL_ROW'] 
+
+    return {"TOTAL_ROW": TOTAL_ROW}
+
+# Dashboard ----------------------------------------------------------------------
 @router.get("/fetch-total-rows-food")
 def fetch_total_rows_food(request: Request, user = Depends(manager)):
     if user.account_type != 2:
@@ -282,6 +302,29 @@ def delete_food(food_id: int, request: Request, user = Depends(manager)):
 
     return {"status": status, "message": message}
 
+@router.get("/orders", response_class=HTMLResponse)
+def order_list(request: Request, user=Depends(manager)):
+    if user.account_type != 2:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+
+    # Data cần sử dụng
+    account_id = user.account_id
+    username = user.account_username
+
+    data_res = {
+        "request": request,
+        "title": "Trang đơn hàng",
+        'username': username,
+        'account_id': account_id
+    }
+    return templates.TemplateResponse("seller_order_list.html", data_res)
+    
+
 @router.get("/", response_class=HTMLResponse)
 def seller_index_page( request: Request, user = Depends(manager)):
     if user.account_type != 2:
@@ -296,11 +339,11 @@ def seller_index_page( request: Request, user = Depends(manager)):
     username = user.account_username
 
     #Lấy thông tin tài khoản
-
-    seller_info = seller_crud.get_seller_by_account_id(db=db, account_id=account_id)
+    db_ = get_database_session()
+    seller_info = seller_crud.get_seller_by_account_id(db=db_, account_id=account_id)
 
     # Lấy danh sách món ăn hết hàng
-    list_foods_out_of_stock = food_crud.get_list_foods_out_of_stock(db=db, account_id=account_id)
+    list_foods_out_of_stock = food_crud.get_list_foods_out_of_stock(db=db_, account_id=account_id)
 
     print(f"out of stock: {list_foods_out_of_stock}")
 

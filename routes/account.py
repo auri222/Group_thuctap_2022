@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from config.db import SessionLocal
 import models, schemas
 from crud import account_crud
-
+from ultilities import Hash
 router = APIRouter(
     prefix="/account",
     tags=['Accounts']
@@ -19,6 +19,8 @@ db = get_database_session()
 
 @router.post("/create/")
 def create_account(account: schemas.Account):
+    plain = account.account_password
+    account.account_password = Hash.bcrypt(password=plain)
     return account_crud.create_account(db, account=account)
 
 @router.put("/update/{account_id}")
@@ -42,7 +44,7 @@ def delete_account(account_id: int):
 @router.get("/check-duplicate-username")
 def count_duplicate_username(username: str):
     db_ = get_database_session()
-    count = account_crud.count_duplicate_username(db=db, username=username)
+    count = account_crud.count_duplicate_username(db=db_, username=username)
     return {"count": count}
 
 @router.get("/{id}")

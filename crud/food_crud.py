@@ -19,7 +19,7 @@ def count_all_foods_by_account(db: Session, account_id: int, query: Union[str, N
     WHERE (acc.account_id = {account_id}) """
     # Nếu có seach => str = Pho
     if query:
-        query_str = f"""AND (f.food_name LIKE '%{query}%')"""
+        query_str = f""" AND (f.food_name LIKE '%{query}%')"""
         string = ''.join([string, query_str])
     result = db.execute(string)
     return result.fetchall()

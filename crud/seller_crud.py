@@ -102,12 +102,20 @@ JOIN restaurant res ON res.seller_id = sl.seller_id
     result = db.execute(string)
     return result.fetchall()
 
+def count_food_of_seller_restaurant(db: Session, seller_id: int):
+    string = f"""SELECT COUNT(*) AS TOTAL_ROW
+FROM  seller sl
+JOIN restaurant res ON res.seller_id = sl.seller_id
+JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
+WHERE sl.seller_id ={seller_id}"""
+    result = db.execute(string)
+    return result.fetchall()
+
 def get_all_info_seller(db: Session, seller_id: int):
-    string = f"""SELECT acc.account_username, acc.account_date_created, sl.*, res.restaurant_name, res.restaurant_address, res.restaurant_image, COUNT(rw.food_id) AS TOTAL_FOOD
+    string = f"""SELECT acc.account_username, acc.account_date_created, sl.*, res.restaurant_name, res.restaurant_address, res.restaurant_image
 FROM seller sl
 JOIN account acc ON acc.account_id = sl.account_id
 JOIN restaurant res ON res.seller_id = sl.seller_id
-JOIN restaurant_warehouse rw ON rw.restaurant_id = res.restaurant_id
 WHERE sl.seller_id = {seller_id}"""
 
     result = db.execute(string)

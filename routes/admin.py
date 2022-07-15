@@ -50,18 +50,22 @@ def read_profile_admin(request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     account_id = user.account_id
+    db_ = get_database_session()
+    admin_info = admin_crud.get_admin_by_account_id(db=db_, account_id=account_id)
+    account_info = account_crud.get_account(db=db_, account_id=account_id)
     username = account_info.account_username
-    admin_info = admin_crud.get_admin_by_account_id(db=db, account_id=account_id)
-    account_info = account_crud.get_account(db, account_id=account_id)
-
     data = []
     data.append(admin_info.__dict__)
+
+    account_data = []
+    account_data.append(account_info.__dict__)
     data_res = {
         "request": request,
         "title": 'Thông tin Admin',
         'admin_info': data,
         'username': username,
-        'account_id': account_id
+        'account_id': account_id,
+        'account_info': account_data
     }
     return templates.TemplateResponse("admin_profile.html", data_res)
 
@@ -139,8 +143,8 @@ def edit_admin_info(account_id: int, admin: schemas.UpdateAdminInfo, request: Re
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    
-    admin_info = admin_crud.update_admin(db=db, admin=admin, admin_id=account_id )
+    db_ = get_database_session()
+    admin_info = admin_crud.update_admin(db=db_, admin=admin, admin_id=account_id )
     print(f"admin info: {admin_info}")
     if admin_info:
         status = 1
@@ -161,8 +165,8 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
-
-    account_info = account_crud.get_account(db, account_id=account_id)
+    db_ = get_database_session()
+    account_info = account_crud.get_account(db=db_, account_id=account_id)
     username = account_info.account_username
     error = ""
     data = []
@@ -201,7 +205,8 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
     #username lấy từ form
     username = account.account_username
     
-    account_username = account_crud.update_account_name(db=db, account=account, account_id=account_id)
+    db_ = get_database_session()
+    account_username = account_crud.update_account_name(db=db_, account=account, account_id=account_id)
 
     if account_username:
         if account_username == username:
@@ -225,8 +230,8 @@ def edit_admin_form(account_id: int,request: Request, user=Depends(manager)):
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
-
-    account_info = account_crud.get_account(db, account_id=account_id)
+    db_ = get_database_session()
+    account_info = account_crud.get_account(db = db_, account_id=account_id)
     username = account_info.account_username
     error = ""
     data = []
@@ -283,8 +288,9 @@ def edit_admin_form(request: Request, user=Depends(manager)):
             'error': 'Bạn không được cấp quyền để vào trang này!'
         }
         return templates.TemplateResponse("login.html", error_data)
+    db_ = get_database_session()
     account_id = user.account_id
-    account_info = account_crud.get_account(db, account_id=account_id)
+    account_info = account_crud.get_account(db= db_, account_id=account_id)
     username = account_info.account_username
     error = ""
     data = []
@@ -321,8 +327,8 @@ async def edit_account(account: schemas.UpdateAccountPassword, request: Request,
     message = ""
 
     #password lấy từ form
-    
-    account_info = account_crud.update_account_password(db=db,account=account, account_id=account_id)
+    db_ = get_database_session()
+    account_info = account_crud.update_account_password(db=db_,account=account, account_id=account_id)
     if account_info != None:
         
         status = 1
@@ -461,7 +467,7 @@ def edit_foodtype(foodtype_id: int, foodtype: schemas.FoodType, request: Request
     status = 1
     message = ""
     print(f"Số tên trùng: {row_count}")
-    if row_count > 0:
+    if row_count > 1:
         status = 0
         message = "Tên loại thức ăn bị trùng!"
     else:
@@ -712,7 +718,7 @@ def edit_payment_method(payment_id: int, payment_method: schemas.PaymentMethod, 
     count = admin_crud.count_all_seller_accounts(db=db_)
     TOTAL_ROWS_SELLER = count[0]['TOTAL_ROW_SELLER']
 
-    return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER }
+    return {"TOTAL_ROWS_SELLER": TOTAL_ROWS_SELLER, "status": status, "message": message}
 
 # DASHBOARD -----------------------------------------------------------------------------------------
 @router.get("/fetch-all-rows-seller")
@@ -777,9 +783,14 @@ def get_orders(request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
+    username = user.account_username
+    account_id = user.account_id
+
     data_res = {
         "request": request,
-        "title": "Trang đơn hàng"
+        "title": "Trang đơn hàng",
+        'username': username,
+        'account_id': account_id
     }
     return templates.TemplateResponse("admin_order_list.html", data_res)
 
@@ -924,10 +935,14 @@ def fetch_seller_info(seller_id: int, request: Request, user=Depends(manager)):
         return templates.TemplateResponse("login.html", error_data)
 
     db_ = get_database_session()
+
+    count = seller_crud.count_food_of_seller_restaurant(db=db_, seller_id=seller_id)
+    TOTAL_ROW = count[0]['TOTAL_ROW']
+
     seller_info = seller_crud.get_all_info_seller(db=db_, seller_id=seller_id)
 
 
-    return {"seller_info": seller_info}
+    return {"seller_info": seller_info, "TOTAL_ROW": TOTAL_ROW}
 
 @router.delete("/payment_method/delete")
 def edit_payment_method(payment_id: int, request: Request, user=Depends(manager)):
@@ -978,7 +993,7 @@ def delete_seller(seller_id: int, request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    db_ = get_database_session()
+    # db_ = get_database_session()
 
     #Khởi tạo các biến cần thiết
     flag = 0 # Cờ
@@ -993,11 +1008,11 @@ def delete_seller(seller_id: int, request: Request, user=Depends(manager)):
     data = []
     result = 0 #Check xem có xóa warehouse không
     #Lấy account_id của seller
-    seller_info = seller_crud.get_acccount_id(db=db_, seller_id=seller_id)
+    seller_info = seller_crud.get_acccount_id(db=db, seller_id=seller_id)
     seller_account_id = seller_info[0]['account_id']
 
     #Count restaurant info
-    count_restaurant = seller_crud.count_restaurant_info(db=db_, seller_id=seller_id)
+    count_restaurant = seller_crud.count_restaurant_info(db=db, seller_id=seller_id)
     print(count_restaurant)
 
     #Tạo biến kiểm tra
@@ -1010,37 +1025,36 @@ def delete_seller(seller_id: int, request: Request, user=Depends(manager)):
     if total_restaurant_info == 1: 
         restaurant_id = count_restaurant[0]['restaurant_id']
         #count all items in warehouse
-        count_warehouse = seller_crud.count_warehouse_info(db=db_, seller_id=seller_id)
+        count_warehouse = seller_crud.count_warehouse_info(db=db, seller_id=seller_id)
 
         total_warehouse_info = count_warehouse[0]['TOTAL_WAREHOUSE_ROW']
         # > 0:
         if total_warehouse_info > 0: #TH1
-            result_delete_warehouse_food = seller_crud.delete_warehouse_food_by_restaurant_id(db=db_, restaurant_id=restaurant_id)
+            result_delete_warehouse_food = seller_crud.delete_warehouse_food_by_restaurant_id(db=db, restaurant_id=restaurant_id)
             
             if result_delete_warehouse_food:
                 result = 1
-            result_delete_restaurant = seller_crud.delete_restaurant(db=db_, restaurant_id=restaurant_id)
-            result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
-            result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+            result_delete_restaurant = seller_crud.delete_restaurant(db=db, restaurant_id=restaurant_id)
+            result_delete_seller = seller_crud.delete_seller(db=db, seller_id=seller_id)
+            result_delete_account = seller_crud.delete_account(db=db, account_id=seller_account_id)
             flag =1
 
         # <0:
         else: #TH2
-            result_delete_restaurant = seller_crud.delete_restaurant(db=db_, restaurant_id=restaurant_id)
-            result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
-            result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+            result_delete_restaurant = seller_crud.delete_restaurant(db=db, restaurant_id=restaurant_id)
+            result_delete_seller = seller_crud.delete_seller(db=db, seller_id=seller_id)
+            result_delete_account = seller_crud.delete_account(db=db, account_id=seller_account_id)
             flag = 2
     # Nếu restaurant info không có thì xóa từ seller -> account (TH3)
     else: #TH3
-        result_delete_seller = seller_crud.delete_seller(db=db_, seller_id=seller_id)
-        result_delete_account = seller_crud.delete_account(db=db_, account_id=seller_account_id)
+        result_delete_seller = seller_crud.delete_seller(db=db, seller_id=seller_id)
+        result_delete_account = seller_crud.delete_account(db=db, account_id=seller_account_id)
         flag = 3
 
     data.append(result)
     data.append(result_delete_restaurant)
     data.append(result_delete_seller)
     data.append(result_delete_account)
-    
 
     return {"flag": flag, "seller_account_id": seller_account_id, "result": data}
 
@@ -1057,7 +1071,7 @@ def delete_buyer(buyer_id: int, request: Request, user=Depends(manager)):
         }
         return templates.TemplateResponse("login.html", error_data)
 
-    db_ = get_database_session()
+    # db_ = get_database_session()
     
     #Tạo biến kiểm tra
     status = 1
@@ -1065,11 +1079,11 @@ def delete_buyer(buyer_id: int, request: Request, user=Depends(manager)):
     row_buyer_deleted = 0
     row_account_deleted = 0
 
-    buyer_account_id = buyer_crud.get_account_buyer(db=db_, buyer_id=buyer_id)
+    buyer_account_id = buyer_crud.get_account_buyer(db=db, buyer_id=buyer_id)
 
-    row_buyer_deleted = buyer_crud.delete_buyer(db=db_, buyer_id=buyer_id)
+    row_buyer_deleted = buyer_crud.delete_buyer(db=db, buyer_id=buyer_id)
 
-    row_account_deleted = buyer_crud.delete_account_buyer(db=db_, account_id=buyer_account_id)
+    row_account_deleted = buyer_crud.delete_account_buyer(db=db, account_id=buyer_account_id)
 
     if row_buyer_deleted > 0:
         if row_account_deleted > 0:

@@ -17,7 +17,7 @@ Trang quản lý danh sách người bán
 {% block content %}
 <div class="row py-3">
     <div class="col-md-12">
-
+        <span>Tổng số: {{ TOTAL_ROW }}</span>
         <div class="card border-0">
             <div class="card-body px-0 py-2">
                 <div id="data_content" class="table-responsive">
@@ -265,7 +265,7 @@ Trang quản lý danh sách người bán
                                     <tr>
                                     <td scope="row" style="width: 40%;">Số món ăn hiện có:</td>
                                     <td style="width: 60%;">
-                                        `+ info.TOTAL_FOOD + `
+                                        `+ response.TOTAL_ROW + `
                                     </td>
                                     </tr>
 
@@ -302,11 +302,14 @@ Trang quản lý danh sách người bán
                         success: function (response) {
                             console.log("flag: " + response.flag);
                             console.log("seller account id: " + response.seller_account_id);
-                            console.log("data: " + response.result); //4 phần tử
+                            console.log(response.result); //4 phần tử
                             var flag = true;
                             var TH = response.flag; //TH1, TH2, TH3
                             var length = response.result.length;
                             var data = response.result;
+                            console.log(data[0]);
+                            console.log(length);
+                            console.log("Case "+TH);
                             if (TH == 1) {
                                 //4 giá trị trong danh sách phải >0 => true
                                 for (let i = 0; i < length; i++) {
@@ -314,7 +317,7 @@ Trang quản lý danh sách người bán
                                         flag = flag && true;
                                     }
                                     else {
-                                        flag = flag && false;
+                                        flag =  false;
                                     }
                                 }
                             }
@@ -322,26 +325,33 @@ Trang quản lý danh sách người bán
                             if (TH == 2) {
                                 //giá trị đầu == 0, 3 giá trị còn lại >0 => true
                                 for (let i = 0; i < length; i++) {
+                                    console.log("Lặp "+i);
                                     if (i == 0) {
+                                        console.log("if "+i+" == 0: ");
                                         if (data[i] == 0) {
                                             flag = flag && true;
+                                            console.log("if data = "+data[i]+" == 0: flag = "+flag);
                                         }
                                         else {
-                                            flag = flag && false;
+                                            flag = false;
+                                            console.log("if data = "+data[i]+" !== 0: flag = "+flag);
                                         }
                                     }
                                     else {
+                                        console.log("if "+i+" !== 0: ");
                                         if (data[i] > 0) {
                                             flag = flag && true;
+                                            console.log("if data = "+data[i]+" > 0: flag = "+flag);
                                         }
                                         else {
-                                            flag = flag && false;
+                                            flag = false;
+                                            console.log("if data = "+data[i]+" <==> 0: flag = "+flag);
                                         }
                                     }
                                 }
                             }
 
-                            if (TH = 3) {
+                            if (TH == 3) {
                                 //2 giá trị đầu == 0, 2 giá trị còn lại >0 => true
                                 for (let i = 0; i < length; i++) {
                                     if (i  <= 1) {
@@ -349,7 +359,7 @@ Trang quản lý danh sách người bán
                                             flag = flag && true;
                                         }
                                         else {
-                                            flag = flag && false;
+                                            flag = false;
                                         }
                                     }
                                     else {
@@ -357,12 +367,12 @@ Trang quản lý danh sách người bán
                                             flag = flag && true;
                                         }
                                         else {
-                                            flag = flag && false;
+                                            flag = false;
                                         }
                                     }
                                 }
                             }
-
+                            console.log("flag = "+flag);
 
                             //Chưa check result => thông báo xóa không công không ổn
                             if (flag == false) {

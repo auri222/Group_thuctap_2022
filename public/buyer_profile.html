@@ -161,7 +161,7 @@ Food Delivery
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="accInfoModalLabel">Sửa tên đăng nhập</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -179,7 +179,7 @@ Food Delivery
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary btn-save-acc">Lưu thay đổi</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
         </div>
       </form>
 
@@ -193,7 +193,7 @@ Food Delivery
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="infoModalLabel">Sửa thông tin cá nhân</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -242,7 +242,7 @@ Food Delivery
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary btn-save-info">Lưu thay đổi</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
         </div>
       </form>
       {% endfor %}
@@ -299,17 +299,25 @@ Food Delivery
                     Swal.fire({
                       position: 'center',
                       icon: 'success',
-                      title: '' + response.message,
-                      showConfirmButton: false,
-                      timer: 1500
-                    });
-                    $(function () {
-                      function reload_info_modal() {
-                        $('#accInfoModal').modal('hide');
-                        location.reload();
+                      title: '' + response.message + '. Vui lòng đăng nhập lại',
+                      showConfirmButton: true,
+                      confirmButtonColor: '#28a745',
+                      confirmButtonText: 'OK'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        $(function () {
+                          function reload_info_modal() {
+                            //$('#accInfoModal').modal().hide();
+                               // do something…
+                               location.href = '/login_form';
+                       
+                            
+                          }
+                          window.setTimeout(reload_info_modal, 1000);
+                        });
                       }
-                      window.setTimeout(reload_info_modal, 1500);
-                    });
+                    })
+
                   }
                 }
               });
@@ -393,7 +401,7 @@ Food Delivery
               });
               $(function () {
                 function reload_info_modal() {
-                  $('#accInfoModal').modal('hide');
+                  
                   location.reload();
                 }
                 window.setTimeout(reload_info_modal, 1500);

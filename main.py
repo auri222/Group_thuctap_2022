@@ -144,6 +144,15 @@ def restaurant_detail(restaurant_id: int, request: Request, page: int=1, query: 
     }
     return templates.TemplateResponse("restaurant_index.html", data_res)
 
+@app.get("/cart", response_class=HTMLResponse)
+def show_cart_page(request: Request):
+    data_res = {
+        "request": request,
+        "title": "Trang chủ"
+    }
+
+    return templates.TemplateResponse("cart.html",data_res)
+
 # ----------------------------------------------------------------------------------------------------------
 
 # if __name__ == "__main__":

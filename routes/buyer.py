@@ -98,6 +98,7 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
         return templates.TemplateResponse("login.html", error_data)
     account_id = user.account_id
 
+    db_ = get_database_session()
     #Biến response kết quả
     status = 1
     message = ""
@@ -105,7 +106,7 @@ async def edit_account(account: schemas.UpdateAccountName, request: Request, use
     #username lấy từ form
     username = account.account_username
 
-    account_username = account_crud.update_account_name(db=db, account=account, account_id=account_id)
+    account_username = account_crud.update_account_name(db=db_, account=account, account_id=account_id)
 
     if account_username:
         if account_username == username:
@@ -224,6 +225,31 @@ def home(restaurant_id: int, request: Request, page: int=1, query: Union[str, No
     }
 
     return templates.TemplateResponse("restaurant_index.html",data_res)
+
+@router.get("/cart", response_class=HTMLResponse)
+def show_cart_page(request: Request, user=Depends(manager)):
+    
+    if user.account_type != 3:
+        error_data = {
+            "request": request,
+            "title": 'Trang đăng nhập',
+            'error': 'Bạn không được cấp quyền để vào trang này!'
+        }
+        return templates.TemplateResponse("login.html", error_data)
+    
+    account_id = user.account_id
+    db_ = get_database_session()
+    account_info = account_crud.get_account(db=db_, account_id=account_id)
+    username = account_info.account_username
+
+    data_res = {
+        "request": request,
+        "title": "Trang chủ",
+        'account_id': account_id,
+        'username': username
+    }
+
+    return templates.TemplateResponse("cart.html",data_res)
 
 @router.get("/", response_class=HTMLResponse)
 def home( request: Request, user= Depends(manager)):

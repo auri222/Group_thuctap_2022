@@ -260,7 +260,7 @@ async def edit_food_info(food_id: int, food: schemas.UpdateFoodInfo, warehouse: 
     updated_quantity = restaurant_warehouse_crud.update_food_quantity_by_food_id(db=db, restaurant_warehouse=warehouse, food_id=food_id)
     print(f"Updated quantity: {updated_quantity}")
 
-    if (updated_food) and (updated_quantity):
+    if (updated_food) and (updated_quantity >= 0):
         status = 1
         message = "Cập nhật thông tin thành công"
     else:

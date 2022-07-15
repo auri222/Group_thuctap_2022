@@ -70,6 +70,7 @@ Food Delivery
         <div class="row">
             <div class="col-md-3 px-0">
                 <div style="background: #fff;border-radius: 5px;" class="mx-2">
+                    <br>
                     <h5 style="text-align: center;">Thực Đơn</h5>
                     <!-- danh sach loai thuc an cua nha hang -->
                     <ul style="list-style-type: none;">
@@ -80,6 +81,7 @@ Food Delivery
                         {% else %}
                         <li>Không có thông tin</li>
                         {% endif %}
+                        <br>
                     </ul>
                 </div>
             </div>
@@ -90,25 +92,24 @@ Food Delivery
                         <div class="col-8">
                             {% if username %}
                             {% if query %}
-                            <input class="form-control search-buyer-food" type="text"
-                                value="{{query}}" aria-label="Search">
+                            <input class="form-control search-buyer-food" style="margin-left: 20px;" type="text" value="{{query}}"
+                                aria-label="Search">
                             {% else %}
-                            <input class="form-control search-buyer-food" type="text"
-                                placeholder="Nhập Tên Món.." aria-label="Search">
+                            <input class="form-control search-buyer-food" style="margin-left: 20px;" type="text" placeholder="Nhập Tên Món.."
+                                aria-label="Search">
                             {% endif %}
                             {% else %}
                             {% if query %}
-                            <input class="form-control search-food" type="text" value="{{query}}"
-                                aria-label="Search">
+                            <input class="form-control search-food" style="margin-left: 20px;" type="text" value="{{query}}" aria-label="Search">
                             {% else %}
-                            <input class="form-control search-food" type="text" placeholder="Nhập Tên Món.."
+                            <input class="form-control search-food" style="margin-left: 20px;" type="text" placeholder="Nhập Tên Món.."
                                 aria-label="Search">
                             {% endif %}
                             {% endif %}
                             <input type="hidden" id="restaurant_id" value="{{restaurant_id}}">
                         </div>
                         <div class="col-4 pl-0">
-                            <button class="btn btn-outline-warning btn-search" type="button" data-toggle="tooltip"
+                            <button class="btn btn-outline-warning btn-search"  type="button" data-toggle="tooltip"
                                 data-placement="top" title="Click để tìm">Tìm Món</button>
 
                             <button class="btn btn-outline-warning btn-del-search" type="button" data-toggle="tooltip"
@@ -124,7 +125,7 @@ Food Delivery
                     <div class="row py-2">
                         {% if food_info %}
                         {% for info in food_info %}
-                        <div class="col-12 col-md-4 col-lg-4 mb-3">
+                        <div class="col-12 col-md-6 col-lg-4 mb-3">
                             <div class="card h-100 pt-0">
                                 <img src="{{ url_for('static', path='backend/seller/images/food/') }}{{ info.food_image }}"
                                     class="card-img-top card-image" alt="Hình món ăn: {{ info.food_image }}"
@@ -310,6 +311,13 @@ Food Delivery
 
 
                 }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Hãy nhập vào khung tìm kiếm trước'
+                    });
+                }
 
             }
 
@@ -318,7 +326,7 @@ Food Delivery
                 if (search_buyer_food !== "") {
                     console.log("Logged search: " + search_buyer_food);
                     $.ajax({
-                        url: "/restaurant/fetch-query?restaurant_id=" + restaurant_id + "&query=" + search_food,
+                        url: "/restaurant/fetch-query?restaurant_id=" + restaurant_id + "&query=" + search_buyer_food,
                         method: "GET",
                         contentType: "application/json",
                         success: function (response) {
@@ -335,6 +343,13 @@ Food Delivery
                         }
                     });
 
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Hãy nhập vào khung tìm kiếm trước'
+                    });
                 }
 
             }
@@ -390,12 +405,19 @@ Food Delivery
                 success: function (response) {
                     if (response.status == 0) {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: '' + response.message
-                        });
-                        flag = false;
-                        console.log("Flag inside: " + flag);
+                            title: 'Bạn chưa đăng nhập',
+                            text: "Bạn cần đăng nhập để thực hiện chức năng này",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Đi đến trang đăng nhập',
+                            cancelButtonText: 'Đóng'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/login_form";
+                            }
+                        })
                     }
                     else {
                         alert("Bạn đã đăng nhập. :>");

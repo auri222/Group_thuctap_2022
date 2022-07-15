@@ -49,7 +49,7 @@ Trang thông tin danh sách món ăn
                 <table class="table  mt-2">
                     <thead class="thead-dark">
                         <tr>
-                            <th>STT </th>
+                            <th>ID</th>
                             <th>Tên món ăn</th>
                             <th>Số lượng</th>
                             <th>Giá</th>
@@ -255,13 +255,24 @@ Trang thông tin danh sách món ăn
     $(document).ready(function () {
 
         $(document).on('click', '.btn-del-search', function () {
-            var search = $(this).val('');
-            $(function () {
-                function back_to_normal_page() {
-                    location.href = "/seller/food";
-                }
-                window.setTimeout(back_to_normal_page, 1000);
-            });
+            var search = $('#search').val();
+            if (search == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không có gì để xóa'
+                });
+            }
+            else {
+                $('#search').val('');
+                $(function () {
+                    function back_to_normal_page() {
+                        location.href = "/seller/food";
+                    }
+                    window.setTimeout(back_to_normal_page, 1000);
+                });
+            }
+
         })
 
         $(document).on('click', '.btn-search', function () {
@@ -275,7 +286,25 @@ Trang thông tin danh sách món ăn
                 });
             }
             else {
-                location.href = "/seller/food?page=1&query=" + query;
+                $.ajax({
+                    url: "/seller/food/fetch-total-row?query="+query,
+                    method: "GET",
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log(response);
+                        if (response.TOTAL_ROW > 0) {
+                            location.href = "/seller/food?page=1&query=" + query;
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Không tìm thấy món có tên '+query
+                            });
+                        }
+                    }
+                })
+
             }
         })
 
@@ -288,17 +317,23 @@ Trang thông tin danh sách món ăn
             } else {
                 $('#error-name').html("");
                 $('#food_name').toggleClass("is-valid");
-                flag = true;
+                flag =flag && true;
             }
 
             if (price == "") {
                 $('#error-price').html("Hãy nhập giá!");
                 // $('#food_price').toggleClass("is-invalid");
                 flag = false;
-            } else {
+            } else if(price <= 0)
+            {
+                $('#error-price').html("Hãy nhập giá hợp lý!");
+                // $('#food_price').toggleClass("is-invalid");
+                flag = false;
+            }
+            else {
                 $('#error-price').html("");
                 $('#food_price').toggleClass("is-valid");
-                flag = true;
+                flag = flag && true;
             }
 
             if (type == "") {
@@ -308,17 +343,22 @@ Trang thông tin danh sách món ăn
             } else {
                 $('#error-type').html("");
                 $('#food_type').toggleClass("is-valid");
-                flag = true;
+                flag =flag && true;
             }
 
             if (quantity == "") {
                 $('#error-quantity').html("Hãy nhập số lượng món ăn!");
                 // $('#food_quantity').toggleClass("is-invalid");
                 flag = false;
-            } else {
+            }else if(quantity < 0){
+                $('#error-quantity').html("Hãy nhập số lượng món ăn lớn hơn 0");
+                // $('#food_quantity').toggleClass("is-invalid");
+                flag = false;
+            } 
+            else {
                 $('#error-quantity').html("");
                 $('#food_quantity').toggleClass("is-valid");
-                flag = true;
+                flag =flag && true;
             }
 
             if (description == "") {
@@ -328,7 +368,7 @@ Trang thông tin danh sách món ăn
             } else {
                 $('#error-text').html("");
                 $('#food_description').toggleClass("is-valid");
-                flag = true;
+                flag =flag && true;
             }
 
             return flag;
@@ -408,13 +448,13 @@ Trang thông tin danh sách món ăn
                     check = false;
                 }
             }
-            if(check == true){
+            if (check == true) {
                 $('#error-image').html("");
                 $('#food_image').toggleClass("is-valid");
             }
 
             if ((check_food_input(food_name, food_price, food_type, food_quantity, food_description) == true) && (check == true)) {
-                
+
                 $('#error-name').html("");
 
                 var food = {

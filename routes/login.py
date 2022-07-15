@@ -80,9 +80,11 @@ async def login( request: Request, username: str = Form(...), password: str = Fo
     )
     account_type = user.account_type
     account_id = user.account_id
-
+    print(account_type)
+    print(account_id)
+    active = 1
     # Đúng thông tin đăng nhập thì set status = 1
-    active_status = account_crud.update_account_active_status(db=db, account_id=account_id, status=1)
+    active_status = account_crud.update_account_active_status(db=db, account_id=account_id, status=active)
     print(f"active status: {active_status}")
 
     if account_type == 1:
@@ -113,7 +115,7 @@ def protected_route(request: Request, user=Depends(manager)):
     # Đúng thông tin đăng nhập thì set status = 1
     active_status = account_crud.update_account_active_status(db=db, account_id=account_id, status=0)
     print(f"active status: {active_status}")
-    resp = RedirectResponse(url="/login_form", status_code=status.HTTP_302_FOUND)
+    resp = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     manager.set_cookie(resp, "")
     return resp
 

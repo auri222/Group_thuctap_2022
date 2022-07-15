@@ -37,14 +37,15 @@ def read_restaurant_info(request: Request, user=Depends(manager)):
     account_id = user.account_id
     username = user.account_username
 
+    db_ = get_database_session()
     print(f"ACCOUNT ID: {account_id}")
-    seller_info = seller_crud.get_seller_by_account_id(db=db, account_id=account_id)
+    seller_info = seller_crud.get_seller_by_account_id(db=db_, account_id=account_id)
     seller_data = []
     seller_data.append(seller_info.__dict__)
     print(seller_data)
     seller_id = seller_data[0]['seller_id']
     print(f"SELLER ID: {seller_id}")
-    restaurant_info = restaurant_crud.get_restaurant_info_by_seller_ID(db=db, seller_id=seller_id)
+    restaurant_info = restaurant_crud.get_restaurant_info_by_seller_ID(db=db_, seller_id=seller_id)
     print("Restaurant info: ",restaurant_info)
 
         

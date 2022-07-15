@@ -1,0 +1,77 @@
+{% extends "buyer_layout.html" %}
+
+{% block title %}
+Food Delivery
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.14/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', path='frontend/css/buyer_index.css') }}">
+
+{% endblock %}
+
+{% block banner %}
+<!-- banner -->
+<section class="parallax_buyer_profile">
+  <div class="container py-5 text-white text-center">
+    <div class="row py-5">
+      <div class="col-lg-9 mx-auto">
+        <h1 class="aaa"><span>Giỏ hàng</span></h1>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tapestry&display=swap');
+
+  .parallax_buyer_profile {
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://cdn.pixabay.com/photo/2017/05/02/18/20/blueberries-2278921_960_720.jpg');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 100%;
+    min-height: 350px;
+  }
+
+  .aaa {
+    font-family: 'Tapestry', cursive !important;
+    font-size: 60px;
+    color: rgba(199, 243, 254, 0.947);
+    cursor: pointer;
+
+    transition: all 0.5s;
+  }
+
+  .aaa:hover {
+    color: rgb(158, 255, 255);
+    transform: scaleX(1.05);
+  }
+
+  .table-profile th,
+  td {
+    font-size: 16px;
+  }
+</style>
+<!-- banner end -->
+{% endblock %}
+
+{% block content %}
+<div class="row table-profile py-5">
+  <div class="col-1 col-md-2 col-lg-2"></div>
+  <div class="col-9 col-md-8 col-lg-8">
+    <div class="text-center" style="font-size: 20px;">Không có thông tin</div>
+  </div>
+  <div class="col-1 col-md-2 col-lg-2"></div>
+</div>
+{% endblock %}
+
+
+{% block modal %}
+
+{% endblock %}
+
+{% block script %}
+
+
+{% endblock %}
